@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="VersionOneIdeaPlugin" default="ccbuild">
+  
+  <target name="plugin.compile.idea">
+      <!-- here compiling the java source files -->
+  </target>
+
+  <target name="plugin.build.idea" depends="plugin.compile.idea">
+      <!-- here build the jar of IDEA plugin-->
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" description="cleanup all"/>
+  
+  <target name="ccbuild" depends="init, clean, plugin.compile.idea, plugin.build.idea" description="build all"/>
+</project>

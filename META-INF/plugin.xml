@@ -1,0 +1,40 @@
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
+<idea-plugin>
+    <name>VersionOne Integration Plugin</name>
+
+    <description>Tool for tracking in VersionOne.</description>
+
+    <version>0.1</version>
+
+    <!--<vendor logo="/general/ijLogo.png" email="a@b.com"/>-->
+    <vendor logo="/v1.png" url="http://www.versionone.com/">VersionOne</vendor>
+
+    <idea-version since-build="7000"/>
+
+    <project-components>
+        <component>
+            <implementation-class>com.versionone.integration.idea.V1Plugin</implementation-class>
+
+            <!--<interface-class>com.versionone.integration.idea.V1Plugin</interface-class>-->
+        </component>
+    </project-components>
+
+    <actions>
+        <group id="V1.ToolWindow">
+            <action id="V1.toolRefresh" icon="/actions/sync.png"
+                    class="com.versionone.integration.idea.actions.Refresh"
+                    text="Refresh" description="Refresh data from server.">
+                <keyboard-shortcut keymap="$default" first-keystroke="control F5"/>
+            </action>
+
+            <action id="V1.Help" icon="/actions/help.png"
+                    class="com.versionone.integration.idea.actions.Help"
+                    text="Help" description="Help">
+            </action>
+            <action id="Filter" icon="/debugger/class_filter.png"
+                    class="com.versionone.integration.idea.actions.FilterAction"
+                    text="Filter tasks"
+                    description="Filter tasks assigned for current user"/>
+        </group>
+    </actions>
+</idea-plugin>
