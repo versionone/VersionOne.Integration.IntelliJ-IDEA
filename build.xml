@@ -16,5 +16,5 @@
   
   <target name="clean" description="cleanup all"/>
   
-  <target name="ccbuild" depends="init, clean, plugin.compile.idea, plugin.build.idea" description="build all"/>
+  <target name="ccnet.build" depends="init, clean, plugin.compile.idea, plugin.build.idea" description="build all"/>
 </project>
