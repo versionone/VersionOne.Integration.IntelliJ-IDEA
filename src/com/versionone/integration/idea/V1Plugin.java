@@ -7,6 +7,8 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -24,7 +26,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class V1Plugin implements ProjectComponent, PersistentStateComponent<V1Plugin.Config> {
+public class V1Plugin implements ProjectComponent {
 
 
     private final String[] columnNames = {  "Title",
@@ -47,8 +49,8 @@ public class V1Plugin implements ProjectComponent, PersistentStateComponent<V1Pl
 
     private ToolWindow toolWindow;
     private JPanel contentPanel;
-    private Config cfg = new Config();
-    private V1DBLayout layout = new V1DBLayout(); 
+    private final Settings cfg = new Settings();
+    private V1DBLayout layout = new V1DBLayout();
 
 
     public V1Plugin(Project project) {
@@ -145,16 +147,21 @@ public class V1Plugin implements ProjectComponent, PersistentStateComponent<V1Pl
         frame.setVisible(true);
     }
 
-    public Config getState() {
-        return cfg;
-    }
-
-    public void loadState(Config state) {
-        cfg = state;
-    }
-
-    public static class Config {
+    @State(name = "V1PluginSettings", storages = {
+            @Storage(id = "other",
+                    file = "$WORKSPACE_FILE$"
+            )})
+    public static class Settings implements PersistentStateComponent<Settings> {
         public String user, passwd;
+
+        public Settings getState() {
+            return this;
+        }
+
+        public void loadState(Settings state) {
+            user = state.user;
+            passwd = state.passwd;
+        }
     }
 
 
