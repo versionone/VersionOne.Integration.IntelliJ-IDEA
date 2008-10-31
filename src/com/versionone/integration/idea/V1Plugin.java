@@ -43,8 +43,8 @@ public class V1Plugin implements ProjectComponent {
 
     private ToolWindow toolWindow;
     private JPanel contentPanel;
-    private final Settings cfg = new Settings();
-    private V1DBLayout layout = new V1DBLayout();
+    private final WorkspaceSettings cfg = new WorkspaceSettings();
+    private DataLayer layout = new DataLayer();
 
 
     public V1Plugin(Project project) {

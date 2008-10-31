@@ -1,9 +1,9 @@
 package com.versionone.integration.idea;
 
 /**
- *
+ * Requests, cache, get change requests and store data from VersionOne server.
  */
-public final class V1DBLayout {
+public final class DataLayer {
 
     public Object[][] getMainData() {
         Object[][] data = {
