@@ -5,10 +5,7 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.application.ApplicationInfo;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -21,22 +18,19 @@ import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class V1Plugin implements ProjectComponent {
 
 
-    private final String[] columnNames = {  "Title",
-                                            "ID",
-                                            "Parent",
-                                            "Detail Estimate",
-                                            "Done",
-                                            "Effort",
-                                            "To Do",
-                                            "Status"};
+    private final ColumnData[] columnData = {   new ColumnData("Title", "string", true),
+                                                new ColumnData("ID", "number", false),
+                                                new ColumnData("Parent", "string", false),
+                                                new ColumnData("Detail Estimate", "number", true),
+                                                new ColumnData("Done", "number", false),
+                                                new ColumnData("Effort", "number", true),
+                                                new ColumnData("To Do", "number", true),
+                                                new ColumnData("Status", "list", true)};
 
     private static final int IDEA_VERSION = 7941;
     private static final boolean IDEA8 = IDEA_VERSION > 7941;
@@ -111,7 +105,7 @@ public class V1Plugin implements ProjectComponent {
 
     private JTable creatingTable() {
 
-        JTable table = new JTable(new V1TableModel(layout.getMainData(), columnNames));
+        JTable table = new JTable(new V1TableModel(layout.getMainData(), columnData));
 
 
         //JScrollPane scrollPane = new JScrollPane(table);
@@ -147,32 +141,5 @@ public class V1Plugin implements ProjectComponent {
         frame.setVisible(true);
     }
 
-    @State(name = "V1PluginSettings", storages = {
-            @Storage(id = "other",
-                    file = "$WORKSPACE_FILE$"
-            )})
-    public static class Settings implements PersistentStateComponent<Settings> {
-        public String user, passwd;
 
-        public Settings getState() {
-            return this;
-        }
-
-        public void loadState(Settings state) {
-            user = state.user;
-            passwd = state.passwd;
-        }
-    }
-
-
-    public class V1TableModel extends DefaultTableModel {
-        public V1TableModel(Object[][] data, String[] columnNames) {
-            super(data, columnNames);
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    }
 }
