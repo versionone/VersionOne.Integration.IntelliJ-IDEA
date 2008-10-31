@@ -19,16 +19,22 @@ import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class V1Plugin implements ProjectComponent, PersistentStateComponent<V1Plugin.Config> {
 
 
-    private final String[] columnNames = {  "First Name",
-                                            "Last Name",
-                                            "Sport",
-                                            "# of Years",
-                                            "Vegetarian"};
+    private final String[] columnNames = {  "Title",
+                                            "ID",
+                                            "Parent",
+                                            "Detail Estimate",
+                                            "Done",
+                                            "Effort",
+                                            "To Do",
+                                            "Status"};
 
     private static final int IDEA_VERSION = 7941;
     private static final boolean IDEA8 = IDEA_VERSION > 7941;
@@ -42,6 +48,7 @@ public class V1Plugin implements ProjectComponent, PersistentStateComponent<V1Pl
     private ToolWindow toolWindow;
     private JPanel contentPanel;
     private Config cfg = new Config();
+    private V1DBLayout layout = new V1DBLayout(); 
 
 
     public V1Plugin(Project project) {
@@ -102,21 +109,8 @@ public class V1Plugin implements ProjectComponent, PersistentStateComponent<V1Pl
 
     private JTable creatingTable() {
 
+        JTable table = new JTable(new V1TableModel(layout.getMainData(), columnNames));
 
-        Object[][] data = {
-            {"Mary", "Campione",
-             "Snowboarding", new Integer(5), new Boolean(false)},
-            {"Alison", "Huml",
-             "Rowing", new Integer(3), new Boolean(true)},
-            {"Kathy", "Walrath",
-             "Knitting", new Integer(2), new Boolean(false)},
-            {"Sharon", "Zakhour",
-             "Speed reading", new Integer(20), new Boolean(true)},
-            {"Philip", "Milne",
-             "Pool", new Integer(10), new Boolean(false)}
-        };
-
-        JTable table = new JTable(data, columnNames);
 
         //JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
@@ -161,5 +155,17 @@ public class V1Plugin implements ProjectComponent, PersistentStateComponent<V1Pl
 
     public static class Config {
         public String user, passwd;
+    }
+
+
+    public class V1TableModel extends DefaultTableModel {
+        public V1TableModel(Object[][] data, String[] columnNames) {
+            super(data, columnNames);
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
     }
 }
