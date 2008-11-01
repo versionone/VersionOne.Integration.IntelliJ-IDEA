@@ -16,6 +16,8 @@
     <!--<vendor logo="/general/ijLogo.png" email="a@b.com"/>-->
     <vendor logo="/v1.png" url="http://www.versionone.com/">VersionOne</vendor>
 
+    <category>Tools Integration</category>
+
     <idea-version since-build="7000"/>
 
     <project-components>
