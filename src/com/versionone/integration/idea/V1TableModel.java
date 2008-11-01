@@ -1,6 +1,9 @@
 package com.versionone.integration.idea;
 
 import javax.swing.table.DefaultTableModel;
+import javax.swing.*;
+import java.util.EventObject;
+import java.awt.*;
 
 /**
  * Created by IntelliJ IDEA.

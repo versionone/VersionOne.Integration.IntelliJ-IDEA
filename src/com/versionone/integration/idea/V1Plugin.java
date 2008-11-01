@@ -105,11 +105,16 @@ public class V1Plugin implements ProjectComponent {
 
     private JTable creatingTable() {
 
-        JTable table = new JTable(new V1TableModel(layout.getMainData(), columnData));
+        JTable table = new V1Table(new V1TableModel(layout.getMainData(), columnData));
 
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+
+        //JComboBox cb =new JComboBox(new DataLayer().getAllStatuses());
 
         //JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
+        //table.getColumn(table.getColumnName(7)).setCellEditor(new DefaultCellEditor(cb));
 
         //container.setLayout();
         //container.add(table.getTableHeader(), BorderLayout.PAGE_START);
