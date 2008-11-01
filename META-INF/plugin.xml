@@ -1,5 +1,5 @@
 <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
-<idea-plugin>
+<idea-plugin url="http://community.versionone.com/sdk/Documentation/Integrations.aspx">
     <name>VersionOne Integration Plugin</name>
     <id>V1IdeaPlugin</id>
     <description><![CDATA[
@@ -13,8 +13,9 @@
 
     <version>0.1</version>
 
-    <!--<vendor logo="/general/ijLogo.png" email="a@b.com"/>-->
-    <vendor logo="/v1.png" url="http://www.versionone.com/">VersionOne</vendor>
+    <vendor logo="/v1.png" url="http://www.versionone.com/" email="support@versionone.com">
+        VersionOne, Inc.
+    </vendor>
 
     <category>Tools Integration</category>
 
