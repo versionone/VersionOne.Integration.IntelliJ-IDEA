@@ -108,9 +108,21 @@ public class V1Plugin implements ProjectComponent {
         JTable table = new V1Table(new V1TableModel(layout.getMainData(), columnData));
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
 
 
-        //JComboBox cb =new JComboBox(new DataLayer().getAllStatuses());
+//        JComboBox cb =new JComboBox(new DataLayer().getAllStatuses());
+//            ItemListener listener = new ItemListener() {
+//
+//                public void itemStateChanged(ItemEvent e) {
+//                    //DataLayer.getInstance().
+//
+//                    if (e.getStateChange() == ItemEvent.SELECTED) {
+//                        System.out.println(e.getItem()+ " - "+e.paramString());
+//                    }
+//                }
+//            };
+//        cb.addItemListener(listener);
 
         //JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
