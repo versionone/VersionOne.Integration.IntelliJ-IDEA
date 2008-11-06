@@ -5,6 +5,7 @@ import com.versionone.integration.idea.DataLayer;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 
 public class DataLayerTest {
     private DataLayer data;
@@ -15,6 +16,7 @@ public class DataLayerTest {
     }
 
     @Test
+    @Ignore
     public void testGetMainData() {
         Object[][] x = data.getMainData();
         for (Object[] objects : x) {
