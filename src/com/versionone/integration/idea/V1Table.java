@@ -23,7 +23,7 @@ public class V1Table extends JTable {
     @Override
     public TableCellEditor getCellEditor(final int row, final int col) {
         if (col == 7) {
-            JComboBox comboEditor = new JComboBox(new DataLayer().getAllStatuses());
+            JComboBox comboEditor = new JComboBox(DataLayer.getInstance().getAllStatuses());
             //select current value
             //comboEditor.setSelectedItem(DataLayer.getInstance().getValue(col, row));
             ItemListener listener = new ItemListener() {

@@ -1,13 +1,13 @@
 package com.versionone.integration.idea;
 
-import com.versionone.om.V1Instance;
-import com.versionone.om.Project;
-import com.versionone.om.IListValueProperty;
-import com.versionone.om.Task;
-import com.versionone.om.ApiClientInternals;
-import com.versionone.common.sdk.TaskStatus;
-import com.versionone.common.sdk.ITaskStatus;
 import com.versionone.apiclient.V1Exception;
+import com.versionone.common.sdk.IStatusCodes;
+import com.versionone.common.sdk.TaskStatusCodes;
+import com.versionone.om.ApiClientInternals;
+import com.versionone.om.IListValueProperty;
+import com.versionone.om.Project;
+import com.versionone.om.Task;
+import com.versionone.om.V1Instance;
 
 import java.util.Collection;
 
@@ -15,22 +15,24 @@ import java.util.Collection;
  * Requests, cache, get change requests and store data from VersionOne server.
  */
 public final class DataLayer {
+    private static DataLayer instance;
+
     public String v1Path = "http://jsdksrv01/VersionOne/";
     public String user = "admin";
     public String passwd = "admin";
     public String projectName = "V1EclipseTestPrj";
 
     private V1Instance v1;
-    private ITaskStatus statusList;
+    private IStatusCodes statusList;
     private boolean trackEffort;
     private Object[][] data;
-    private static DataLayer instance;
 
-    public DataLayer(){
-        v1 = new V1Instance(v1Path,user,passwd);
-        final ApiClientInternals apiClient = v1.getApiClient();
+    private DataLayer() {
         try {
-            statusList = new TaskStatus(apiClient.getMetaModel(),apiClient.getServices());
+            v1 = new V1Instance(v1Path, user, passwd);
+            final ApiClientInternals apiClient = v1.getApiClient();
+            statusList = new TaskStatusCodes(apiClient.getMetaModel(), apiClient.getServices());
+            trackEffort = v1.getConfiguration().effortTrackingEnabled;
         } catch (V1Exception e) {
             e.printStackTrace();
         }
@@ -38,35 +40,25 @@ public final class DataLayer {
     }
 
     public void refresh() {
+        System.out.println("DataLayer.refresh()");
         Project prj = v1.get().projectByName(projectName);
-        if (prj == null){
+        if (prj == null) {
             return;
         }
         Collection<Task> tasks = prj.getTasks(null);
-        data  = new Object[tasks.size()][ColunmnsNames.COUNT];
-        int i=0;
+        data = new Object[tasks.size()][ColunmnsNames.COUNT];
+        int i = 0;
         for (Task task : tasks) {
             setTaskData(data[i++], task);
         }
 
-/*
-        data  = new Object[][] {
-            {"Title", "ID", "Parent", "Detail Estimeate", "Done", "Effort", "To Do", "Status"},
-            {"Alison", "Huml", "Rowing", 3, true, 1, 1, "Done"},
-            {"Kathy", "Walrath", "Knitting", 2, false, 1, 1, "In Progress"},
-            {"Sharon", "Zakhour", "Speed reading", 20, true, 1, 1, "In Progress"},
-            {"Philip", "Milne", "Pool", 10, false, 1, 1, "Done"}
-        };
-*/
-        trackEffort = v1.getConfiguration().effortTrackingEnabled;
-
-//        statusList = new String[] {"", "In Progress", "Done", "My :)"};
-
         wr();
     }
 
-    /**temp*/
-    public void wr() {
+    /**
+     * temp
+     */
+    private void wr() {
         Object[][] x = getMainData();
         for (Object[] objects : x) {
             for (Object o : objects) {

@@ -32,9 +32,6 @@ public class V1Plugin implements ProjectComponent {
                                                 new ColumnData("To Do", "number", true),
                                                 new ColumnData("Status", "list", true)};
 
-    private static final int IDEA_VERSION = 7941;
-    private static final boolean IDEA8 = IDEA_VERSION > 7941;
-
     private static final Logger LOG = Logger.getLogger(V1Plugin.class);
     @NonNls public static final String TOOL_WINDOW_ID = "V1Integration";
 
@@ -44,7 +41,6 @@ public class V1Plugin implements ProjectComponent {
     private ToolWindow toolWindow;
     private JPanel contentPanel;
     private final WorkspaceSettings cfg = new WorkspaceSettings();
-    private DataLayer layout = new DataLayer();
 
 
     public V1Plugin(Project project) {
@@ -105,7 +101,7 @@ public class V1Plugin implements ProjectComponent {
 
     private JTable creatingTable() {
 
-        JTable table = new V1Table(new V1TableModel(layout.getMainData(), columnData));
+        JTable table = new V1Table(new V1TableModel(DataLayer.getInstance().getMainData(), columnData));
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         

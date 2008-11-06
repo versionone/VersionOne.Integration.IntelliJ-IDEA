@@ -9,13 +9,14 @@ import com.versionone.apiclient.IServices;
 import com.versionone.apiclient.Query;
 import com.versionone.apiclient.QueryResult;
 import com.versionone.apiclient.V1Exception;
+import com.versionone.apiclient.FilterTerm;
 
 /**
  * Implementation of IStatusCodes using VercionOne
  *
  * @author jerry
  */
-public final class TaskStatus implements ITaskStatus {
+public final class TaskStatusCodes implements IStatusCodes {
     private static final String TASK_STATUS = "TaskStatus";
     private static final String NAME = "Name";
 
@@ -28,14 +29,15 @@ public final class TaskStatus implements ITaskStatus {
      * @param services  - services to use for obtaining data
      * @throws V1Exception - if we cannot read data
      */
-    public TaskStatus(IMetaModel metaModel, IServices services) throws V1Exception {
+    public TaskStatusCodes(IMetaModel metaModel, IServices services) throws V1Exception {
         final IAssetType statusType = metaModel.getAssetType(TASK_STATUS);
         final IAttributeDefinition name = statusType.getAttributeDefinition(NAME);
-//        final IAttributeDefinition active = statusType.getAttributeDefinition("Active");
+//        statusType.g
+        final IAttributeDefinition inactive = statusType.getAttributeDefinition("Inactive");
 
         final Query query = new Query(statusType);
         query.getSelection().add(name);
-//        query.setFilter(new FilterTerm(active));
+        query.setFilter(new FilterTerm(inactive, FilterTerm.Operator.Equal, "False"));
         final QueryResult queryResults = services.retrieve(query);
         final Asset[] assets = queryResults.getAssets();
 
