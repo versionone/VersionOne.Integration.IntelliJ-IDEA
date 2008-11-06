@@ -135,7 +135,7 @@
     <target name="plugin.package.idea" depends="plugin.build.idea">
         <mkdir dir="${publish.dir}"/>
         <mkdir dir="${publish.dir}/tmpl"/>
-        <copy file="${build.dir}/${jar.filename}" todir="${publish.dir}/tmpl/"/>
+        <copy file="${distr.dir}/${jar.filename}" todir="${publish.dir}/tmpl/"/>
         <copy file="${lib.dir}/VersionOne.APIClient.jar" tofile="${publish.dir}/tmpl/VersionOne.APIClient.jar"/>
         <copy file="${lib.dir}/VersionOne.ObjectModel.jar" tofile="${publish.dir}/tmpl/VersionOne.ObjectModel.jar"/>
         
