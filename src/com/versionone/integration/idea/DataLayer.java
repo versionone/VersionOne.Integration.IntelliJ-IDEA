@@ -5,16 +5,22 @@ import com.versionone.common.sdk.IStatusCodes;
 import com.versionone.common.sdk.TaskStatusCodes;
 import com.versionone.om.ApiClientInternals;
 import com.versionone.om.IListValueProperty;
+import com.versionone.om.Member;
 import com.versionone.om.Project;
 import com.versionone.om.Task;
 import com.versionone.om.V1Instance;
+import com.versionone.om.filters.TaskFilter;
+import org.apache.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
  * Requests, cache, get change requests and store data from VersionOne server.
  */
 public final class DataLayer {
+    private static final Logger LOG = Logger.getLogger(DataLayer.class);
+
     private static DataLayer instance;
 
     public String v1Path = "http://jsdksrv01/VersionOne/";
@@ -25,7 +31,7 @@ public final class DataLayer {
     private V1Instance v1;
     private IStatusCodes statusList;
     private boolean trackEffort;
-    private Object[][] data;
+    private Object[][] tasksData;
 
     private DataLayer() {
         try {
@@ -39,18 +45,38 @@ public final class DataLayer {
         refresh();
     }
 
+    private static final String[] TASK_ATTRIBUTES = "Name,Description,Category,Customer,DetailEstimate,Estimate,LastVersion,Number,Owners,Parent,Reference,Scope,Source,Status,Timebox,ToDo,Actuals.Value.@Sum".split(",");
+
     public void refresh() {
-        System.out.println("DataLayer.refresh()");
-        Project prj = v1.get().projectByName(projectName);
-        if (prj == null) {
+        LOG.info("DataLayer.refresh()");
+
+        final Project project = v1.get().projectByName(projectName);
+        if (project == null) {
+            LOG.error("There is no project: " + projectName);
             return;
         }
-        Collection<Task> tasks = prj.getTasks(null);
-        data = new Object[tasks.size()][ColunmnsNames.COUNT];
+
+        final TaskFilter filter = new TaskFilter();
+        final Collection<Project> childProjects = project.getThisAndAllChildProjects();
+        for (Project prj : childProjects) {
+            if (prj.isActive()) {
+                filter.project.add(prj);
+            }
+        }
+//        filter.state.add(BaseAssetFilter.State.Active);   //TODO Make cange in SDK
+        final Member member = v1.get().memberByUserName(user);//TODO cache
+        filter.owners.add(member);
+        Collection<Task> tasks = v1.get().tasks(filter);
+        tasksData = new Object[tasks.size()][ColunmnsNames.COUNT];
         int i = 0;
         for (Task task : tasks) {
-            setTaskData(data[i++], task);
+            if (task.getParent().getIteration().isActive()) {//TODO it's a workaround
+                if (task.isActive()) {//TODO it's a workaround
+                    setTaskData(tasksData[i++], task);
+                }
+            }
         }
+        tasksData = Arrays.copyOf(tasksData, i);
 
         wr();
     }
@@ -82,11 +108,11 @@ public final class DataLayer {
     }
 
     public Object[][] getMainData() {
-        return data;
+        return tasksData;
     }
 
     public Object getValue(int col, int row) {
-        return data[row][col];
+        return tasksData[row][col];
     }
 
     public String[] getAllStatuses() {
