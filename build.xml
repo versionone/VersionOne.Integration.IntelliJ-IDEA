@@ -1,20 +1,207 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<project name="VersionOneIdeaPlugin" default="ccbuild">
-  
-  <target name="plugin.compile.idea">
-      <!-- here compiling the java source files -->
-  </target>
+<project name="VersionOneIdeaPlugin" default="ccnet.build">
 
-  <target name="plugin.build.idea" depends="plugin.compile.idea">
-      <!-- here build the jar of IDEA plugin-->
-  </target>
-  
-  <target name="init" description="Build initialization">
-    <!-- Perform any build initialization in this target -->
-  </target>
-  
-  <target name="clean" description="cleanup all"/>
-  
-  <target name="ccnet.build" depends="init, clean, plugin.compile.idea, plugin.build.idea" description="build all"/>
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.max.memory" value="128m"/>
+    <property name="compiler.args" value=""/>
+
+    <!--Settings-->
+    <property name="ver.major" value="8"/>
+    <property name="ver.minor" value="1"/>
+    <property name="ver.build" value="0"/>
+    <property name="publish.dir" value="./_publish"/>
+    <property name="build.version" value="${ver.major}.${ver.minor}.${ver.build}"/>
+    <property name="jar.filename" value="V1IdeaPlugin.jar"/>
+    <property name="zip.filename" value="V1IdeaPlugin.${build.version}.zip"/>
+    <property name="coverage.file" value="cobertura.ser"/>
+
+    <!-- Directories -->
+    <property name="base.dir" value="."/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="idea.lib.dir" value="${basedir}/idea_lib"/>
+    <property name="res.dir" value="${basedir}/res"/>
+    <property name="src.dir" value="${basedir}/src"/>
+    <property name="tests.dir" value="${basedir}/tests"/>
+    <property name="distr.dir" value="${basedir}/distr"/>
+
+    <!-- Build Directories -->
+    <property name="build.dir" value="${basedir}/Common"/>
+    <property name="bin.product.dir" value="${build.dir}/bin_production"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="coverage.dir" value="coverage"/>
+    <property name="coverage.classes" value="${coverage.dir}/classes"/>
+    <property name="coverage.junit" value="${coverage.dir}/junit"/>
+
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+    </path>
+
+    <path id="idea.classpath">
+        <fileset dir="${idea.lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+    </path>
+
+    <patternset id="compiler.resources">
+        <include name="**/?*.properties"/>
+        <include name="**/?*.xml"/>
+        <include name="**/?*.gif"/>
+        <include name="**/?*.png"/>
+        <include name="**/?*.jpeg"/>
+        <include name="**/?*.jpg"/>
+        <include name="**/?*.html"/>
+        <include name="**/?*.dtd"/>
+        <include name="**/?*.tld"/>
+    </patternset>
+
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2">
+        <classpath>
+            <fileset dir="${idea.lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </classpath>
+    </taskdef>
+
+    <taskdef classpath="${lib.dir}/cobertura.jar" resource="tasks.properties">
+        <classpath>
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </classpath>
+    </taskdef> 
+
+    <target name="compile.clean">
+        <delete dir="${bin.product.dir}"/>
+        <delete dir="${build.dir}"/>        
+    </target>
+
+    <target name="plugin.compile.idea" description="Compile VersionOne plugin for IDEA">
+        <mkdir dir="${bin.product.dir}"/>
+        <javac2 destdir="${bin.product.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true">
+            <compilerarg line="${compiler.args}"/>
+            <!--<bootclasspath refid="idea.module.bootclasspath"/>-->
+            <classpath refid="classpath"/>
+            <classpath refid="idea.classpath"/>
+
+            <src path="${tests.dir}"/>
+            <src path="${src.dir}"/>
+            <!--<patternset refid="excluded.from.compilation.idea"/>-->
+        </javac2>
+
+        <copy todir="${bin.product.dir}">
+            <fileset dir="${res.dir}">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <target name="build.clean">
+        <delete file="${build.dir}/${jar.filename}"/>
+    </target>
+
+    <target name="plugin.build.idea" depends="plugin.compile.idea">
+        <!--<property name="tmp.dir.idea" value="${module.idea.basedir}/../temp"/>-->
+        <mkdir dir="${distr.dir}"/>
+
+        <jar destfile="${distr.dir}/${jar.filename}" duplicate="preserve">
+            <zipfileset dir="${bin.product.dir}" prefix=""/>
+            <zipfileset file="${base.dir}/META-INF/plugin.xml" prefix="META-INF"/>
+            <manifest>
+                <attribute name="BuiltBy" value="VersionOne"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="package.clean">
+        <delete dir="${distr.dir}"/>
+        <delete file="${zip.filename}"/>
+	<!--<delete dir="${publish.dir}"/>-->
+	    <delete dir="${junit.output.dir}"/>
+	    <delete dir="." includes="cobertura.ser"/>
+    </target>
+
+
+    <target name="plugin.package.idea" depends="plugin.build.idea">
+        <mkdir dir="${publish.dir}"/>
+        <mkdir dir="${publish.dir}/tmpl"/>
+        <copy file="${build.dir}/${jar.filename}" todir="${publish.dir}/tmpl/"/>
+        <copy file="${lib.dir}/VersionOne.APIClient.jar" tofile="${publish.dir}/tmpl/VersionOne.APIClient.jar"/>
+        <copy file="${lib.dir}/VersionOne.ObjectModel.jar" tofile="${publish.dir}/tmpl/VersionOne.ObjectModel.jar"/>
+        
+        <zip destfile="${publish.dir}/${zip.filename}">
+            <fileset dir="${publish.dir}/tmpl/"/>
+        </zip>
+        <delete dir="${publish.dir}/tmpl"/>
+    </target>
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+
+    <target name="coverage.init">
+        <mkdir dir="${coverage.classes}"/>
+        <mkdir dir="${coverage.junit}"/>
+    </target>
+
+    <target name="coverage.clean">
+        <delete dir="${coverage.dir}"/>
+        <delete file="${coverage.file}"/>
+    </target>
+
+    <target name="coverage" depends="plugin.compile.idea, coverage.clean, coverage.init">
+	    <mkdir dir="${junit.output.dir}"/>
+        <cobertura-instrument todir="${coverage.classes}" datafile="${coverage.file}">
+            <fileset dir="${bin.product.dir}">
+                <include name="**/*.class"/>
+                <exclude name="**/*Tester.class"/>
+                <exclude name="**/*Test.class"/>
+            </fileset>
+        </cobertura-instrument>
+
+        <junit fork="yes" printsummary="withOutAndErr">
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${coverage.file}"/>
+            <!--<sysproperty key="test.websiteurl" value="${test.websiteurl}"/>-->
+
+            <classpath>
+                <pathelement location="${coverage.classes}"/>
+                <pathelement location="${bin.product.dir}"/>
+                <path refid="classpath"/>
+            </classpath>
+            <formatter type="xml"/>
+
+            <batchtest fork="yes" todir="${junit.output.dir}">
+                <fileset dir="${bin.product.dir}">
+	            <include name="**/*Test.class"/>
+                <include name="**/*Tester.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <cobertura-report datafile="${coverage.file}" destdir="${coverage.dir}/html">
+            <fileset dir="${src.dir}" includes="**/*"/>
+        </cobertura-report>
+        <cobertura-report datafile="${coverage.file}" format="xml" destdir="${coverage.dir}">
+            <fileset dir="${src.dir}" includes="**/*"/>
+        </cobertura-report>
+        <move file="${coverage.dir}/coverage.xml" tofile="${coverage.dir}/coverage.raw"/>
+        <xslt destdir="${coverage.dir}" style="${base.dir}/stripDTD.xsl" in="${coverage.dir}/coverage.raw"
+            out="${coverage.dir}/coverage.xml"/>
+    </target> 
+
+
+    <target name="clean" depends="compile.clean,package.clean,build.clean" description="cleanup all"/>
+
+    <target name="ccnet.build" depends="init, clean, coverage, plugin.package.idea" description="build all"/>
 </project>
