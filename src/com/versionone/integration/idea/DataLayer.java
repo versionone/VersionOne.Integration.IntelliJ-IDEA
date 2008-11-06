@@ -2,12 +2,14 @@ package com.versionone.integration.idea;
 
 import com.versionone.om.V1Instance;
 import com.versionone.om.Project;
-import com.versionone.om.Story;
 import com.versionone.om.IListValueProperty;
 import com.versionone.om.Task;
+import com.versionone.om.ApiClientInternals;
+import com.versionone.common.sdk.TaskStatus;
+import com.versionone.common.sdk.ITaskStatus;
+import com.versionone.apiclient.V1Exception;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Requests, cache, get change requests and store data from VersionOne server.
@@ -19,17 +21,23 @@ public final class DataLayer {
     public String projectName = "V1EclipseTestPrj";
 
     private V1Instance v1;
-    private String[] statusList;
-
+    private ITaskStatus statusList;
+    private boolean trackEffort;
     private Object[][] data;
     private static DataLayer instance;
 
-    public DataLayer() {
+    public DataLayer(){
         v1 = new V1Instance(v1Path,user,passwd);
+        final ApiClientInternals apiClient = v1.getApiClient();
+        try {
+            statusList = new TaskStatus(apiClient.getMetaModel(),apiClient.getServices());
+        } catch (V1Exception e) {
+            e.printStackTrace();
+        }
         refresh();
     }
 
-    private void refresh() {
+    public void refresh() {
         Project prj = v1.get().projectByName(projectName);
         if (prj == null){
             return;
@@ -50,9 +58,24 @@ public final class DataLayer {
             {"Philip", "Milne", "Pool", 10, false, 1, 1, "Done"}
         };
 */
+        trackEffort = v1.getConfiguration().effortTrackingEnabled;
 
-        statusList = new String[] {"", "In Progress", "Done", "My :)"};
+//        statusList = new String[] {"", "In Progress", "Done", "My :)"};
+
+        wr();
     }
+
+    /**temp*/
+    public void wr() {
+        Object[][] x = getMainData();
+        for (Object[] objects : x) {
+            for (Object o : objects) {
+                System.out.print(o + "|");
+            }
+            System.out.print("\n");
+        }
+    }
+
 
     private static void setTaskData(Object[] data, Task task) {
         data[ColunmnsNames.Title.getNum()] = task.getName();
@@ -75,7 +98,7 @@ public final class DataLayer {
     }
 
     public String[] getAllStatuses() {
-        return statusList;
+        return statusList.getDisplayValues();
     }
 
     public static DataLayer getInstance() {

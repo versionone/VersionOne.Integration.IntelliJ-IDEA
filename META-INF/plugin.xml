@@ -4,7 +4,6 @@
     <id>V1IdeaPlugin</id>
     <description><![CDATA[
         Tool for tracking in VersionOne.
-        <p>
         <ul>
             <li>Read stories data for current iteration in specified project</li>
         </ul>
