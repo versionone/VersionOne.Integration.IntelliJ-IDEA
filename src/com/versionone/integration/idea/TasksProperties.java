@@ -3,24 +3,27 @@ package com.versionone.integration.idea;
 
 public enum TasksProperties {
 
-    Title(0), ID(1), Parent(2), DetailEstimeate(3), Done(4), Effort(5), ToDo(6), Status(7,"Status","list",true);
+    Title(0, "Task", Type.String, true),
+    ID(1, "ID", Type.String, false),
+    Parent(2, "Story", Type.String, false),
+    DetailEstimeate(3, "Detailed Estimate", Type.Number, true),
+    Done(4, "Done", Type.Number, false),
+    Effort(5, "Effort", Type.Number, true),
+    ToDo(6, "Todo", Type.Number, true),
+    Status(7, "Status", Type.StatusList, true);
 
     public static final int COUNT = 8;
 
     int num;
     String columnName;
-    String type;        // TODO make it enum
+    Type type;        // TODO make it enum
     boolean isEditable;
 
-    TasksProperties(int num, String columnName, String type, boolean editable) {
+    TasksProperties(int num, String columnName, Type type, boolean editable) {
         this.num = num;
         this.columnName = columnName;
         this.type = type;
         isEditable = editable;
-    }
-
-    TasksProperties(int i) {
-        this(i, "not implemented!!!", "", false);
     }
 
     public int getNum() {
@@ -31,11 +34,15 @@ public enum TasksProperties {
         return columnName;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
     public boolean isEditable() {
         return isEditable;
+    }
+
+    public static enum Type {
+        Number, String, StatusList
     }
 }
