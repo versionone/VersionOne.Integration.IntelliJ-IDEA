@@ -200,8 +200,8 @@
             <fileset dir="${src.dir}" includes="**/*"/>
         </cobertura-report>
         <move file="${coverage.dir}/coverage.xml" tofile="${coverage.dir}/coverage.raw"/>
-        <!--<xslt destdir="${coverage.dir}" style="${base.dir}/stripDTD.xsl" in="${coverage.dir}/coverage.raw"-->
-            <!--out="${coverage.dir}/coverage.xml"/>-->
+        <xslt destdir="${coverage.dir}" style="${base.dir}/stripDTD.xsl" in="${coverage.dir}/coverage.raw"
+            out="${coverage.dir}/coverage.xml"/>
     </target> 
 
 
