@@ -72,7 +72,7 @@ public class V1Plugin implements ProjectComponent {
     private void initToolWindow() {
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         contentPanel = createContentPanel();
-        toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.LEFT);
+        toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
         ContentFactory contentFactory;
 //        contentFactory = ContentFactory.SERVICE.getInstance();
         contentFactory = PeerFactory.getInstance().getContentFactory();
