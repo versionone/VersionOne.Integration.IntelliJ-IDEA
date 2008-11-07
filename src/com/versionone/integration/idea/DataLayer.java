@@ -23,22 +23,28 @@ public final class DataLayer {
 
     private static DataLayer instance;
 
+/*
     public String v1Path = "http://jsdksrv01/VersionOne/";
     public String user = "admin";
     public String passwd = "admin";
     public String projectName = "V1EclipseTestPrj";
+*/
+    private final WorkspaceSettings cfg;
 
     private V1Instance v1;
+    private Member member;
     private IStatusCodes statusList;
     private boolean trackEffort;
     private Object[][] tasksData;
 
-    private DataLayer() {
+    private DataLayer(WorkspaceSettings workspaceSettings) {
+        cfg = workspaceSettings;
         try {
-            v1 = new V1Instance(v1Path, user, passwd);
+            v1 = new V1Instance(cfg.v1Path, cfg.user, cfg.passwd);
             final ApiClientInternals apiClient = v1.getApiClient();
             statusList = new TaskStatusCodes(apiClient.getMetaModel(), apiClient.getServices());
             trackEffort = v1.getConfiguration().effortTrackingEnabled;
+            member = v1.get().memberByUserName(cfg.user);//TODO cache
         } catch (V1Exception e) {
             e.printStackTrace();
         }
@@ -50,9 +56,9 @@ public final class DataLayer {
     public void refresh() {
         LOG.info("DataLayer.refresh()");
 
-        final Project project = v1.get().projectByName(projectName);
+        final Project project = v1.get().projectByName(cfg.projectName);
         if (project == null) {
-            LOG.error("There is no project: " + projectName);
+            LOG.error("There is no project: " + cfg.projectName);
             return;
         }
 
@@ -64,55 +70,56 @@ public final class DataLayer {
             }
         }
 //        filter.state.add(BaseAssetFilter.State.Active);   //TODO Make cange in SDK
-        final Member member = v1.get().memberByUserName(user);//TODO cache
         filter.owners.add(member);
         Collection<Task> tasks = v1.get().tasks(filter);
-        tasksData = new Object[tasks.size()][ColunmnsNames.COUNT];
+        tasksData = new Object[tasks.size()][TasksProperties.COUNT];
         int i = 0;
         for (Task task : tasks) {
-            if (task.getParent().getIteration().isActive()) {//TODO it's a workaround
-                if (task.isActive()) {//TODO it's a workaround
+            if (task.getParent().getIteration().isActive()) {
+                if (task.isActive()) {
                     setTaskData(tasksData[i++], task);
                 }
             }
         }
         tasksData = Arrays.copyOf(tasksData, i);
 
-        wr();
+        if (LOG.isInfoEnabled()) {
+            wr();
+        }
     }
 
     /**
      * temp
      */
     private void wr() {
-        Object[][] x = getMainData();
-        for (Object[] objects : x) {
-            for (Object o : objects) {
-                System.out.print(o + "|");
-            }
-            System.out.print("\n");
+        for (int i = 0; i < tasksData.length; i++) {
+            Object[] objects = tasksData[i];
+
+        }
+        for (Object task : TasksProperties.values()) {
+                System.out.println(task);
         }
     }
 
 
     private static void setTaskData(Object[] data, Task task) {
-        data[ColunmnsNames.Title.getNum()] = task.getName();
-        data[ColunmnsNames.ID.getNum()] = task.getID();
-        data[ColunmnsNames.Parent.getNum()] = task.getParent().getName();
-        data[ColunmnsNames.DetailEstimeate.getNum()] = task.getDetailEstimate();
-        data[ColunmnsNames.Done.getNum()] = task.getDone();
-        data[ColunmnsNames.Effort.getNum()] = 0;
-        data[ColunmnsNames.ToDo.getNum()] = task.getToDo();
+        data[TasksProperties.Title.getNum()] = task.getName();
+        data[TasksProperties.ID.getNum()] = task.getID();
+        data[TasksProperties.Parent.getNum()] = task.getParent().getName();
+        data[TasksProperties.DetailEstimeate.getNum()] = task.getDetailEstimate();
+        data[TasksProperties.Done.getNum()] = task.getDone();
+        data[TasksProperties.Effort.getNum()] = 0;
+        data[TasksProperties.ToDo.getNum()] = task.getToDo();
         final IListValueProperty status = task.getStatus();
-        data[ColunmnsNames.Status.getNum()] = status.getCurrentValue();
+        data[TasksProperties.Status.getNum()] = status.getCurrentValue();
     }
 
-    public Object[][] getMainData() {
-        return tasksData;
+    public int getTasksCount() {
+        return tasksData.length;
     }
 
-    public Object getValue(int col, int row) {
-        return tasksData[row][col];
+    public Object getTaskPropertyValue(int task, TasksProperties property) {
+        return tasksData[task][property.getNum()];
     }
 
     public String[] getAllStatuses() {
@@ -121,8 +128,12 @@ public final class DataLayer {
 
     public static DataLayer getInstance() {
         if (instance == null) {
-            instance = new DataLayer();
+            instance = new DataLayer(new WorkspaceSettings());
         }
         return instance;
+    }
+
+    public void setTaskPropertyValue(int task, TasksProperties property, Object value) {
+        tasksData[task][property.getNum()] = value;
     }
 }

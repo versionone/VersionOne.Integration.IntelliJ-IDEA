@@ -11,12 +11,12 @@ import java.util.HashSet;
 /**
  * Created by IntelliJ IDEA.
  */
-public class V1Table extends JTable {
+public class TasksTable extends JTable {
 
     //private JComboBox comboEditor = new JComboBox(new DataLayer().getAllStatuses());
     private Set<Integer> rowsChanged = new HashSet<Integer>() ;
 
-    public V1Table(V1TableModel v1TableModel) {
+    public TasksTable(HorizontalTableModel v1TableModel) {
         super(v1TableModel);
     }
 

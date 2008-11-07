@@ -14,26 +14,19 @@ import com.intellij.peer.PeerFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
+import static com.versionone.integration.idea.TasksProperties.*;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class V1Plugin implements ProjectComponent {
+public class TasksComponent implements ProjectComponent {
+    private final TasksProperties[] tasksColumnData = {Title, ID, Parent, DetailEstimeate, Done, Effort, ToDo, Status};
 
-
-    private final ColumnData[] columnData = {   new ColumnData("Title", "string", true),
-                                                new ColumnData("ID", "number", false),
-                                                new ColumnData("Parent", "string", false),
-                                                new ColumnData("Detail Estimate", "number", true),
-                                                new ColumnData("Done", "number", false),
-                                                new ColumnData("Effort", "number", true),
-                                                new ColumnData("To Do", "number", true),
-                                                new ColumnData("Status", "list", true)};
-
-    private static final Logger LOG = Logger.getLogger(V1Plugin.class);
-    @NonNls public static final String TOOL_WINDOW_ID = "V1Integration";
+    private static final Logger LOG = Logger.getLogger(TasksComponent.class);
+    @NonNls
+    public static final String TOOL_WINDOW_ID = "V1Integration";
 
 
     private final Project project;
@@ -43,7 +36,7 @@ public class V1Plugin implements ProjectComponent {
     private final WorkspaceSettings cfg = new WorkspaceSettings();
 
 
-    public V1Plugin(Project project) {
+    public TasksComponent(Project project) {
         this.project = project;
     }
 
@@ -72,6 +65,11 @@ public class V1Plugin implements ProjectComponent {
     private void initToolWindow() {
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         contentPanel = createContentPanel();
+
+        ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
+        ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
+        contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
+
         toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
         ContentFactory contentFactory;
 //        contentFactory = ContentFactory.SERVICE.getInstance();
@@ -84,27 +82,21 @@ public class V1Plugin implements ProjectComponent {
         JPanel panel = new JPanel(new BorderLayout());
 
         panel.setBackground(UIUtil.getTreeTextBackground());
-        panel.add(new JLabel("Hello World!", JLabel.CENTER), BorderLayout.CENTER);
         JTable table = creatingTable();
         //panel.add(creatingTable());
 
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane);
 
-        ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
-        ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
-
-        panel.add(toolbar.getComponent(), BorderLayout.LINE_START);
         return panel;
     }
 
 
     private JTable creatingTable() {
 
-        JTable table = new V1Table(new V1TableModel(DataLayer.getInstance().getMainData(), columnData));
+        JTable table = new TasksTable(new HorizontalTableModel(tasksColumnData));
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
 
 
 //        JComboBox cb =new JComboBox(new DataLayer().getAllStatuses());
@@ -129,11 +121,8 @@ public class V1Plugin implements ProjectComponent {
         //container.add(table, BorderLayout.CENTER);
 
 
-
         return table;
-
     }
-
 
 
     private void unregisterToolWindow() {
@@ -144,7 +133,7 @@ public class V1Plugin implements ProjectComponent {
      * Temporary method for testing purposes.
      */
     public static void main(String[] args) {
-        V1Plugin plugin = new V1Plugin(null);
+        TasksComponent plugin = new TasksComponent(null);
         JPanel panel = plugin.createContentPanel();
         JFrame frame = new JFrame("IDEA V1 Plugin");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -153,6 +142,4 @@ public class V1Plugin implements ProjectComponent {
         frame.pack();
         frame.setVisible(true);
     }
-
-
 }

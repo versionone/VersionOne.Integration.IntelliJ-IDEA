@@ -22,7 +22,7 @@
 
     <project-components>
         <component>
-            <implementation-class>com.versionone.integration.idea.V1Plugin</implementation-class>
+            <implementation-class>com.versionone.integration.idea.TasksComponent</implementation-class>
 
             <!--<interface-class>com.versionone.integration.idea.V1Plugin</interface-class>-->
         </component>

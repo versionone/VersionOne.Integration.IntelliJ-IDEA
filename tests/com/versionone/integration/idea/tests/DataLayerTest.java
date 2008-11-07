@@ -2,10 +2,13 @@
 package com.versionone.integration.idea.tests;
 
 import com.versionone.integration.idea.DataLayer;
+import com.versionone.integration.idea.TasksProperties;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
+
+import java.util.Collection;
 
 public class DataLayerTest {
     private DataLayer data;
@@ -18,12 +21,11 @@ public class DataLayerTest {
     @Test
     @Ignore
     public void testGetMainData() {
-        Object[][] x = data.getMainData();
-        for (Object[] objects : x) {
-            for (Object o : objects) {
-                System.out.print(o + "|");
+        int list = data.getTasksCount();
+        for (int i = 0; i < list; i++) {
+            for (TasksProperties property : TasksProperties.values()) {
+                System.out.println(data.getTaskPropertyValue(i,property));
             }
-            System.out.print("\n");
         }
     }
 }        

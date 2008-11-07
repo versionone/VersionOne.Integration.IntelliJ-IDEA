@@ -13,6 +13,7 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
     public String v1Path = "http://jsdksrv01/VersionOne/";
     public String user = "admin";
     public String passwd = "admin";
+    public String projectName = "V1EclipseTestPrj";
 
     public WorkspaceSettings getState() {
         return this;
@@ -22,5 +23,6 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
         user = state.user;
         passwd = state.passwd;
         v1Path = state.v1Path;
+        projectName = state.projectName;
     }
 }
