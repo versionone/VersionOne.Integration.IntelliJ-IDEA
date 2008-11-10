@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Requests, cache, get change requests and store data from VersionOne server.
@@ -133,7 +134,7 @@ public final class DataLayer {
 
     public static DataLayer getInstance() {
         if (instance == null) {
-            instance = new DataLayer(new WorkspaceSettings());
+            instance = new DataLayer(WorkspaceSettings.getInstance());
         }
         return instance;
     }
@@ -145,19 +146,23 @@ public final class DataLayer {
     public IProjectTreeNode getProjects() {
         //ProjectFilter filter = new ProjectFilter();
         //filter.getState().add(BaseAssetFilter.State.Active);
-
         Collection<Project> projects = v1.getProjects();
+        
         ProjectTreeNode treeProjects = new ProjectTreeNode("", "");
 
-        //for(Project project : projects) {
+        /*
+        Collection<Project> projects = v1.getProjects().iterator().next().getChildProjects(filter, true);
+        for(Project project : projects) {
+            getAllChildren(project, projects);
+        }
+        */
+
         recurseAndAddNodes(treeProjects.children, projects);
-        //}
                
         return treeProjects;
     }
 
     private void recurseAndAddNodes(List<IProjectTreeNode> projectTreeNodes, Collection<Project> projects) {
-
         for(Project project : projects) {
             ProjectTreeNode oneNode = new ProjectTreeNode(project.getID().getToken(), project.getName());
             projectTreeNodes.add(oneNode);
@@ -169,4 +174,15 @@ public final class DataLayer {
 
     }
 
+    /* one of method building tree
+    private void getAllChildren(Project parent, Collection<Project> projects) {
+        List<Project> found = new ArrayList<Project>();
+        for (Project project : projects) {
+            if (project.getParentProject() != null && project.getParentProject().getID() == parent.getID()) {
+                found.add(project.getParentProject());
+            }
+        }
+
+    }
+    */
 }

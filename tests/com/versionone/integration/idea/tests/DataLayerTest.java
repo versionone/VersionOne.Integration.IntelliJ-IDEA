@@ -34,6 +34,7 @@ public class DataLayerTest {
     }
 
     @Test
+    @Ignore
     public void testGetProjects() {
         IProjectTreeNode projects = data.getProjects();
 

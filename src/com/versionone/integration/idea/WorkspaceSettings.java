@@ -14,6 +14,13 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
     public String user = "admin";
     public String passwd = "admin";
     public String projectName = "V1EclipseTestPrj";
+    public boolean isShowAllTask = true;
+
+    private static WorkspaceSettings setting = new WorkspaceSettings();
+
+    // singelton
+    private WorkspaceSettings() {
+    }
 
     public WorkspaceSettings getState() {
         return this;
@@ -24,5 +31,11 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
         passwd = state.passwd;
         v1Path = state.v1Path;
         projectName = state.projectName;
+        isShowAllTask = state.isShowAllTask;
     }
+
+    public static WorkspaceSettings getInstance() {
+        return setting;
+    }
+
 }

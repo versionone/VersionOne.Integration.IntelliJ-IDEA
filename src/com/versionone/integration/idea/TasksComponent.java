@@ -33,7 +33,7 @@ public class TasksComponent implements ProjectComponent {
 
     private ToolWindow toolWindow;
     private JPanel contentPanel;
-    private final WorkspaceSettings cfg = new WorkspaceSettings();
+    private final WorkspaceSettings cfg = WorkspaceSettings.getInstance();
 
 
     public TasksComponent(Project project) {
