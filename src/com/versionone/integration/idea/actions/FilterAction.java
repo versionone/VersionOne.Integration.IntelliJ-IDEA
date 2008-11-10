@@ -2,19 +2,27 @@
 package com.versionone.integration.idea.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.ToggleAction;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
+import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.Application;
+import com.versionone.integration.idea.FilterForm;
+import com.versionone.integration.idea.DataLayer;
+import com.versionone.integration.idea.FilterComponent;
+import com.versionone.common.sdk.IProjectTreeNode;
 import org.apache.log4j.Logger;
 
-public class FilterAction extends ToggleAction {
+public class FilterAction extends AnAction {
 
     private final Logger LOG = Logger.getLogger(this.getClass());
-    private boolean state;
 
-    public boolean isSelected(AnActionEvent e) {
-        return state;
-    }
-
-    public void setSelected(AnActionEvent e, boolean state) {
-        this.state = state;
+    public void actionPerformed(AnActionEvent e) {
+        Application application = ApplicationManager.getApplication();
+//        FilterComponent filterComponent =
+//                application.getComponent(FilterComponent.class);
+        FilterComponent.setupProject(e);
     }
 }
