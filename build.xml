@@ -2,6 +2,8 @@
 
 <project name="VersionOneIdeaPlugin" default="ccnet.build">
 
+    <property file="build.properties"/>
+
     <property name="compiler.debug" value="on"/>
     <property name="compiler.generate.no.warnings" value="off"/>
     <property name="compiler.max.memory" value="128m"/>
@@ -86,7 +88,7 @@
     <target name="plugin.compile.idea" description="Compile VersionOne plugin for IDEA">
         <mkdir dir="${bin.product.dir}"/>
         <javac2 destdir="${bin.product.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
-                memorymaximumsize="${compiler.max.memory}" fork="true">
+                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${java.dir}/javac">
             <compilerarg line="${compiler.args}"/>
             <!--<bootclasspath refid="idea.module.bootclasspath"/>-->
             <classpath refid="classpath"/>
@@ -204,6 +206,10 @@
             out="${coverage.dir}/coverage.xml"/>
     </target> 
 
+
+    <target name="test">
+        <exec command="java -version"/>
+    </target>
 
     <target name="clean" depends="compile.clean,package.clean,build.clean,coverage.clean" description="cleanup all"/>
 
