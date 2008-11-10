@@ -3,6 +3,8 @@ package com.versionone.integration.idea;
 import com.versionone.apiclient.V1Exception;
 import com.versionone.common.sdk.IStatusCodes;
 import com.versionone.common.sdk.TaskStatusCodes;
+import com.versionone.common.sdk.IProjectTreeNode;
+import com.versionone.common.sdk.ProjectTreeNode;
 import com.versionone.om.ApiClientInternals;
 import com.versionone.om.IListValueProperty;
 import com.versionone.om.Member;
@@ -10,10 +12,13 @@ import com.versionone.om.Project;
 import com.versionone.om.Task;
 import com.versionone.om.V1Instance;
 import com.versionone.om.filters.TaskFilter;
+import com.versionone.om.filters.ProjectFilter;
+import com.versionone.om.filters.BaseAssetFilter;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Requests, cache, get change requests and store data from VersionOne server.
@@ -136,4 +141,32 @@ public final class DataLayer {
     public void setTaskPropertyValue(int task, TasksProperties property, Object value) {
         tasksData[task][property.getNum()] = value;
     }
+
+    public IProjectTreeNode getProjects() {
+        //ProjectFilter filter = new ProjectFilter();
+        //filter.getState().add(BaseAssetFilter.State.Active);
+
+        Collection<Project> projects = v1.getProjects();
+        ProjectTreeNode treeProjects = new ProjectTreeNode("", "");
+
+        //for(Project project : projects) {
+        recurseAndAddNodes(treeProjects.children, projects);
+        //}
+               
+        return treeProjects;
+    }
+
+    private void recurseAndAddNodes(List<IProjectTreeNode> projectTreeNodes, Collection<Project> projects) {
+
+        for(Project project : projects) {
+            ProjectTreeNode oneNode = new ProjectTreeNode(project.getID().getToken(), project.getName());
+            projectTreeNodes.add(oneNode);
+
+            ProjectFilter filter = new ProjectFilter();
+            filter.getState().add(BaseAssetFilter.State.Active);
+            recurseAndAddNodes(oneNode.children, project.getChildProjects(filter));
+        }
+
+    }
+
 }

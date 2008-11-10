@@ -8,33 +8,33 @@ import java.util.ArrayList;
  */
 public class ProjectTreeNode implements IProjectTreeNode {
 
-	private String _name;
-	private String _token;
-	ArrayList<IProjectTreeNode> _children = new ArrayList<IProjectTreeNode>();
+	private String name;
+	private String token;
+	public ArrayList<IProjectTreeNode> children = new ArrayList<IProjectTreeNode>();
 	
 	public ProjectTreeNode(String name, String token) {
-		_name = name;
-		_token = token;
+		this.name = name;
+		this.token = token;
 	}
 	
 	public IProjectTreeNode[] getChildren() {		
-		return _children.toArray(new IProjectTreeNode[_children.size()]);
+		return children.toArray(new IProjectTreeNode[children.size()]);
 	}
 
 	public String getName() {
-		return _name;
+		return name;
 	}
 
 	public String getToken() {
-		return _token;
+		return token;
 	}
 
 	public boolean hasChildren() {
-		return 0 != _children.size();
+		return 0 != children.size();
 	}
 	
 	public void addChild(IProjectTreeNode value) {
-		_children.add(value);
+		children.add(value);
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class ProjectTreeNode implements IProjectTreeNode {
 		boolean rc = false;
 		if(null != obj && obj instanceof ProjectTreeNode) {
 			ProjectTreeNode node = (ProjectTreeNode)obj;
-			rc = _token.equals(node.getToken());
+			rc = token.equals(node.getToken());
 		}
 		return rc;
 	}
