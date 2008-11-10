@@ -69,7 +69,14 @@ public final class DataLayer {
         }
 
         final TaskFilter filter = new TaskFilter();
-        final Collection<Project> childProjects = project.getThisAndAllChildProjects();
+        Collection<Project> childProjects;
+        if (cfg.isShowAllTask) {
+            childProjects = project.getThisAndAllChildProjects();
+        }
+        else {
+            childProjects = Arrays.asList(project);            
+        }
+
         for (Project prj : childProjects) {
             if (prj.isActive()) {
                 filter.project.add(prj);

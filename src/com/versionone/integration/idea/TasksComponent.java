@@ -33,6 +33,7 @@ public class TasksComponent implements ProjectComponent {
 
     private ToolWindow toolWindow;
     private JPanel contentPanel;
+    private Content content;
     private final WorkspaceSettings cfg = WorkspaceSettings.getInstance();
 
 
@@ -74,8 +75,14 @@ public class TasksComponent implements ProjectComponent {
         ContentFactory contentFactory;
 //        contentFactory = ContentFactory.SERVICE.getInstance();
         contentFactory = PeerFactory.getInstance().getContentFactory();
-        Content content = contentFactory.createContent(contentPanel, "<Project>", false);
+        content = contentFactory.createContent(contentPanel, cfg.projectName, false);
         toolWindow.getContentManager().addContent(content);
+    }
+
+    public void updateDisplayName() {
+        if (content != null) {
+            content.setDisplayName(cfg.projectName);
+        }
     }
 
     private JPanel createContentPanel() {
