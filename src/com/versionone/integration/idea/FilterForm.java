@@ -37,14 +37,19 @@ public class FilterForm implements Configurable {
     }
 
     public boolean isModified() {
-//        System.out.println("FilterForm.isModified");
-//        return cfg.projectName.equals(projectTree.getLastSelectedPathComponent());
-        return true;
+        final Object selectedPrj = projectTree.getLastSelectedPathComponent();
+        if (selectedPrj == null) {
+            return false;
+        }
+        final String cfgPrj = WorkspaceSettings.getInstance().projectName;
+        return !cfgPrj.equals(selectedPrj.toString());//TODO change to use IDs
+        //TODO add showAllTasksCheckBox support
     }
 
     public void apply() throws ConfigurationException {
         final Object node = projectTree.getLastSelectedPathComponent();
         WorkspaceSettings.getInstance().projectName = node.toString();
+        //TODO add showAllTasksCheckBox support
     }
 
     public void reset() {
