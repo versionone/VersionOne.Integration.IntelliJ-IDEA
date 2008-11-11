@@ -3,8 +3,6 @@ package com.versionone.integration.idea;
 import com.versionone.apiclient.V1Exception;
 import com.versionone.common.sdk.IStatusCodes;
 import com.versionone.common.sdk.TaskStatusCodes;
-import com.versionone.common.sdk.IProjectTreeNode;
-import com.versionone.common.sdk.ProjectTreeNode;
 import com.versionone.om.ApiClientInternals;
 import com.versionone.om.IListValueProperty;
 import com.versionone.om.Member;
@@ -150,12 +148,14 @@ public final class DataLayer {
         tasksData[task][property.getNum()] = value;
     }
 
-    public IProjectTreeNode getProjects() {
-        //ProjectFilter filter = new ProjectFilter();
-        //filter.getState().add(BaseAssetFilter.State.Active);
+    public ProjectTreeNode getProjects() {
+        ProjectFilter filter = new ProjectFilter();
+        filter.getState().add(BaseAssetFilter.State.Active);
         Collection<Project> projects = v1.getProjects();
-        
-        ProjectTreeNode treeProjects = new ProjectTreeNode("", "");
+
+        Project mainProject = projects.iterator().next();
+
+        ProjectTreeNode treeProjects = new ProjectTreeNode(mainProject.getName(), null, 0, mainProject.getID().getToken());
 
         /*
         Collection<Project> projects = v1.getProjects().iterator().next().getChildProjects(filter, true);
@@ -164,32 +164,21 @@ public final class DataLayer {
         }
         */
 
-        recurseAndAddNodes(treeProjects.children, projects);
+        recurseAndAddNodes(treeProjects.children, mainProject.getChildProjects(filter), null);
                
         return treeProjects;
     }
 
-    private void recurseAndAddNodes(List<IProjectTreeNode> projectTreeNodes, Collection<Project> projects) {
+    private void recurseAndAddNodes(List<ProjectTreeNode> projectTreeNodes, Collection<Project> projects, ProjectTreeNode parent) {
+        int i=0;
         for(Project project : projects) {
-            ProjectTreeNode oneNode = new ProjectTreeNode(project.getID().getToken(), project.getName());
+            ProjectTreeNode oneNode = new ProjectTreeNode(project.getName(), parent, i++, project.getID().getToken());
             projectTreeNodes.add(oneNode);
 
             ProjectFilter filter = new ProjectFilter();
             filter.getState().add(BaseAssetFilter.State.Active);
-            recurseAndAddNodes(oneNode.children, project.getChildProjects(filter));
+            recurseAndAddNodes(oneNode.children, project.getChildProjects(filter), oneNode);
         }
 
     }
-
-    /* one of method building tree
-    private void getAllChildren(Project parent, Collection<Project> projects) {
-        List<Project> found = new ArrayList<Project>();
-        for (Project project : projects) {
-            if (project.getParentProject() != null && project.getParentProject().getID() == parent.getID()) {
-                found.add(project.getParentProject());
-            }
-        }
-
-    }
-    */
 }

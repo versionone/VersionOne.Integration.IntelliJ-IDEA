@@ -3,16 +3,13 @@ package com.versionone.integration.idea.tests;
 
 import com.versionone.integration.idea.DataLayer;
 import com.versionone.integration.idea.TasksProperties;
-import com.versionone.om.Project;
-import com.versionone.common.sdk.ProjectTreeNode;
-import com.versionone.common.sdk.IProjectTreeNode;
+import com.versionone.integration.idea.ProjectTreeNode;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.ArrayList;
 
 public class DataLayerTest {
     private DataLayer data;
@@ -36,25 +33,28 @@ public class DataLayerTest {
     @Test
     @Ignore
     public void testGetProjects() {
-        IProjectTreeNode projects = data.getProjects();
+        com.versionone.integration.idea.ProjectTreeNode projects = data.getProjects();
 
         //for(Project project : projects) {
 
-        System.out.println(projects.getToken() + " " + projects.getName());
-        displayAllProjects(projects.getChildren(), 0);
+        System.out.println(projects.toString() + " --- " +projects.getToken() + " child:" + projects.getChildCount());
+        displayAllProjects(projects.children, 0);
 
         //}
     }
 
-    private void displayAllProjects(IProjectTreeNode[] projectTreeNodes, int pos){
-        for(IProjectTreeNode project : projectTreeNodes) {
+    private void displayAllProjects(ArrayList<ProjectTreeNode> projectTreeNodes, int pos){
+        for(ProjectTreeNode project : projectTreeNodes) {
             System.out.print(pos);
             for (int i=0; i<pos*2; i++) {
                 System.out.print("-");
             }
-            System.out.println(project.getToken() + " " + project.getName());
-            if (project.hasChildren()) {
-                displayAllProjects(project.getChildren(), pos + 1);
+
+            if (project.getParent() != null) {
+                System.out.println(project.toString() + " --- " +project.getToken() + " child:" + project.getChildCount()  + " data:" + ((ProjectTreeNode) project.getParent()).getToken());
+            }
+            if (project.getAllowsChildren()) {
+                displayAllProjects(project.children, pos + 1);
             }
 
 

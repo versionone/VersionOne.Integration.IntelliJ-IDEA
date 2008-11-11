@@ -3,7 +3,6 @@ package com.versionone.integration.idea;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.versionone.common.sdk.IProjectTreeNode;
 
 import javax.swing.*;
 
@@ -14,9 +13,9 @@ public class FilterForm implements Configurable {
     private JPanel panel;
     private JCheckBox showAllTasksCheckBox;
 
-    private IProjectTreeNode myProject;
+    private ProjectTreeNode myProject;
 
-    public FilterForm(IProjectTreeNode myProject) {
+    public FilterForm(ProjectTreeNode myProject) {
         this.myProject = myProject;
     }
 
@@ -54,6 +53,6 @@ public class FilterForm implements Configurable {
     }
 
     private void createUIComponents() {
-        projectTree = new JTree(new ProjectTreeNode(myProject, null, -1));
+        projectTree = new JTree(myProject);
     }
 }

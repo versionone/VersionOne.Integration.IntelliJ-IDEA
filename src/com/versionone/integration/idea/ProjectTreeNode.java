@@ -1,29 +1,37 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
-import com.versionone.common.sdk.IProjectTreeNode;
 import com.intellij.util.enumeration.ArrayEnumeration;
 
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
+import java.util.ArrayList;
 
 public class ProjectTreeNode implements TreeNode {
-    private final IProjectTreeNode prj;
     private final ProjectTreeNode parent;
     private final int index;
+    private String name;
+    private String token;
 
-    public ProjectTreeNode(IProjectTreeNode myProject, ProjectTreeNode parent, int index) {
-        prj = myProject;
+    public ArrayList<ProjectTreeNode> children = new ArrayList<ProjectTreeNode>();
+
+    public ProjectTreeNode(String projectName, ProjectTreeNode parent, int index, String token) {
+        this.name = projectName;
         this.parent = parent;
         this.index = index;
+        this.token = token;
     }
 
     public TreeNode getChildAt(int childIndex) {
-        return new ProjectTreeNode(prj.getChildren()[childIndex], this, childIndex);
+        return this.children.get(childIndex);
+    }
+
+    public String getToken() {
+        return this.token;
     }
 
     public int getChildCount() {
-        return prj.getChildren().length;
+        return children.size();
     }
 
     public TreeNode getParent() {
@@ -35,19 +43,19 @@ public class ProjectTreeNode implements TreeNode {
     }
 
     public boolean getAllowsChildren() {
-        return prj.hasChildren();
+        return children.size() > 0;
     }
 
     public boolean isLeaf() {
-        return !prj.hasChildren();
+        return children.size() == 0;
     }
 
     public Enumeration children() {
-        return new ArrayEnumeration(prj.getChildren());
+        return new ArrayEnumeration(children.toArray());
     }
 
     @Override
     public String toString() {
-        return prj.getName();
+        return name;
     }
 }
