@@ -101,15 +101,9 @@ public class TasksComponent implements ProjectComponent {
     }
 
     private JPanel createContentPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
+        final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
-        JTable table = creatingTable();
-        //panel.add(creatingTable());
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane);
-
+        panel.add(new JScrollPane(creatingTable()));
         return panel;
     }
 

@@ -50,7 +50,9 @@ public class FilterForm implements Configurable {
 
     public void apply() throws ConfigurationException {
         final Object node = projectTree.getLastSelectedPathComponent();
-        WorkspaceSettings.getInstance().projectName = node.toString();
+        if (node != null) {
+            WorkspaceSettings.getInstance().projectName = node.toString();
+        }
         WorkspaceSettings.getInstance().isShowAllTask = showAllTasksCheckBox.isSelected();
     }
 
