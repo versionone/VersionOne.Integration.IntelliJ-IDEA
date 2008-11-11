@@ -14,9 +14,17 @@ import com.intellij.peer.PeerFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
-import static com.versionone.integration.idea.TasksProperties.*;
+import static com.versionone.integration.idea.TasksProperties.DetailEstimeate;
+import static com.versionone.integration.idea.TasksProperties.Done;
+import static com.versionone.integration.idea.TasksProperties.Effort;
+import static com.versionone.integration.idea.TasksProperties.ID;
+import static com.versionone.integration.idea.TasksProperties.Parent;
+import static com.versionone.integration.idea.TasksProperties.Status;
+import static com.versionone.integration.idea.TasksProperties.Title;
+import static com.versionone.integration.idea.TasksProperties.ToDo;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,6 +67,8 @@ public class TasksComponent implements ProjectComponent {
         // empty
     }
 
+    @NotNull
+    @NonNls
     public String getComponentName() {
         return "V1.ToolWindow";
     }
@@ -83,6 +93,11 @@ public class TasksComponent implements ProjectComponent {
         if (content != null) {
             content.setDisplayName(cfg.projectName);
         }
+        repaint();
+    }
+
+    public void repaint() {
+        contentPanel.repaint();
     }
 
     private JPanel createContentPanel() {

@@ -4,10 +4,8 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
-import java.awt.*;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -18,6 +16,7 @@ public class TasksTable extends JTable {
 
     //private JComboBox comboEditor = new JComboBox(new DataLayer().getAllStatuses());
     private Set<Integer> rowsChanged = new HashSet<Integer>() ;
+    //MVC-View cannot access DataLayer, must use MVC-Model 
     private DataLayer data = DataLayer.getInstance();
 
     public TasksTable(HorizontalTableModel v1TableModel) {

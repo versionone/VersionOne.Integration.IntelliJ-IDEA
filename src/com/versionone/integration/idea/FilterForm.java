@@ -3,10 +3,10 @@ package com.versionone.integration.idea;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
-
-import org.jetbrains.annotations.Nls;
+import javax.swing.tree.TreeSelectionModel;
 
 public class FilterForm implements Configurable {
     private JTree projectTree;
@@ -37,23 +37,25 @@ public class FilterForm implements Configurable {
     }
 
     public boolean isModified() {
+        if (WorkspaceSettings.getInstance().isShowAllTask != showAllTasksCheckBox.isSelected()) {
+            return true;
+        }
         final Object selectedPrj = projectTree.getLastSelectedPathComponent();
         if (selectedPrj == null) {
             return false;
         }
         final String cfgPrj = WorkspaceSettings.getInstance().projectName;
         return !cfgPrj.equals(selectedPrj.toString());//TODO change to use IDs
-        //TODO add showAllTasksCheckBox support
     }
 
     public void apply() throws ConfigurationException {
         final Object node = projectTree.getLastSelectedPathComponent();
         WorkspaceSettings.getInstance().projectName = node.toString();
-        //TODO add showAllTasksCheckBox support
+        WorkspaceSettings.getInstance().isShowAllTask = showAllTasksCheckBox.isSelected();
     }
 
     public void reset() {
-        //TODO impl selection of current node tree.setSelectionPath();
+        showAllTasksCheckBox.setSelected(WorkspaceSettings.getInstance().isShowAllTask);
         projectTree.clearSelection();
     }
 
@@ -62,5 +64,6 @@ public class FilterForm implements Configurable {
 
     private void createUIComponents() {
         projectTree = new JTree(projectRoot);
+        projectTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
 }

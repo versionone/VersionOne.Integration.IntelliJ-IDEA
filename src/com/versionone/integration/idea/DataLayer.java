@@ -7,11 +7,12 @@ import com.versionone.om.ApiClientInternals;
 import com.versionone.om.IListValueProperty;
 import com.versionone.om.Member;
 import com.versionone.om.Project;
+import com.versionone.om.SDKException;
 import com.versionone.om.Task;
 import com.versionone.om.V1Instance;
-import com.versionone.om.filters.TaskFilter;
-import com.versionone.om.filters.ProjectFilter;
 import com.versionone.om.filters.BaseAssetFilter;
+import com.versionone.om.filters.ProjectFilter;
+import com.versionone.om.filters.TaskFilter;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
@@ -51,10 +52,16 @@ public final class DataLayer {
 
     private static final String[] TASK_ATTRIBUTES = "Name,Description,Category,Customer,DetailEstimate,Estimate,LastVersion,Number,Owners,Parent,Reference,Scope,Source,Status,Timebox,ToDo,Actuals.Value.@Sum".split(",");
 
-    public void refresh() {
+    public synchronized void refresh() {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
 
-        final Project project = v1.get().projectByName(cfg.projectName);
+        Project project = null;
+        try {
+            project = v1.get().projectByName(cfg.projectName);
+        } catch (SDKException e) {
+            LOG.error("Error on SDK level", e);
+            return;
+        }
         if (project == null) {
             LOG.error("There is no project: " + cfg.projectName);
             return;
@@ -96,21 +103,20 @@ public final class DataLayer {
 
     private void saveDefaultTaskData() {
         if (tasksData.length > 0) {
-            defaultTaskData =  new Object[tasksData.length][tasksData[0].length];
+            defaultTaskData = new Object[tasksData.length][tasksData[0].length];
 
-            for (int i=0; i<tasksData.length; i++) {
-                for (int j=0; j<tasksData[i].length; j++) {
+            for (int i = 0; i < tasksData.length; i++) {
+                for (int j = 0; j < tasksData[i].length; j++) {
                     defaultTaskData[i][j] = tasksData[i][j];
                 }
             }
         }
-
     }
 
-    public void setNewTaskValue(TasksProperties column, int task) {
+    public synchronized void setNewTaskValue(TasksProperties column, int task) {
         System.out.print("Id=" + task);
         if (column != null) {
-            System.out.println(" // name="+column.name());
+            System.out.println(" // name=" + column.name());
         }
     }
 
@@ -121,11 +127,7 @@ public final class DataLayer {
         for (int i = 0; i < tasksData.length; i++) {
             Object[] objects = tasksData[i];
         }
-        for (Object task : TasksProperties.values()) {
-            System.out.println(task);
-        }
     }
-
 
     private static void setTaskData(Object[] data, Task task) {
         data[TasksProperties.Title.getNum()] = task.getName();
@@ -139,11 +141,11 @@ public final class DataLayer {
         data[TasksProperties.Status.getNum()] = status.getCurrentValue();
     }
 
-    public int getTasksCount() {
+    public synchronized int getTasksCount() {
         return tasksData.length;
     }
 
-    public Object getTaskPropertyValue(int task, TasksProperties property) {
+    public synchronized Object getTaskPropertyValue(int task, TasksProperties property) {
         return tasksData[task][property.getNum()];
     }
 
@@ -158,7 +160,7 @@ public final class DataLayer {
         return instance;
     }
 
-    public void setTaskPropertyValue(int task, TasksProperties property, Object value) {
+    public synchronized void setTaskPropertyValue(int task, TasksProperties property, Object value) {
         Object data = null;
         switch (property.getType()) {
             case String:
@@ -175,7 +177,7 @@ public final class DataLayer {
         tasksData[task][property.getNum()] = data;
     }
 
-    public ProjectTreeNode getProjects() {
+    public synchronized ProjectTreeNode getProjects() {
         ProjectFilter filter = new ProjectFilter();
         filter.getState().add(BaseAssetFilter.State.Active);
         Collection<Project> projects = v1.getProjects();
@@ -208,10 +210,11 @@ public final class DataLayer {
         }
     }
 
-    public boolean isTaskDataChanged(int firstRow) {
+
+    public synchronized boolean isTaskDataChanged(int task) {
         boolean result = true;
 
-        for (TasksProperties property : TasksProperties.values()){
+        for (TasksProperties property : TasksProperties.values()) {
 
             // if property is not editable - next iteration
             if (!property.isEditable()) {
@@ -220,35 +223,31 @@ public final class DataLayer {
 
             switch (property.getType()) {
                 case Number:
-                    if (tasksData[firstRow][property.getNum()] != null &&
-                        defaultTaskData[firstRow][property.getNum()]  != null) {
+                    if (tasksData[task][property.getNum()] != null &&
+                            defaultTaskData[task][property.getNum()] != null) {
 
-                        Double editedData = Double.parseDouble(tasksData[firstRow][property.getNum()].toString());
-                        Double defaultData = Double.parseDouble(defaultTaskData[firstRow][property.getNum()].toString());
+                        Double editedData = Double.parseDouble(tasksData[task][property.getNum()].toString());
+                        Double defaultData = Double.parseDouble(defaultTaskData[task][property.getNum()].toString());
                         result = result && editedData.equals(defaultData);
-                    }
-                    else if (tasksData[firstRow][property.getNum()] == null &&
-                        defaultTaskData[firstRow][property.getNum()]  == null) {
+                    } else if (tasksData[task][property.getNum()] == null &&
+                            defaultTaskData[task][property.getNum()] == null) {
                         result = true;
-                    }
-                    else {
+                    } else {
                         result = false;
                     }
                     break;
                 case StatusList:
                 case String:
-                    if (tasksData[firstRow][property.getNum()] != null &&
-                        defaultTaskData[firstRow][property.getNum()]  != null) {
+                    if (tasksData[task][property.getNum()] != null &&
+                            defaultTaskData[task][property.getNum()] != null) {
 
-                        String editedData = tasksData[firstRow][property.getNum()].toString();
-                        String defaultData = defaultTaskData[firstRow][property.getNum()].toString();
+                        String editedData = tasksData[task][property.getNum()].toString();
+                        String defaultData = defaultTaskData[task][property.getNum()].toString();
                         result = result && editedData.equals(defaultData);
-                    }
-                    else if (tasksData[firstRow][property.getNum()] == null &&
-                        defaultTaskData[firstRow][property.getNum()]  == null) {
+                    } else if (tasksData[task][property.getNum()] == null &&
+                            defaultTaskData[task][property.getNum()] == null) {
                         result = true;
-                    }
-                    else {
+                    } else {
                         result = false;
                     }
                     break;
@@ -257,7 +256,6 @@ public final class DataLayer {
             if (!result) {
                 break;
             }
-
         }
 
         return !result;
