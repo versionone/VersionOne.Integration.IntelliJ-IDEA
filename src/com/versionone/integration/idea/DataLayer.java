@@ -27,12 +27,12 @@ public final class DataLayer {
 
     private static DataLayer instance;
 
-/*
-    public String v1Path = "http://jsdksrv01/VersionOne/";
-    public String user = "admin";
-    public String passwd = "admin";
-    public String projectName = "V1EclipseTestPrj";
-*/
+    /*
+        public String v1Path = "http://jsdksrv01/VersionOne/";
+        public String user = "admin";
+        public String passwd = "admin";
+        public String projectName = "V1EclipseTestPrj";
+    */
     private final WorkspaceSettings cfg;
 
     private V1Instance v1;
@@ -58,7 +58,7 @@ public final class DataLayer {
     private static final String[] TASK_ATTRIBUTES = "Name,Description,Category,Customer,DetailEstimate,Estimate,LastVersion,Number,Owners,Parent,Reference,Scope,Source,Status,Timebox,ToDo,Actuals.Value.@Sum".split(",");
 
     public void refresh() {
-        LOG.info("DataLayer.refresh()");
+        System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
 
         final Project project = v1.get().projectByName(cfg.projectName);
         if (project == null) {
@@ -70,9 +70,8 @@ public final class DataLayer {
         Collection<Project> childProjects;
         if (cfg.isShowAllTask) {
             childProjects = project.getThisAndAllChildProjects();
-        }
-        else {
-            childProjects = Arrays.asList(project);            
+        } else {
+            childProjects = Arrays.asList(project);
         }
 
         for (Project prj : childProjects) {
@@ -105,10 +104,9 @@ public final class DataLayer {
     private void wr() {
         for (int i = 0; i < tasksData.length; i++) {
             Object[] objects = tasksData[i];
-
         }
         for (Object task : TasksProperties.values()) {
-                System.out.println(task);
+            System.out.println(task);
         }
     }
 
@@ -165,13 +163,13 @@ public final class DataLayer {
         */
 
         recurseAndAddNodes(treeProjects.children, mainProject.getChildProjects(filter), null);
-               
+
         return treeProjects;
     }
 
     private void recurseAndAddNodes(List<ProjectTreeNode> projectTreeNodes, Collection<Project> projects, ProjectTreeNode parent) {
-        int i=0;
-        for(Project project : projects) {
+        int i = 0;
+        for (Project project : projects) {
             ProjectTreeNode oneNode = new ProjectTreeNode(project.getName(), parent, i++, project.getID().getToken());
             projectTreeNodes.add(oneNode);
 
@@ -179,6 +177,5 @@ public final class DataLayer {
             filter.getState().add(BaseAssetFilter.State.Active);
             recurseAndAddNodes(oneNode.children, project.getChildProjects(filter), oneNode);
         }
-
     }
 }

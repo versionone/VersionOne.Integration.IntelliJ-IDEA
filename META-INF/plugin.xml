@@ -24,7 +24,7 @@
         <component>
             <implementation-class>com.versionone.integration.idea.TasksComponent</implementation-class>
 
-            <!--<interface-class>com.versionone.integration.idea.V1Plugin</interface-class>-->
+            <!--<interface-class>com.versionone.integration.idea.TasksComponent</interface-class>-->
         </component>
     </project-components>
 

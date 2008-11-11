@@ -13,10 +13,10 @@ public class FilterForm implements Configurable {
     private JPanel panel;
     private JCheckBox showAllTasksCheckBox;
 
-    private ProjectTreeNode myProject;
+    private final ProjectTreeNode projectRoot;
 
-    public FilterForm(ProjectTreeNode myProject) {
-        this.myProject = myProject;
+    public FilterForm(ProjectTreeNode projectRoot) {
+        this.projectRoot = projectRoot;
     }
 
     @Nls
@@ -25,11 +25,11 @@ public class FilterForm implements Configurable {
     }
 
     public Icon getIcon() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public String getHelpTopic() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public JComponent createComponent() {
@@ -37,22 +37,25 @@ public class FilterForm implements Configurable {
     }
 
     public boolean isModified() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+//        System.out.println("FilterForm.isModified");
+//        return cfg.projectName.equals(projectTree.getLastSelectedPathComponent());
+        return true;
     }
 
     public void apply() throws ConfigurationException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final Object node = projectTree.getLastSelectedPathComponent();
+        WorkspaceSettings.getInstance().projectName = node.toString();
     }
 
     public void reset() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        //TODO impl selection of current node tree.setSelectionPath();
+        projectTree.clearSelection();
     }
 
     public void disposeUIResources() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private void createUIComponents() {
-        projectTree = new JTree(myProject);
+        projectTree = new JTree(projectRoot);
     }
 }

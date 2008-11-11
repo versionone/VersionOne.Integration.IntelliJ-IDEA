@@ -137,7 +137,7 @@ public class TasksComponent implements ProjectComponent {
     }
 
     /**
-     * Temporary method for testing purposes.
+     * Temporary method for testing purposes. TODO delete
      */
     public static void main(String[] args) {
         TasksComponent plugin = new TasksComponent(null);
