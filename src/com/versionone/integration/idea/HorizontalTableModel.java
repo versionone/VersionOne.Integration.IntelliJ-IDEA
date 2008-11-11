@@ -34,6 +34,10 @@ public class HorizontalTableModel extends AbstractTableModel {
         return data.getTaskPropertyValue(rowIndex, columnData[columnIndex]);
     }
 
+    public TasksProperties getColumn(int column) {
+         return columnData.length < column ? columnData[column] : null;
+    }
+
     @Override
     public String getColumnName(int column) {
         return columnData[column].columnName;
@@ -47,5 +51,6 @@ public class HorizontalTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         data.setTaskPropertyValue(rowIndex, columnData[columnIndex], aValue);
+        fireTableCellUpdated(rowIndex, columnIndex);
     }
 }

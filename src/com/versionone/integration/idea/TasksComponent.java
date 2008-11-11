@@ -120,7 +120,7 @@ public class TasksComponent implements ProjectComponent {
 //        cb.addItemListener(listener);
 
         //JScrollPane scrollPane = new JScrollPane(table);
-        //table.setFillsViewportHeight(true);
+        table.setFillsViewportHeight(true);
         //table.getColumn(table.getColumnName(7)).setCellEditor(new DefaultCellEditor(cb));
 
         //container.setLayout();

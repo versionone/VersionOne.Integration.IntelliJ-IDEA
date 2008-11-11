@@ -3,8 +3,11 @@ package com.versionone.integration.idea;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.*;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -15,6 +18,7 @@ public class TasksTable extends JTable {
 
     //private JComboBox comboEditor = new JComboBox(new DataLayer().getAllStatuses());
     private Set<Integer> rowsChanged = new HashSet<Integer>() ;
+    private DataLayer data = DataLayer.getInstance();
 
     public TasksTable(HorizontalTableModel v1TableModel) {
         super(v1TableModel);
@@ -47,8 +51,21 @@ public class TasksTable extends JTable {
     public void tableChanged(TableModelEvent e) {
         super.tableChanged(e);
         System.out.println("e.getFirstRow()="+ e.getFirstRow());
-        if (e.getFirstRow()>0) {
-            rowsChanged.add(e.getFirstRow());
+
+//        HorizontalTableModel tabMod = (HorizontalTableModel)e.getSource();
+//
+//        if (TableModelEvent.HEADER_ROW != e.getFirstRow()) {
+//            data.setNewTaskValue((tabMod).getColumn(e.getFirstRow()), e.getFirstRow());
+//        }
+
+        if (e.getFirstRow()>TableModelEvent.HEADER_ROW) {
+            if (data.isTaskDataChanged(e.getFirstRow())) {
+                rowsChanged.add(e.getFirstRow());
+            }
+            else {
+                rowsChanged.remove(e.getFirstRow());
+            }
+
         }
         repaint();
     }
