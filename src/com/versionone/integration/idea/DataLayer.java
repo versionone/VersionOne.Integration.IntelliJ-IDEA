@@ -82,13 +82,13 @@ public final class DataLayer {
             filter.owners.add(member);
         }
         Collection<Task> tasks = v1.get().tasks(filter);
-        tasksData = new Object[tasks.size()][TasksProperties.COUNT];
+        tasksData = new Object[tasks.size()][TasksProperties.values().length];
         serverTaskList = new Task[tasks.size()];
         int i = 0;
         for (Task task : tasks) {
             final Iteration iteration = task.getParent().getIteration();
             if (iteration != null && iteration.isActive()) {
-                serverTaskList[i] = task; 
+                serverTaskList[i] = task;
                 setTaskData(tasksData[i++], task);
             }
         }
@@ -103,11 +103,11 @@ public final class DataLayer {
 
     private static void setTaskData(Object[] data, Task task) {
         data[TasksProperties.Title.getNum()] = task.getName();
-        data[TasksProperties.ID.getNum()] = task.getID();
+        data[TasksProperties.ID.getNum()] = task.getDisplayID();
         data[TasksProperties.Parent.getNum()] = task.getParent().getName();
         data[TasksProperties.DetailEstimeate.getNum()] = task.getDetailEstimate();
         data[TasksProperties.Done.getNum()] = task.getDone();
-        data[TasksProperties.Effort.getNum()] = 0;
+        data[TasksProperties.Effort.getNum()] = 0D;
         data[TasksProperties.ToDo.getNum()] = task.getToDo();
         final IListValueProperty status = task.getStatus();
         data[TasksProperties.Status.getNum()] = status.getCurrentValue();
@@ -131,12 +131,11 @@ public final class DataLayer {
         //v1.get
 
         for (int i = 0; i < tasksData.length; i++) {
-            if(isTaskDataChanged(i)) {
+            if (isTaskDataChanged(i)) {
                 updateServerTask(serverTaskList[i], tasksData[i]);
                 serverTaskList[i].save();
             }
         }
-
     }
 
     private void updateServerTask(Task task, Object[] data) {
@@ -145,7 +144,7 @@ public final class DataLayer {
         //data[TasksProperties.Parent.getNum()] = task.getParent().getName();
         task.setDetailEstimate(getDoubleValue(data[TasksProperties.DetailEstimeate.getNum()]));
         //data[TasksProperties.Done.getNum()] = task.getDone();
-        task.createEffort(getDoubleValue(data[TasksProperties.Effort.getNum()].toString()) , member);
+        task.createEffort(getDoubleValue(data[TasksProperties.Effort.getNum()].toString()), member);
         task.setToDo(getDoubleValue(data[TasksProperties.ToDo.getNum()]));
         //final IListValueProperty status = task.getStatus();
         //data[TasksProperties.Status.getNum()] = status.getCurrentValue();
@@ -201,7 +200,7 @@ public final class DataLayer {
         Object data = null;
         if (value != null) {
             switch (property.getType()) {
-                case String:
+                case Text:
                     data = value.toString();
                     break;
                 case StatusList:
@@ -274,7 +273,7 @@ public final class DataLayer {
                         result = result && editedNumber.equals(defaultNumber);
                         break;
                     case StatusList:
-                    case String:
+                    case Text:
                         String editedData = tasksData[task][property.getNum()].toString();
                         String defaultData = defaultTaskData[task][property.getNum()].toString();
                         result = result && editedData.equals(defaultData);

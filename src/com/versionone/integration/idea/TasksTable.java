@@ -1,23 +1,31 @@
 package com.versionone.integration.idea;
 
+import com.intellij.openapi.editor.colors.ColorKey;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.util.ui.Table;
+
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 import java.awt.*;
-import java.util.Set;
-import java.util.HashSet;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * Created by IntelliJ IDEA.
  */
-public class TasksTable extends JTable {
-    //MVC-View cannot access DataLayer, must use MVC-Model 
-    private DataLayer data = DataLayer.getInstance();
+public class TasksTable extends Table {
+
+    private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
 
     public TasksTable(HorizontalTableModel v1TableModel) {
         super(v1TableModel);
+    }
+
+    @Override
+    public HorizontalTableModel getModel() {
+        return (HorizontalTableModel) super.getModel();
     }
 
     @Override
@@ -31,7 +39,7 @@ public class TasksTable extends JTable {
                 public void itemStateChanged(ItemEvent e) {
                     //DataLayer.getInstance().
                     if (e.getStateChange() == ItemEvent.SELECTED) {
-                        System.out.println("row="+ row + " col="+col+"----"+e.getItem()+ " - "+e.paramString());
+                        System.out.println("row=" + row + " col=" + col + "----" + e.getItem() + " - " + e.paramString());
                     }
                 }
             };
@@ -68,29 +76,26 @@ public class TasksTable extends JTable {
 
 
     @Override
-    public Component prepareRenderer(TableCellRenderer renderer,
-                                     int rowIndex, int vColIndex) {
+    public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int vColIndex) {
 
         Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
-        if (getSelectedRow() != rowIndex) {
-            if (data.isTaskDataChanged(rowIndex)) {
-                c.setBackground(Color.yellow);
+        if (rowIndex != getSelectedRow()) {
+            if (getModel().isRowChanged(rowIndex)) {
+                c.setBackground(colorsScheme.getColor(ColorKey.find("V1_CHANGED_ROW")));
                 c.setForeground(Color.black);
             } else {
                 c.setBackground(getBackground());
                 c.setForeground(getForeground());
             }
-        }
-        else
-        {
-                c.setBackground(getSelectionBackground());
-                c.setForeground(getSelectionForeground());            
+        } else {
+            c.setBackground(getSelectionBackground());
+            c.setForeground(getSelectionForeground());
         }
 
         JTable.DropLocation dropLocation = getDropLocation();
         if (dropLocation != null) {
-            System.out.println("rowIndex="+ rowIndex + " vColIndex="+vColIndex);
-            System.out.println("dropLocation.getColumn()="+ dropLocation.getColumn() + " dropLocation.getRow()="+dropLocation.getRow());
+            System.out.println("rowIndex=" + rowIndex + " vColIndex=" + vColIndex);
+            System.out.println("dropLocation.getColumn()=" + dropLocation.getColumn() + " dropLocation.getRow()=" + dropLocation.getRow());
         }
 
         return c;

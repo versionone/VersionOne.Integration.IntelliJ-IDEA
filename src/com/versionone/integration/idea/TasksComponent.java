@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -40,7 +41,7 @@ public class TasksComponent implements ProjectComponent {
 
     private Content content;
     private final WorkspaceSettings cfg = WorkspaceSettings.getInstance();
-    private JTable table;
+    private TasksTable table;
 
 
     public TasksComponent(Project project) {
@@ -49,7 +50,10 @@ public class TasksComponent implements ProjectComponent {
 
     public void projectOpened() {
         String ideaVersion = ApplicationInfo.getInstance().getMajorVersion();
-        System.out.println("IDEA version = " + ideaVersion);
+        String minorVersion = ApplicationInfo.getInstance().getMinorVersion();
+        System.out.println("IDEA version = " + ideaVersion + '.' + minorVersion);
+        ideaVersion = ApplicationInfo.getInstance().getVersionName();
+        System.out.println("IDEA name = " + ideaVersion);
         initToolWindow();
     }
 
@@ -58,7 +62,7 @@ public class TasksComponent implements ProjectComponent {
     }
 
     public void initComponent() {
-        // empty
+        ColorKey.createColorKey("V1_CHANGED_ROW", new Color(255, 243, 200));
     }
 
     public void disposeComponent() {
@@ -107,38 +111,12 @@ public class TasksComponent implements ProjectComponent {
         return panel;
     }
 
-
-    private JTable createTable() {
-        JTable table = new TasksTable(new HorizontalTableModel(tasksColumnData));
-
+    private TasksTable createTable() {
+        TasksTable table = new TasksTable(new HorizontalTableModel(tasksColumnData));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-
-//        JComboBox cb =new JComboBox(new DataLayer().getAllStatuses());
-//            ItemListener listener = new ItemListener() {
-//
-//                public void itemStateChanged(ItemEvent e) {
-//                    //DataLayer.getInstance().
-//
-//                    if (e.getStateChange() == ItemEvent.SELECTED) {
-//                        System.out.println(e.getItem()+ " - "+e.paramString());
-//                    }
-//                }
-//            };
-//        cb.addItemListener(listener);
-
-        //JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
-        //table.getColumn(table.getColumnName(7)).setCellEditor(new DefaultCellEditor(cb));
-
-        //container.setLayout();
-        //container.add(table.getTableHeader(), BorderLayout.PAGE_START);
-        //container.add(table, BorderLayout.CENTER);
-
-
         return table;
     }
-
 
     private void unregisterToolWindow() {
         ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_ID);

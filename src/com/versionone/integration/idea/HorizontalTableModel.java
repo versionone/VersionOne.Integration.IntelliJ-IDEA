@@ -1,17 +1,10 @@
 package com.versionone.integration.idea;
 
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.*;
-import javax.swing.event.TableModelListener;
-import java.util.EventObject;
-import java.util.Collection;
-import java.awt.*;
 
 /**
  *
-*/
+ */
 public class HorizontalTableModel extends AbstractTableModel {
 
     private TasksProperties[] columnData = null;
@@ -34,10 +27,6 @@ public class HorizontalTableModel extends AbstractTableModel {
         return data.getTaskPropertyValue(rowIndex, columnData[columnIndex]);
     }
 
-    public TasksProperties getColumn(int column) {
-         return columnData.length < column ? columnData[column] : null;
-    }
-
     @Override
     public String getColumnName(int column) {
         return columnData[column].columnName;
@@ -50,7 +39,20 @@ public class HorizontalTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        switch (columnData[columnIndex].getType()) {
+            case Text:
+                break;
+        }
         data.setTaskPropertyValue(rowIndex, columnData[columnIndex], aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
+    }
+
+    public boolean isRowChanged(int rowIndex) {
+        return data.isTaskDataChanged(rowIndex);
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        return columnData[columnIndex].getType().getColumnClass();
     }
 }
