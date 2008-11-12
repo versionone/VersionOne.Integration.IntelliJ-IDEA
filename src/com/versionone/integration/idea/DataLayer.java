@@ -37,6 +37,7 @@ public final class DataLayer {
     private IStatusCodes statusList;
     private boolean trackEffort;
     private Object[][] tasksData;
+    private Task[] serverTaskList;
 
     private DataLayer(WorkspaceSettings workspaceSettings) {
         cfg = workspaceSettings;
@@ -81,14 +82,17 @@ public final class DataLayer {
         }
         Collection<Task> tasks = v1.get().tasks(filter);
         tasksData = new Object[tasks.size()][TasksProperties.COUNT];
+        serverTaskList = new Task[tasks.size()];
         int i = 0;
         for (Task task : tasks) {
             final Iteration iteration = task.getParent().getIteration();
             if (iteration != null && iteration.isActive()) {
+                serverTaskList[i] = task; 
                 setTaskData(tasksData[i++], task);
             }
         }
         tasksData = Arrays.copyOf(tasksData, i);
+        serverTaskList = Arrays.copyOf(serverTaskList, i);
 
         saveDefaultTaskData();
 
@@ -119,6 +123,36 @@ public final class DataLayer {
                 }
             }
         }
+    }
+
+    public void commitChangedTaskData() {
+
+        //v1.get
+
+        for (int i = 0; i < tasksData.length; i++) {
+            if(isTaskDataChanged(i)) {
+                updateServerTask(serverTaskList[i], tasksData[i]);
+                serverTaskList[i].save();
+            }
+        }
+
+    }
+
+    private void updateServerTask(Task task, Object[] data) {
+        task.setName(data[TasksProperties.Title.getNum()].toString());
+        //data[TasksProperties.ID.getNum()] = task.getID();
+        //data[TasksProperties.Parent.getNum()] = task.getParent().getName();
+        task.setDetailEstimate(getDoubleValue(data[TasksProperties.DetailEstimeate.getNum()]));
+        //data[TasksProperties.Done.getNum()] = task.getDone();
+        task.createEffort(getDoubleValue(data[TasksProperties.Effort.getNum()].toString()) , member);
+        task.setToDo(getDoubleValue(data[TasksProperties.ToDo.getNum()]));
+        //final IListValueProperty status = task.getStatus();
+        //data[TasksProperties.Status.getNum()] = status.getCurrentValue();
+        task.getStatus().setCurrentValue(data[TasksProperties.Status.getNum()] != null ? data[TasksProperties.Status.getNum()].toString() : null);
+    }
+
+    private Double getDoubleValue(Object data) {
+        return data != null ? Double.parseDouble(data.toString()) : null;
     }
 
     public synchronized void setNewTaskValue(int task, TasksProperties property) {

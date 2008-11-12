@@ -4,12 +4,20 @@ package com.versionone.integration.idea.tests;
 import com.versionone.integration.idea.DataLayer;
 import com.versionone.integration.idea.TasksProperties;
 import com.versionone.integration.idea.ProjectTreeNode;
+import com.versionone.integration.idea.WorkspaceSettings;
+import com.versionone.om.V1Instance;
+import com.versionone.om.Project;
+import com.versionone.om.Task;
+import com.versionone.om.Iteration;
+import com.versionone.om.filters.BaseAssetFilter;
+import com.versionone.om.filters.TaskFilter;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class DataLayerTest {
     private DataLayer data;
@@ -61,4 +69,31 @@ public class DataLayerTest {
         }
 
     }
+
+//    @Test
+//    public void sdkTest() {
+//        WorkspaceSettings cfg = WorkspaceSettings.getInstance();
+//        V1Instance v1 = new V1Instance(cfg.v1Path, cfg.user, cfg.passwd);
+//        Project project = v1.get().projectByName(cfg.projectName);
+//        final Collection<Project> childProjects = project.getThisAndAllChildProjects();
+//        final TaskFilter filter = new TaskFilter();
+//
+//        for (Project prj : childProjects) {
+//            if (prj.isActive()) {
+//                filter.project.add(prj);
+//                break;
+//            }
+//        }
+//        filter.getState().add(BaseAssetFilter.State.Active);
+//        Collection<Task> tasks = v1.get().tasks(filter);
+//
+//        for (Task task : tasks) {
+//
+//            for (int i=0; i<100;i++){
+//                String name = task.getName();
+//
+//                System.out.println(name);
+//            }
+//        }
+//    }
 }        
