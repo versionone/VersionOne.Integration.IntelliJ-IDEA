@@ -19,6 +19,6 @@ public class Refresh extends AnAction {
             return;
         }
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
-        tc.repaint();
+        tc.revalidate();
     }
 }

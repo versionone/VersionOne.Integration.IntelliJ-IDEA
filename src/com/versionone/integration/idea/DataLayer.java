@@ -16,6 +16,7 @@ import com.versionone.om.filters.BaseAssetFilter;
 import com.versionone.om.filters.ProjectFilter;
 import com.versionone.om.filters.TaskFilter;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -219,6 +220,7 @@ public final class DataLayer {
         tasksData[task][property.getNum()] = data;
     }
 
+    @NotNull
     public synchronized ProjectTreeNode getProjects() {
         ProjectFilter filter = new ProjectFilter();
         filter.getState().add(BaseAssetFilter.State.Active);

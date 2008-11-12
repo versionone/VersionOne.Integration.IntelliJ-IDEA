@@ -5,6 +5,7 @@ import com.versionone.integration.idea.DataLayer;
 import com.versionone.integration.idea.TasksProperties;
 import com.versionone.integration.idea.ProjectTreeNode;
 import com.versionone.integration.idea.WorkspaceSettings;
+import com.versionone.integration.idea.TasksComponent;
 import com.versionone.om.V1Instance;
 import com.versionone.om.Project;
 import com.versionone.om.Task;
@@ -16,8 +17,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.awt.*;
 
 public class DataLayerTest {
     private DataLayer data;
@@ -96,4 +99,19 @@ public class DataLayerTest {
 //            }
 //        }
 //    }
-}        
+
+    /**
+     * Temporary method for testing purposes. TODO delete
+     */
+    public static void main(String[] args) {
+        TasksComponent plugin = new TasksComponent(null);
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(new JTree(DataLayer.getInstance().getProjects()));
+        JFrame frame = new JFrame("IDEA V1 Plugin");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(200, 800));
+        frame.add(panel);
+        frame.pack();
+        frame.setVisible(true);
+    }
+}

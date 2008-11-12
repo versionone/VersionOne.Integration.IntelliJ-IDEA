@@ -30,19 +30,17 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TasksComponent implements ProjectComponent {
-    private final TasksProperties[] tasksColumnData = {Title, ID, Parent, DetailEstimeate, Done, Effort, ToDo, Status};
 
     private static final Logger LOG = Logger.getLogger(TasksComponent.class);
     @NonNls
     public static final String TOOL_WINDOW_ID = "V1Integration";
-
+    private static final TasksProperties[] tasksColumnData = {Title, ID, Parent, DetailEstimeate, Done, Effort, ToDo, Status};
 
     private final Project project;
 
-    private ToolWindow toolWindow;
-    private JPanel contentPanel;
     private Content content;
     private final WorkspaceSettings cfg = WorkspaceSettings.getInstance();
+    private JTable table;
 
 
     public TasksComponent(Project project) {
@@ -75,13 +73,13 @@ public class TasksComponent implements ProjectComponent {
 
     private void initToolWindow() {
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        contentPanel = createContentPanel();
+        JPanel contentPanel = createContentPanel();
 
         ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
         ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
         contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
 
-        toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
+        ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
         ContentFactory contentFactory;
 //        contentFactory = ContentFactory.SERVICE.getInstance();
         contentFactory = PeerFactory.getInstance().getContentFactory();
@@ -93,23 +91,24 @@ public class TasksComponent implements ProjectComponent {
         if (content != null) {
             content.setDisplayName(cfg.projectName);
         }
-        repaint();
+        revalidate();
     }
 
-    public void repaint() {
-        contentPanel.repaint();
+    public void revalidate() {
+        table.revalidate();
+        table.repaint();
     }
 
     private JPanel createContentPanel() {
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
-        panel.add(new JScrollPane(creatingTable()));
+        table = createTable();
+        panel.add(new JScrollPane(table));
         return panel;
     }
 
 
-    private JTable creatingTable() {
-
+    private JTable createTable() {
         JTable table = new TasksTable(new HorizontalTableModel(tasksColumnData));
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
