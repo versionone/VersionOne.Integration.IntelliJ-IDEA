@@ -229,36 +229,26 @@ public final class DataLayer {
                 continue;
             }
 
-            switch (property.getType()) {
-                case Number:
-                    if (tasksData[task][property.getNum()] != null &&
-                            defaultTaskData[task][property.getNum()] != null) {
-
-                        Double editedData = Double.parseDouble(tasksData[task][property.getNum()].toString());
-                        Double defaultData = Double.parseDouble(defaultTaskData[task][property.getNum()].toString());
-                        result = result && editedData.equals(defaultData);
-                    } else if (tasksData[task][property.getNum()] == null &&
-                            defaultTaskData[task][property.getNum()] == null) {
-                        result = true;
-                    } else {
-                        result = false;
-                    }
-                    break;
-                case StatusList:
-                case String:
-                    if (tasksData[task][property.getNum()] != null &&
-                            defaultTaskData[task][property.getNum()] != null) {
-
+            if (tasksData[task][property.getNum()] != null &&
+                    defaultTaskData[task][property.getNum()] != null) {
+                switch (property.getType()) {
+                    case Number:
+                        Double editedNumber = Double.parseDouble(tasksData[task][property.getNum()].toString());
+                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.getNum()].toString());
+                        result = result && editedNumber.equals(defaultNumber);
+                        break;
+                    case StatusList:
+                    case String:
                         String editedData = tasksData[task][property.getNum()].toString();
                         String defaultData = defaultTaskData[task][property.getNum()].toString();
                         result = result && editedData.equals(defaultData);
-                    } else if (tasksData[task][property.getNum()] == null &&
-                            defaultTaskData[task][property.getNum()] == null) {
-                        result = true;
-                    } else {
-                        result = false;
-                    }
-                    break;
+                        break;
+                }
+            } else if (tasksData[task][property.getNum()] == null &&
+                    defaultTaskData[task][property.getNum()] == null) {
+                result = true;
+            } else {
+                result = false;
             }
 
             if (!result) {

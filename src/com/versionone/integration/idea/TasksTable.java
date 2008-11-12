@@ -1,11 +1,11 @@
 package com.versionone.integration.idea;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.*;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -13,9 +13,6 @@ import java.util.HashSet;
  * Created by IntelliJ IDEA.
  */
 public class TasksTable extends JTable {
-
-    //private JComboBox comboEditor = new JComboBox(new DataLayer().getAllStatuses());
-    private Set<Integer> rowsChanged = new HashSet<Integer>() ;
     //MVC-View cannot access DataLayer, must use MVC-Model 
     private DataLayer data = DataLayer.getInstance();
 
@@ -46,37 +43,37 @@ public class TasksTable extends JTable {
         }
     }
 
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        super.tableChanged(e);
-        System.out.println("e.getFirstRow()="+ e.getFirstRow());
-
-//        HorizontalTableModel tabMod = (HorizontalTableModel)e.getSource();
+//    @Override
+//    public void tableChanged(TableModelEvent e) {
+//        super.tableChanged(e);
+//        System.out.println("e.getFirstRow()="+ e.getFirstRow());
 //
-//        if (TableModelEvent.HEADER_ROW != e.getFirstRow()) {
-//            data.setNewTaskValue((tabMod).getColumn(e.getFirstRow()), e.getFirstRow());
+////        HorizontalTableModel tabMod = (HorizontalTableModel)e.getSource();
+////
+////        if (TableModelEvent.HEADER_ROW != e.getFirstRow()) {
+////            data.setNewTaskValue((tabMod).getColumn(e.getFirstRow()), e.getFirstRow());
+////        }
+//
+//        if (e.getFirstRow()>TableModelEvent.HEADER_ROW) {
+//            if (data.isTaskDataChanged(e.getFirstRow())) {
+//                rowsChanged.add(e.getFirstRow());
+//            }
+//            else {
+//                rowsChanged.remove(e.getFirstRow());
+//            }
+//
 //        }
+//        repaint();
+//    }
 
-        if (e.getFirstRow()>TableModelEvent.HEADER_ROW) {
-            if (data.isTaskDataChanged(e.getFirstRow())) {
-                rowsChanged.add(e.getFirstRow());
-            }
-            else {
-                rowsChanged.remove(e.getFirstRow());
-            }
 
-        }
-        repaint();
-    }
-
-    /*
     @Override
     public Component prepareRenderer(TableCellRenderer renderer,
                                      int rowIndex, int vColIndex) {
 
         Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
         if (getSelectedRow() != rowIndex) {
-            if (rowsChanged.size() > 0 && rowsChanged.contains(rowIndex)) {
+            if (data.isTaskDataChanged(rowIndex)) {
                 c.setBackground(Color.yellow);
                 c.setForeground(Color.black);
             } else {
@@ -98,5 +95,4 @@ public class TasksTable extends JTable {
 
         return c;
     }
-    */
 }
