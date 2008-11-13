@@ -12,10 +12,10 @@ public enum TasksProperties {
     ToDo(6, "Todo", Type.Number, true),
     Status(7, "Status", Type.StatusList, true);
 
-    int num;
-    String columnName;
-    Type type;
-    boolean isEditable;
+    final int num;
+    final String columnName;
+    final Type type;
+    final boolean isEditable;
 
     TasksProperties(int num, String columnName, Type type, boolean editable) {
         this.num = num;
@@ -24,26 +24,10 @@ public enum TasksProperties {
         isEditable = editable;
     }
 
-    public int getNum() {
-        return num;
-    }
-
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public boolean isEditable() {
-        return isEditable;
-    }
-
     public static enum Type {
         Number, Text, StatusList;
 
-        private Class<?> columnClass;
+        public final Class<?> columnClass;
 
         Type() {
             columnClass = Object.class;
@@ -51,10 +35,6 @@ public enum TasksProperties {
 
         Type(Class<?> aClass) {
             columnClass = aClass;
-        }
-
-        public Class<?> getColumnClass() {
-            return columnClass;
         }
     }
 }

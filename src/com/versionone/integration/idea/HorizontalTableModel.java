@@ -1,6 +1,8 @@
 package com.versionone.integration.idea;
 
 import javax.swing.table.AbstractTableModel;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  *
@@ -24,7 +26,20 @@ public class HorizontalTableModel extends AbstractTableModel {
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return data.getTaskPropertyValue(rowIndex, columnData[columnIndex]);
+        return convertValueToString(data.getTaskPropertyValue(rowIndex, columnData[columnIndex]));
+    }
+
+    private static String convertValueToString(Object value) {
+        if (value == null) {
+            return "";
+        } else if (value instanceof String) {
+            return (String) value;
+        } else if (value instanceof Double) {
+            long i100 = Math.round((Double) value * 100);
+            return new BigDecimal(BigInteger.valueOf(i100), 2).toPlainString();
+        } else {
+            return value.toString();
+        }
     }
 
     @Override
@@ -39,10 +54,7 @@ public class HorizontalTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        switch (columnData[columnIndex].getType()) {
-            case Text:
-                break;
-        }
+//        columnData[columnIndex].type.isValue
         data.setTaskPropertyValue(rowIndex, columnData[columnIndex], aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
@@ -53,6 +65,6 @@ public class HorizontalTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return columnData[columnIndex].getType().getColumnClass();
+        return columnData[columnIndex].type.columnClass;
     }
 }

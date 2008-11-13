@@ -1,6 +1,7 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.versionone.apiclient.V1Exception;
 import com.versionone.common.sdk.IStatusCodes;
 import com.versionone.common.sdk.TaskStatusCodes;
@@ -15,7 +16,6 @@ import com.versionone.om.V1Instance;
 import com.versionone.om.filters.BaseAssetFilter;
 import com.versionone.om.filters.ProjectFilter;
 import com.versionone.om.filters.TaskFilter;
-import com.intellij.openapi.progress.ProgressIndicator;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,9 +57,9 @@ public final class DataLayer {
         refresh();
     }
 
-    public  void refresh() {
+    public void refresh() {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
-        synchronized(v1) {
+        synchronized (v1) {
             final Project project;
             try {
                 project = v1.get().projectByName(cfg.projectName);
@@ -106,15 +106,15 @@ public final class DataLayer {
     }
 
     private static void setTaskData(Object[] data, Task task) {
-        data[TasksProperties.Title.getNum()] = task.getName();
-        data[TasksProperties.ID.getNum()] = task.getDisplayID();
-        data[TasksProperties.Parent.getNum()] = task.getParent().getName();
-        data[TasksProperties.DetailEstimeate.getNum()] = task.getDetailEstimate();
-        data[TasksProperties.Done.getNum()] = task.getDone();
-        data[TasksProperties.Effort.getNum()] = 0D;
-        data[TasksProperties.ToDo.getNum()] = task.getToDo();
+        data[TasksProperties.Title.num] = task.getName();
+        data[TasksProperties.ID.num] = task.getDisplayID();
+        data[TasksProperties.Parent.num] = task.getParent().getName();
+        data[TasksProperties.DetailEstimeate.num] = task.getDetailEstimate();
+        data[TasksProperties.Done.num] = task.getDone();
+        data[TasksProperties.Effort.num] = 0D;
+        data[TasksProperties.ToDo.num] = task.getToDo();
         final IListValueProperty status = task.getStatus();
-        data[TasksProperties.Status.getNum()] = status.getCurrentValue();
+        data[TasksProperties.Status.num] = status.getCurrentValue();
     }
 
     private void saveDefaultTaskData() {
@@ -138,23 +138,23 @@ public final class DataLayer {
                 if (isTaskDataChanged(i)) {
                     updateServerTask(serverTaskList[i], tasksData[i]);
                     serverTaskList[i].save();
-                    System.out.println("Saved:"+i);
+                    System.out.println("Saved:" + i);
                 }
             }
         }
     }
 
     private void updateServerTask(Task task, Object[] data) {
-        task.setName(data[TasksProperties.Title.getNum()].toString());
+        task.setName(data[TasksProperties.Title.num].toString());
         //data[TasksProperties.ID.getNum()] = task.getID();
         //data[TasksProperties.Parent.getNum()] = task.getParent().getName();
-        task.setDetailEstimate(getDoubleValue(data[TasksProperties.DetailEstimeate.getNum()]));
+        task.setDetailEstimate(getDoubleValue(data[TasksProperties.DetailEstimeate.num]));
         //data[TasksProperties.Done.getNum()] = task.getDone();
-        task.createEffort(getDoubleValue(data[TasksProperties.Effort.getNum()].toString()), member);
-        task.setToDo(getDoubleValue(data[TasksProperties.ToDo.getNum()]));
+        task.createEffort(getDoubleValue(data[TasksProperties.Effort.num].toString()), member);
+        task.setToDo(getDoubleValue(data[TasksProperties.ToDo.num]));
         //final IListValueProperty status = task.getStatus();
         //data[TasksProperties.Status.getNum()] = status.getCurrentValue();
-        task.getStatus().setCurrentValue(data[TasksProperties.Status.getNum()] != null ? data[TasksProperties.Status.getNum()].toString() : null);
+        task.getStatus().setCurrentValue(data[TasksProperties.Status.num] != null ? data[TasksProperties.Status.num].toString() : null);
     }
 
     private Double getDoubleValue(Object data) {
@@ -188,7 +188,7 @@ public final class DataLayer {
     }
 
     public synchronized Object getTaskPropertyValue(int task, TasksProperties property) {
-        return tasksData[task][property.getNum()];
+        return tasksData[task][property.num];
     }
 
     public String[] getAllStatuses() {
@@ -205,7 +205,7 @@ public final class DataLayer {
     public synchronized void setTaskPropertyValue(int task, TasksProperties property, Object value) {
         Object data = null;
         if (value != null) {
-            switch (property.getType()) {
+            switch (property.type) {
                 case Text:
                     data = value.toString();
                     break;
@@ -222,7 +222,7 @@ public final class DataLayer {
             }
         }
 
-        tasksData[task][property.getNum()] = data;
+        tasksData[task][property.num] = data;
     }
 
     public void setProgressIndicator(ProgressIndicator progressIndicator) {
@@ -266,7 +266,7 @@ public final class DataLayer {
             ProjectFilter filter = new ProjectFilter();
             filter.getState().add(BaseAssetFilter.State.Active);
             if (progressIndicator != null && progressIndicator.isRunning()) {
-                progressIndicator.checkCanceled();                
+                progressIndicator.checkCanceled();
             }
             recurseAndAddNodes(oneNode.children, project.getChildProjects(filter), oneNode);
         }
@@ -279,27 +279,27 @@ public final class DataLayer {
         for (TasksProperties property : TasksProperties.values()) {
 
             // if property is not editable - next iteration
-            if (!property.isEditable()) {
+            if (!property.isEditable) {
                 continue;
             }
 
-            if (tasksData[task][property.getNum()] != null &&
-                    defaultTaskData[task][property.getNum()] != null) {
-                switch (property.getType()) {
+            if (tasksData[task][property.num] != null &&
+                    defaultTaskData[task][property.num] != null) {
+                switch (property.type) {
                     case Number:
-                        Double editedNumber = Double.parseDouble(tasksData[task][property.getNum()].toString());
-                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.getNum()].toString());
+                        Double editedNumber = Double.parseDouble(tasksData[task][property.num].toString());
+                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.num].toString());
                         result = result && editedNumber.equals(defaultNumber);
                         break;
                     case StatusList:
                     case Text:
-                        String editedData = tasksData[task][property.getNum()].toString();
-                        String defaultData = defaultTaskData[task][property.getNum()].toString();
+                        String editedData = tasksData[task][property.num].toString();
+                        String defaultData = defaultTaskData[task][property.num].toString();
                         result = result && editedData.equals(defaultData);
                         break;
                 }
-            } else if (tasksData[task][property.getNum()] == null &&
-                    defaultTaskData[task][property.getNum()] == null) {
+            } else if (tasksData[task][property.num] == null &&
+                    defaultTaskData[task][property.num] == null) {
                 result = true;
             } else {
                 result = false;
