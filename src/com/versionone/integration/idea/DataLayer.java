@@ -19,6 +19,7 @@ import com.versionone.om.filters.TaskFilter;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -109,12 +110,16 @@ public final class DataLayer {
         data[TasksProperties.Title.num] = task.getName();
         data[TasksProperties.ID.num] = task.getDisplayID();
         data[TasksProperties.Parent.num] = task.getParent().getName();
-        data[TasksProperties.DetailEstimeate.num] = task.getDetailEstimate();
-        data[TasksProperties.Done.num] = task.getDone();
-        data[TasksProperties.Effort.num] = 0D;
-        data[TasksProperties.ToDo.num] = task.getToDo();
+        data[TasksProperties.DetailEstimeate.num] = getBigDecimal(task.getDetailEstimate());
+        data[TasksProperties.Done.num] = getBigDecimal(task.getDone());
+        data[TasksProperties.Effort.num] = getBigDecimal(0D);
+        data[TasksProperties.ToDo.num] = getBigDecimal(task.getToDo());
         final IListValueProperty status = task.getStatus();
         data[TasksProperties.Status.num] = status.getCurrentValue();
+    }
+
+    private static BigDecimal getBigDecimal(Double toDo) {
+        return toDo == null ? null : BigDecimal.valueOf(toDo).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     private void saveDefaultTaskData() {
@@ -216,7 +221,7 @@ public final class DataLayer {
                     break;
                 case Number:
                     if (!value.equals("")) {
-                        data = Double.parseDouble(value.toString());
+                        data = value;
                     }
                     break;
             }
@@ -287,8 +292,10 @@ public final class DataLayer {
                     defaultTaskData[task][property.num] != null) {
                 switch (property.type) {
                     case Number:
-                        Double editedNumber = Double.parseDouble(tasksData[task][property.num].toString());
-                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.num].toString());
+//                        Double editedNumber = Double.parseDouble(tasksData[task][property.num].toString());
+//                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.num].toString());
+                        BigDecimal editedNumber = (BigDecimal) tasksData[task][property.num];
+                        BigDecimal defaultNumber = (BigDecimal) defaultTaskData[task][property.num];
                         result = result && editedNumber.equals(defaultNumber);
                         break;
                     case StatusList:

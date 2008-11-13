@@ -2,15 +2,14 @@ package com.versionone.integration.idea;
 
 import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  *
  */
 public class HorizontalTableModel extends AbstractTableModel {
 
-    private TasksProperties[] columnData = null;
-    private DataLayer data;
+    private final TasksProperties[] columnData;
+    private final DataLayer data;
 
     public HorizontalTableModel(TasksProperties[] columnData) {
         this.columnData = columnData;
@@ -26,19 +25,15 @@ public class HorizontalTableModel extends AbstractTableModel {
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return convertValueToString(data.getTaskPropertyValue(rowIndex, columnData[columnIndex]));
+        return roundIfBigDecimal(data.getTaskPropertyValue(rowIndex, columnData[columnIndex]));
     }
 
-    private static String convertValueToString(Object value) {
-        if (value == null) {
-            return "";
-        } else if (value instanceof String) {
-            return (String) value;
-        } else if (value instanceof Double) {
-            long i100 = Math.round((Double) value * 100);
-            return new BigDecimal(BigInteger.valueOf(i100), 2).toPlainString();
+    private static Object roundIfBigDecimal(Object value) {
+        if (value instanceof BigDecimal) {
+            BigDecimal b = (BigDecimal) value;
+            return b.setScale(2, BigDecimal.ROUND_HALF_UP);
         } else {
-            return value.toString();
+            return value;
         }
     }
 
@@ -54,7 +49,14 @@ public class HorizontalTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-//        columnData[columnIndex].type.isValue
+        if (columnData[columnIndex].type == TasksProperties.Type.Number) {
+            try {
+                aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
+            } catch (Exception e) {
+                //We can popup error message there.
+                return;
+            }
+        }
         data.setTaskPropertyValue(rowIndex, columnData[columnIndex], aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
     }

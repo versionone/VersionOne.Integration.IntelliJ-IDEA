@@ -51,30 +51,6 @@ public class TasksTable extends Table {
         }
     }
 
-//    @Override
-//    public void tableChanged(TableModelEvent e) {
-//        super.tableChanged(e);
-//        System.out.println("e.getFirstRow()="+ e.getFirstRow());
-//
-////        HorizontalTableModel tabMod = (HorizontalTableModel)e.getSource();
-////
-////        if (TableModelEvent.HEADER_ROW != e.getFirstRow()) {
-////            data.setNewTaskValue((tabMod).getColumn(e.getFirstRow()), e.getFirstRow());
-////        }
-//
-//        if (e.getFirstRow()>TableModelEvent.HEADER_ROW) {
-//            if (data.isTaskDataChanged(e.getFirstRow())) {
-//                rowsChanged.add(e.getFirstRow());
-//            }
-//            else {
-//                rowsChanged.remove(e.getFirstRow());
-//            }
-//
-//        }
-//        repaint();
-//    }
-
-
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int vColIndex) {
 
