@@ -15,6 +15,7 @@ import com.versionone.om.V1Instance;
 import com.versionone.om.filters.BaseAssetFilter;
 import com.versionone.om.filters.ProjectFilter;
 import com.versionone.om.filters.TaskFilter;
+import com.intellij.openapi.progress.ProgressIndicator;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +41,8 @@ public final class DataLayer {
     private Object[][] tasksData;
     private Task[] serverTaskList;
 
+    private ProgressIndicator progressIndicator;
+
     private DataLayer(WorkspaceSettings workspaceSettings) {
         cfg = workspaceSettings;
         try {
@@ -54,51 +57,52 @@ public final class DataLayer {
         refresh();
     }
 
-    public synchronized void refresh() {
+    public  void refresh() {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
-
-        final Project project;
-        try {
-            project = v1.get().projectByName(cfg.projectName);
-        } catch (SDKException e) {
-            LOG.error("Error on SDK level", e);
-            return;
-        }
-        if (project == null) {
-            LOG.error("There is no project: " + cfg.projectName);
-            return;
-        }
-
-        final TaskFilter filter = new TaskFilter();
-        final Collection<Project> childProjects = project.getThisAndAllChildProjects();
-
-        for (Project prj : childProjects) {
-            if (prj.isActive()) {
-                filter.project.add(prj);
+        synchronized(v1) {
+            final Project project;
+            try {
+                project = v1.get().projectByName(cfg.projectName);
+            } catch (SDKException e) {
+                LOG.error("Error on SDK level", e);
+                return;
             }
-        }
-        filter.getState().add(BaseAssetFilter.State.Active);
-        if (!cfg.isShowAllTask) {
-            filter.owners.add(member);
-        }
-        Collection<Task> tasks = v1.get().tasks(filter);
-        tasksData = new Object[tasks.size()][TasksProperties.values().length];
-        serverTaskList = new Task[tasks.size()];
-        int i = 0;
-        for (Task task : tasks) {
-            final Iteration iteration = task.getParent().getIteration();
-            if (iteration != null && iteration.isActive()) {
-                serverTaskList[i] = task;
-                setTaskData(tasksData[i++], task);
+            if (project == null) {
+                LOG.error("There is no project: " + cfg.projectName);
+                return;
             }
+
+            final TaskFilter filter = new TaskFilter();
+            final Collection<Project> childProjects = project.getThisAndAllChildProjects();
+
+            for (Project prj : childProjects) {
+                if (prj.isActive()) {
+                    filter.project.add(prj);
+                }
+            }
+            filter.getState().add(BaseAssetFilter.State.Active);
+            if (!cfg.isShowAllTask) {
+                filter.owners.add(member);
+            }
+            Collection<Task> tasks = v1.get().tasks(filter);
+            tasksData = new Object[tasks.size()][TasksProperties.values().length];
+            serverTaskList = new Task[tasks.size()];
+            int i = 0;
+            for (Task task : tasks) {
+                final Iteration iteration = task.getParent().getIteration();
+                if (iteration != null && iteration.isActive()) {
+                    serverTaskList[i] = task;
+                    setTaskData(tasksData[i++], task);
+                }
+            }
+            tasksData = Arrays.copyOf(tasksData, i);
+            serverTaskList = Arrays.copyOf(serverTaskList, i);
+
+            saveDefaultTaskData();
+
+            System.out.println("=============== Got " + tasks.size() + " tasks, used " + tasksData.length + " ============");
+            wr();
         }
-        tasksData = Arrays.copyOf(tasksData, i);
-        serverTaskList = Arrays.copyOf(serverTaskList, i);
-
-        saveDefaultTaskData();
-
-        System.out.println("=============== Got " + tasks.size() + " tasks, used " + tasksData.length + " ============");
-        wr();
     }
 
     private static void setTaskData(Object[] data, Task task) {
@@ -129,11 +133,13 @@ public final class DataLayer {
     public void commitChangedTaskData() {
 
         //v1.get
-
-        for (int i = 0; i < tasksData.length; i++) {
-            if (isTaskDataChanged(i)) {
-                updateServerTask(serverTaskList[i], tasksData[i]);
-                serverTaskList[i].save();
+        synchronized (v1) {
+            for (int i = 0; i < tasksData.length; i++) {
+                if (isTaskDataChanged(i)) {
+                    updateServerTask(serverTaskList[i], tasksData[i]);
+                    serverTaskList[i].save();
+                    System.out.println("Saved:"+i);
+                }
             }
         }
     }
@@ -219,8 +225,16 @@ public final class DataLayer {
         tasksData[task][property.getNum()] = data;
     }
 
+    public void setProgressIndicator(ProgressIndicator progressIndicator) {
+        this.progressIndicator = progressIndicator;
+    }
+
+    public void removeProgressIndicator() {
+        this.progressIndicator = null;
+    }
+
     @NotNull
-    public synchronized ProjectTreeNode getProjects() {
+    public ProjectTreeNode getProjects() {
         ProjectFilter filter = new ProjectFilter();
         filter.getState().add(BaseAssetFilter.State.Active);
         Collection<Project> projects = v1.getProjects();
@@ -236,7 +250,9 @@ public final class DataLayer {
         }
         */
 
-        recurseAndAddNodes(treeProjects.children, mainProject.getChildProjects(filter), null);
+        synchronized (v1) {
+            recurseAndAddNodes(treeProjects.children, mainProject.getChildProjects(filter), null);
+        }
 
         return treeProjects;
     }
@@ -249,6 +265,9 @@ public final class DataLayer {
 
             ProjectFilter filter = new ProjectFilter();
             filter.getState().add(BaseAssetFilter.State.Active);
+            if (progressIndicator != null && progressIndicator.isRunning()) {
+                progressIndicator.checkCanceled();                
+            }
             recurseAndAddNodes(oneNode.children, project.getChildProjects(filter), oneNode);
         }
     }
