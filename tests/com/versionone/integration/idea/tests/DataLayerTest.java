@@ -2,76 +2,71 @@
 package com.versionone.integration.idea.tests;
 
 import com.versionone.integration.idea.DataLayer;
-import com.versionone.integration.idea.TasksProperties;
 import com.versionone.integration.idea.ProjectTreeNode;
+import com.versionone.integration.idea.TasksProperties;
 import com.versionone.integration.idea.WorkspaceSettings;
-import com.versionone.integration.idea.TasksComponent;
-import com.versionone.om.V1Instance;
-import com.versionone.om.Project;
-import com.versionone.om.Task;
-import com.versionone.om.Iteration;
-import com.versionone.om.filters.BaseAssetFilter;
-import com.versionone.om.filters.TaskFilter;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.awt.*;
 import java.net.ConnectException;
+import java.util.ArrayList;
 
 public class DataLayerTest {
     private DataLayer data;
 
     @Before
     public void before() {
+        final WorkspaceSettings settings = WorkspaceSettings.getInstance();
+        settings.v1Path = "http://eval.versionone.net/ExigenTest/";
+        settings.user = "admin";
+        settings.passwd = "admin";
+        settings.projectName = "System (All Projects)";
         data = DataLayer.getInstance();
     }
 
+    /**
+     * Integrational test. Need access to V1 server.
+     */
     @Test
-    @Ignore
     public void testGetMainData() {
         int list = data.getTasksCount();
         for (int i = 0; i < list; i++) {
             for (TasksProperties property : TasksProperties.values()) {
-                System.out.println(data.getTaskPropertyValue(i,property));
+                System.out.println(data.getTaskPropertyValue(i, property));
             }
         }
     }
 
+    /**
+     * Integration test. Need access to V1 server.
+     */
     @Test
-    @Ignore
     public void testGetProjects() throws ConnectException {
         com.versionone.integration.idea.ProjectTreeNode projects = data.getProjects();
 
         //for(Project project : projects) {
 
-        System.out.println(projects.toString() + " --- " +projects.getToken() + " child:" + projects.getChildCount());
+        System.out.println(projects.toString() + " --- " + projects.getToken() + " child:" + projects.getChildCount());
         displayAllProjects(projects.children, 0);
 
         //}
     }
 
-    private void displayAllProjects(ArrayList<ProjectTreeNode> projectTreeNodes, int pos){
-        for(ProjectTreeNode project : projectTreeNodes) {
+    private void displayAllProjects(ArrayList<ProjectTreeNode> projectTreeNodes, int pos) {
+        for (ProjectTreeNode project : projectTreeNodes) {
             System.out.print(pos);
-            for (int i=0; i<pos*2; i++) {
+            for (int i = 0; i < pos * 2; i++) {
                 System.out.print("-");
             }
 
             if (project.getParent() != null) {
-                System.out.println(project.toString() + " --- " +project.getToken() + " child:" + project.getChildCount()  + " data:" + ((ProjectTreeNode) project.getParent()).getToken());
+                System.out.println(project.toString() + " --- " + project.getToken() + " child:" + project.getChildCount() + " data:" + ((ProjectTreeNode) project.getParent()).getToken());
             }
             if (project.getAllowsChildren()) {
                 displayAllProjects(project.children, pos + 1);
             }
-
-
         }
-
     }
 
 //    @Test
@@ -104,6 +99,7 @@ public class DataLayerTest {
     /**
      * Temporary method for testing purposes. TODO delete
      */
+/*
     public static void main(String[] args) throws ConnectException {
         TasksComponent plugin = new TasksComponent(null);
         JPanel panel = new JPanel(new BorderLayout());
@@ -115,4 +111,5 @@ public class DataLayerTest {
         frame.pack();
         frame.setVisible(true);
     }
+*/
 }

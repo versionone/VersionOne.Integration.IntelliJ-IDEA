@@ -302,10 +302,7 @@ public final class DataLayer {
         }
     }
 
-
     public boolean isTaskDataChanged(int task) {
-        boolean changed = false;
-
         synchronized (tasksData) {
             for (TasksProperties property : TasksProperties.values()) {
                 // skip not editable properties
@@ -313,32 +310,19 @@ public final class DataLayer {
                     continue;
                 }
 
-                if (tasksData[task][property.num] != null &&
-                        defaultTaskData[task][property.num] != null) {
-                    switch (property.type) {
-                        case Number:
-                            BigDecimal editedNumber = (BigDecimal) tasksData[task][property.num];
-                            BigDecimal defaultNumber = (BigDecimal) defaultTaskData[task][property.num];
-                            changed = changed || !editedNumber.equals(defaultNumber);
-                            break;
-                        case StatusList:
-                        case Text:
-                            String editedData = tasksData[task][property.num].toString();
-                            String defaultData = defaultTaskData[task][property.num].toString();
-                            changed = changed || !editedData.equals(defaultData);
-                            break;
+                final Object actual = tasksData[task][property.num];
+                final Object expected = defaultTaskData[task][property.num];
+                if (actual == null) {
+                    if (expected != null) {
+                        return true;
                     }
                 } else {
-                    changed = !(tasksData[task][property.num] == null &&
-                            defaultTaskData[task][property.num] == null);
-                }
-
-                if (changed) {
-                    break;
+                    if (!actual.equals(expected)) {
+                        return true;
+                    }
                 }
             }
         }
-
-        return changed;
+        return false;
     }
 }
