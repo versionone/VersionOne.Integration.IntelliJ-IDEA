@@ -6,7 +6,6 @@ import com.versionone.common.sdk.IStatusCodes;
 import com.versionone.common.sdk.TaskStatusCodes;
 import com.versionone.om.ApiClientInternals;
 import com.versionone.om.ApplicationUnavailableException;
-import com.versionone.om.IListValueProperty;
 import com.versionone.om.Iteration;
 import com.versionone.om.Member;
 import com.versionone.om.Project;
@@ -18,6 +17,7 @@ import com.versionone.om.filters.ProjectFilter;
 import com.versionone.om.filters.TaskFilter;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.net.ConnectException;
@@ -26,11 +26,11 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Requests, cache, get change requests and store data from VersionOne server.
+ * This class requests, stores data from VersionOne server and send changed data back.
  */
 public final class DataLayer {
-    private static final Logger LOG = Logger.getLogger(DataLayer.class);
 
+    private static final Logger LOG = Logger.getLogger(DataLayer.class);
     private static DataLayer instance;
 
     private final WorkspaceSettings cfg;
@@ -47,8 +47,6 @@ public final class DataLayer {
 
     private DataLayer(WorkspaceSettings workspaceSettings) {
         cfg = workspaceSettings;
-
-
         try {
             connect();
             refresh();
@@ -57,49 +55,25 @@ public final class DataLayer {
         }
     }
 
-    private boolean connect() throws ConnectException {
-        boolean result = false;
-
+    private void connect() throws ConnectException {
         try {
             v1 = new V1Instance(cfg.v1Path, cfg.user, cfg.passwd);
             v1.validate();
             final ApiClientInternals apiClient = v1.getApiClient();
             statusList = new TaskStatusCodes(apiClient.getMetaModel(), apiClient.getServices());
             trackEffort = v1.getConfiguration().effortTrackingEnabled;
-            member = v1.get().memberByUserName(cfg.user);//TODO cache
-            result = true;
+            member = v1.get().memberByUserName(cfg.user);
         } catch (Exception e) {
-//            Messages.showMessageDialog(
-//                    e.getMessage(),
-//                    "Error",
-//                    Messages.getErrorIcon());
             LOG.error("Error connection to VersionOne", e);
             throw new ConnectException(e.getMessage());
         }
-//        } catch (V1Exception e) {
-////            Messages.showMessageDialog(
-////                    "Error connection to VersionOne:\n" + e.getMessage(),
-////                    "Error",
-////                    Messages.getErrorIcon());
-//            LOG.error("Error connection to VersionOne", e);
-//            throw new ConnectException(e.getMessage());
-//        } catch (MetaException e) {
-////            Messages.showMessageDialog(
-////                    "Error connection to VersionOne:\n" + e.getMessage(),
-////                    "Error",
-////                    Messages.getErrorIcon());
-//            LOG.error("Error connection to VersionOne", e);
-//            throw new ConnectException(e.getMessage());
-//        }
-
-        return result;
     }
 
     public void refresh() throws ConnectException {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
 
-        tasksData = new Object[0][0];
-        defaultTaskData = new Object[0][0];
+        tasksData = new Object[0][];
+        defaultTaskData = new Object[0][];
         serverTaskList = new Task[0];
 
         if (!isConnectionValid()) {
@@ -160,8 +134,7 @@ public final class DataLayer {
         data[TasksProperties.Done.num] = getBigDecimal(task.getDone());
         data[TasksProperties.Effort.num] = getBigDecimal(0D);
         data[TasksProperties.ToDo.num] = getBigDecimal(task.getToDo());
-        final IListValueProperty status = task.getStatus();
-        data[TasksProperties.Status.num] = status.getCurrentValue();
+        data[TasksProperties.Status.num] = task.getStatus().getCurrentValue();
     }
 
     private static BigDecimal getBigDecimal(Double toDo) {
@@ -182,8 +155,6 @@ public final class DataLayer {
     }
 
     public void commitChangedTaskData() {
-
-        //v1.get
         synchronized (v1) {
             for (int i = 0; i < tasksData.length; i++) {
                 if (isTaskDataChanged(i)) {
@@ -197,14 +168,9 @@ public final class DataLayer {
 
     private void updateServerTask(Task task, Object[] data) {
         task.setName(data[TasksProperties.Title.num].toString());
-        //data[TasksProperties.ID.getNum()] = task.getID();
-        //data[TasksProperties.Parent.getNum()] = task.getParent().getName();
         task.setDetailEstimate(getDoubleValue(data[TasksProperties.DetailEstimeate.num]));
-        //data[TasksProperties.Done.getNum()] = task.getDone();
         task.createEffort(getDoubleValue(data[TasksProperties.Effort.num]), member);
         task.setToDo(getDoubleValue(data[TasksProperties.ToDo.num]));
-        //final IListValueProperty status = task.getStatus();
-        //data[TasksProperties.Status.getNum()] = status.getCurrentValue();
         task.getStatus().setCurrentValue(data[TasksProperties.Status.num] != null ? data[TasksProperties.Status.num].toString() : null);
     }
 
@@ -252,35 +218,31 @@ public final class DataLayer {
 
     public void setTaskPropertyValue(int task, TasksProperties property, Object value) {
         Object data = null;
-        synchronized (tasksData) {
-            if (value != null) {
-                switch (property.type) {
-                    case Text:
+        if (value != null) {
+            switch (property.type) {
+                case Text:
+                    data = value.toString();
+                    break;
+                case StatusList:
+                    if (!value.equals("")) {
                         data = value.toString();
-                        break;
-                    case StatusList:
-                        if (!value.equals("")) {
-                            data = value.toString();
-                        }
-                        break;
-                    case Number:
-                        if (!value.equals("")) {
-                            data = value;
-                        }
-                        break;
-                }
+                    }
+                    break;
+                case Number:
+                    if (!value.equals("")) {
+                        data = value;
+                    }
+                    break;
             }
         }
 
-        tasksData[task][property.num] = data;
+        synchronized (tasksData) {
+            tasksData[task][property.num] = data;
+        }
     }
 
-    public void setProgressIndicator(ProgressIndicator progressIndicator) {
+    public void setProgressIndicator(@Nullable ProgressIndicator progressIndicator) {
         this.progressIndicator = progressIndicator;
-    }
-
-    public void removeProgressIndicator() {
-        this.progressIndicator = null;
     }
 
     private boolean isConnectionValid() {
@@ -342,13 +304,11 @@ public final class DataLayer {
 
 
     public boolean isTaskDataChanged(int task) {
-        boolean result = true;
-
+        boolean changed = false;
 
         synchronized (tasksData) {
             for (TasksProperties property : TasksProperties.values()) {
-
-                // if property is not editable - next iteration
+                // skip not editable properties
                 if (!property.isEditable) {
                     continue;
                 }
@@ -357,32 +317,28 @@ public final class DataLayer {
                         defaultTaskData[task][property.num] != null) {
                     switch (property.type) {
                         case Number:
-                            //                        Double editedNumber = Double.parseDouble(tasksData[task][property.num].toString());
-                            //                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.num].toString());
                             BigDecimal editedNumber = (BigDecimal) tasksData[task][property.num];
                             BigDecimal defaultNumber = (BigDecimal) defaultTaskData[task][property.num];
-                            result = result && editedNumber.equals(defaultNumber);
+                            changed = changed || !editedNumber.equals(defaultNumber);
                             break;
                         case StatusList:
                         case Text:
                             String editedData = tasksData[task][property.num].toString();
                             String defaultData = defaultTaskData[task][property.num].toString();
-                            result = result && editedData.equals(defaultData);
+                            changed = changed || !editedData.equals(defaultData);
                             break;
                     }
-                } else if (tasksData[task][property.num] == null &&
-                        defaultTaskData[task][property.num] == null) {
-                    result = true;
                 } else {
-                    result = false;
+                    changed = !(tasksData[task][property.num] == null &&
+                            defaultTaskData[task][property.num] == null);
                 }
 
-                if (!result) {
+                if (changed) {
                     break;
                 }
             }
         }
 
-        return !result;
+        return changed;
     }
 }

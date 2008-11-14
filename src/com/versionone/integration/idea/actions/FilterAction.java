@@ -1,23 +1,19 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea.actions;
 
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
-import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.integration.idea.DataLayer;
 import com.versionone.integration.idea.FilterForm;
 import com.versionone.integration.idea.ProjectTreeNode;
-import com.versionone.integration.idea.TasksComponent;
-import com.versionone.apiclient.V1Exception;
 import org.apache.log4j.Logger;
 
 import java.net.ConnectException;
@@ -38,7 +34,7 @@ public class FilterAction extends AnAction {
     }
 
     public static boolean filterDialog(final Project ideaProject) {
-        
+
         final ProgressManager progressManager = ProgressManager.getInstance();
         final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
         final boolean[] isError = new boolean[]{true};
@@ -74,13 +70,14 @@ public class FilterAction extends AnAction {
                 } catch (ConnectException e) {
                     isError[0] = false;
                 }
-                data.removeProgressIndicator();
-            }},
-            "Loading project list",
-            true,
-            ideaProject
+                data.setProgressIndicator(null);
+            }
+        },
+                "Loading project list",
+                true,
+                ideaProject
         );
-        
+
         if (!isCanceled) {
             return false;
         }
