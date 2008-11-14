@@ -2,23 +2,28 @@
 package com.versionone.integration.idea;
 
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.ui.Messages;
-import com.versionone.apiclient.V1Exception;
-import com.versionone.apiclient.MetaException;
 import com.versionone.common.sdk.IStatusCodes;
 import com.versionone.common.sdk.TaskStatusCodes;
-import com.versionone.om.*;
+import com.versionone.om.ApiClientInternals;
+import com.versionone.om.ApplicationUnavailableException;
+import com.versionone.om.IListValueProperty;
+import com.versionone.om.Iteration;
+import com.versionone.om.Member;
+import com.versionone.om.Project;
+import com.versionone.om.SDKException;
+import com.versionone.om.Task;
+import com.versionone.om.V1Instance;
 import com.versionone.om.filters.BaseAssetFilter;
 import com.versionone.om.filters.ProjectFilter;
 import com.versionone.om.filters.TaskFilter;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.math.BigDecimal;
-import java.net.ConnectException;
 
 /**
  * Requests, cache, get change requests and store data from VersionOne server.
@@ -50,7 +55,6 @@ public final class DataLayer {
         } catch (ConnectException e) {
             // do nothing
         }
-
     }
 
     private boolean connect() throws ConnectException {
@@ -106,27 +110,13 @@ public final class DataLayer {
             try {
                 project = v1.get().projectByName(cfg.projectName);
             } catch (Exception e) {
-//                Messages.showMessageDialog(
-//                        "Can't get '" + cfg.projectName + "' project:\n" + e.getMessage(),
-//                        "Error",
-//                        Messages.getErrorIcon());
-                LOG.error("Error on SDK level", e);
+                LOG.error("Cannot get project from server", e);
                 throw new SDKException(e);
-            }// catch (MetaException e) {
-////                Messages.showMessageDialog(
-////                        "Can't get '" + cfg.projectName + "' project:\n" + e.getMessage(),
-////                        "Error",
-////                        Messages.getErrorIcon());
-//                LOG.error("Error on SDK level", e);
-//                return;
-//            }
+            }
             if (project == null) {
-                Messages.showMessageDialog(
-                        "There is no project:" + cfg.projectName,
-                        "Error",
-                        Messages.getErrorIcon());
-                LOG.error("There is no project: " + cfg.projectName);
-                return;
+                final SDKException ex = new SDKException("There is no project: " + cfg.projectName);
+                LOG.error(ex.getMessage(), ex);
+                throw ex;
             }
 
             final TaskFilter filter = new TaskFilter();
@@ -211,7 +201,7 @@ public final class DataLayer {
         //data[TasksProperties.Parent.getNum()] = task.getParent().getName();
         task.setDetailEstimate(getDoubleValue(data[TasksProperties.DetailEstimeate.num]));
         //data[TasksProperties.Done.getNum()] = task.getDone();
-        task.createEffort(getDoubleValue(data[TasksProperties.Effort.num].toString()), member);
+        task.createEffort(getDoubleValue(data[TasksProperties.Effort.num]), member);
         task.setToDo(getDoubleValue(data[TasksProperties.ToDo.num]));
         //final IListValueProperty status = task.getStatus();
         //data[TasksProperties.Status.getNum()] = status.getCurrentValue();
@@ -219,15 +209,7 @@ public final class DataLayer {
     }
 
     private Double getDoubleValue(Object data) {
-        return data != null ? Double.parseDouble(data.toString()) : null;
-    }
-
-    //TODO synchronized???
-    public void setNewTaskValue(int task, TasksProperties property) {
-        System.out.print("Id=" + task);
-        if (property != null) {
-            System.out.println(" // name=" + property.name());
-        }
+        return data != null ? ((BigDecimal) data).doubleValue() : null;
     }
 
     /**
@@ -310,8 +292,7 @@ public final class DataLayer {
             } catch (ApplicationUnavailableException e) {
                 result = false;
             }
-        }
-        else {
+        } else {
             result = false;
         }
 
@@ -323,7 +304,7 @@ public final class DataLayer {
         ProjectFilter filter = new ProjectFilter();
         filter.getState().add(BaseAssetFilter.State.Active);
         Collection<Project> projects;
-        ProjectTreeNode treeProjects = new ProjectTreeNode("", null, 0, "");
+        ProjectTreeNode treeProjects;
 
         if (!isConnectionValid()) {
             connect();
@@ -333,34 +314,11 @@ public final class DataLayer {
             try {
                 projects = v1.getProjects();
             } catch (Exception e) {
-//                Messages.showMessageDialog(
-//                        "Can't get projects list:\n" + e.getMessage(),
-//                        "Error",
-//                        Messages.getErrorIcon());
-                LOG.error("Error on SDK level", e);
-                throw new SDKException(e);
-//                return treeProjects;
-            } //catch (MetaException e) {
-//                Messages.showMessageDialog(
-//                        "Can't get projects list:\n" + e.getMessage(),
-//                        "Error",
-//                        Messages.getErrorIcon());
-//                LOG.error("Error connection to VersionOne", e);
-//                return treeProjects;
-//            }
-
-            Project mainProject = projects.iterator().next();
-
-            treeProjects = new ProjectTreeNode(mainProject.getName(), null, 0, mainProject.getID().getToken());
-
-            /*
-            Collection<Project> projects = v1.getProjects().iterator().next().getChildProjects(filter, true);
-            for(Project project : projects) {
-                getAllChildren(project, projects);
+                LOG.error("Can't get projects list.", e);
+                throw new SDKException("Can't get projects list.", e);
             }
-            */
-
-
+            Project mainProject = projects.iterator().next();
+            treeProjects = new ProjectTreeNode(mainProject.getName(), null, 0, mainProject.getID().getToken());
             recurseAndAddNodes(treeProjects.children, mainProject.getChildProjects(filter), null);
         }
 
@@ -399,8 +357,8 @@ public final class DataLayer {
                         defaultTaskData[task][property.num] != null) {
                     switch (property.type) {
                         case Number:
-    //                        Double editedNumber = Double.parseDouble(tasksData[task][property.num].toString());
-    //                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.num].toString());
+                            //                        Double editedNumber = Double.parseDouble(tasksData[task][property.num].toString());
+                            //                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.num].toString());
                             BigDecimal editedNumber = (BigDecimal) tasksData[task][property.num];
                             BigDecimal defaultNumber = (BigDecimal) defaultTaskData[task][property.num];
                             result = result && editedNumber.equals(defaultNumber);
