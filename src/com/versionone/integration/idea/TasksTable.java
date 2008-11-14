@@ -3,20 +3,14 @@ package com.versionone.integration.idea;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.util.ui.Table;
-import com.versionone.apiclient.V1Exception;
 
 import javax.swing.*;
-import javax.swing.text.DefaultEditorKit;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import javax.help.plaf.basic.BasicFavoritesNavigatorUI;
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.*;
-import java.net.ConnectException;
 
 /**
  * Created by IntelliJ IDEA.
