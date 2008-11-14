@@ -7,8 +7,12 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.ui.Messages;
 import com.versionone.integration.idea.DataLayer;
 import com.versionone.integration.idea.TasksComponent;
+import com.versionone.apiclient.V1Exception;
+
+import java.net.ConnectException;
 
 public class Refresh extends AnAction {
     public void actionPerformed(AnActionEvent e) {
@@ -16,23 +20,44 @@ public class Refresh extends AnAction {
 
         final DataContext dataContext = e.getDataContext();
         final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
-        if (ideaProject == null) {
-            DataLayer.getInstance().refresh();
+        final DataLayer data;
+        try {
+            data = DataLayer.getInstance();
+            if (ideaProject == null) {
+                data.refresh();
+                return;
+            }
+        } catch (ConnectException e1) {
+            Messages.showMessageDialog(
+                    "Error connection to the VesionOne server",
+                    "Error",
+                    Messages.getErrorIcon());
             return;
         }
 
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final DataLayer data = DataLayer.getInstance();
+        final boolean[] a = {true};
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
                 progressManager.getProgressIndicator().setText("Update tasks list");
-                data.refresh();
+                try {
+                    data.refresh();
+                } catch (ConnectException e1) {
+                    a[0] = false;
+                }
             }},
             "Update tasks list",
             false,
             ideaProject
         );
+
+        if (!a[0]) {
+            Messages.showMessageDialog(
+                    "Error connection to the VesionOne server",
+                    "Error",
+                    Messages.getErrorIcon());            
+        }
 
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         tc.revalidate();

@@ -21,6 +21,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.awt.*;
+import java.net.ConnectException;
 
 public class DataLayerTest {
     private DataLayer data;
@@ -43,7 +44,7 @@ public class DataLayerTest {
 
     @Test
     @Ignore
-    public void testGetProjects() {
+    public void testGetProjects() throws ConnectException {
         com.versionone.integration.idea.ProjectTreeNode projects = data.getProjects();
 
         //for(Project project : projects) {
@@ -103,7 +104,7 @@ public class DataLayerTest {
     /**
      * Temporary method for testing purposes. TODO delete
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ConnectException {
         TasksComponent plugin = new TasksComponent(null);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JTree(DataLayer.getInstance().getProjects()));

@@ -1,7 +1,11 @@
 package com.versionone.integration.idea;
 
+import com.versionone.apiclient.V1Exception;
+import com.intellij.openapi.ui.Messages;
+
 import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;
+import java.net.ConnectException;
 
 /**
  *
@@ -13,11 +17,17 @@ public class HorizontalTableModel extends AbstractTableModel {
 
     public HorizontalTableModel(TasksProperties[] columnData) {
         this.columnData = columnData;
+        
         data = DataLayer.getInstance();
     }
 
     public int getRowCount() {
-        return data.getTasksCount();
+        if (data != null) {
+            return data.getTasksCount();
+        }
+        else {
+            return 0;
+        }
     }
 
     public int getColumnCount() {

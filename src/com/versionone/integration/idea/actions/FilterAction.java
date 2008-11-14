@@ -12,11 +12,15 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.ui.Messages;
 import com.versionone.integration.idea.DataLayer;
 import com.versionone.integration.idea.FilterForm;
 import com.versionone.integration.idea.ProjectTreeNode;
 import com.versionone.integration.idea.TasksComponent;
+import com.versionone.apiclient.V1Exception;
 import org.apache.log4j.Logger;
+
+import java.net.ConnectException;
 
 public class FilterAction extends AnAction {
 
@@ -37,6 +41,7 @@ public class FilterAction extends AnAction {
         
         final ProgressManager progressManager = ProgressManager.getInstance();
         final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
+        final boolean[] isError = new boolean[]{true};
 
 //        new Task.Modal(ideaProject, "Loading project list", false) {
 
@@ -56,14 +61,19 @@ public class FilterAction extends AnAction {
 //
 //        }.queue();
 
-        final DataLayer data = DataLayer.getInstance();
+        final DataLayer data;
+        data = DataLayer.getInstance();
 
         boolean isCanceled = ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
                 final ProgressIndicator indicator = progressManager.getProgressIndicator();
                 data.setProgressIndicator(indicator);
                 indicator.setText("Loading project list");
-                projectsRoot[0] = data.getProjects();
+                try {
+                    projectsRoot[0] = data.getProjects();
+                } catch (ConnectException e) {
+                    isError[0] = false;
+                }
                 data.removeProgressIndicator();
             }},
             "Loading project list",
@@ -74,6 +84,15 @@ public class FilterAction extends AnAction {
         if (!isCanceled) {
             return false;
         }
+
+        if (!isError[0]) {
+            Messages.showMessageDialog(
+                    "Error connection to the VesionOne server",
+                    "Error",
+                    Messages.getErrorIcon());
+            return false;
+        }
+
         final FilterForm form = new FilterForm(projectsRoot[0]);
         return ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form);
     }

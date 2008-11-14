@@ -2,27 +2,23 @@
 package com.versionone.integration.idea;
 
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.ui.Messages;
 import com.versionone.apiclient.V1Exception;
+import com.versionone.apiclient.MetaException;
 import com.versionone.common.sdk.IStatusCodes;
 import com.versionone.common.sdk.TaskStatusCodes;
-import com.versionone.om.ApiClientInternals;
-import com.versionone.om.IListValueProperty;
-import com.versionone.om.Iteration;
-import com.versionone.om.Member;
-import com.versionone.om.Project;
-import com.versionone.om.SDKException;
-import com.versionone.om.Task;
-import com.versionone.om.V1Instance;
+import com.versionone.om.*;
 import com.versionone.om.filters.BaseAssetFilter;
 import com.versionone.om.filters.ProjectFilter;
 import com.versionone.om.filters.TaskFilter;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.math.BigDecimal;
+import java.net.ConnectException;
 
 /**
  * Requests, cache, get change requests and store data from VersionOne server.
@@ -32,43 +28,103 @@ public final class DataLayer {
 
     private static DataLayer instance;
 
-    private Object[][] defaultTaskData;
     private final WorkspaceSettings cfg;
 
     private V1Instance v1;
     private Member member;
     private IStatusCodes statusList;
     private boolean trackEffort;
-    private Object[][] tasksData;
-    private Task[] serverTaskList;
+    private Object[][] tasksData = new Object[0][];
+    private Object[][] defaultTaskData = new Object[0][0];
+    private Task[] serverTaskList = new Task[0];
 
     private ProgressIndicator progressIndicator;
 
     private DataLayer(WorkspaceSettings workspaceSettings) {
         cfg = workspaceSettings;
+
+
+        try {
+            connect();
+            refresh();
+        } catch (ConnectException e) {
+            // do nothing
+        }
+
+    }
+
+    private boolean connect() throws ConnectException {
+        boolean result = false;
+
         try {
             v1 = new V1Instance(cfg.v1Path, cfg.user, cfg.passwd);
+            v1.validate();
             final ApiClientInternals apiClient = v1.getApiClient();
             statusList = new TaskStatusCodes(apiClient.getMetaModel(), apiClient.getServices());
             trackEffort = v1.getConfiguration().effortTrackingEnabled;
             member = v1.get().memberByUserName(cfg.user);//TODO cache
-        } catch (V1Exception e) {
-            e.printStackTrace();
+            result = true;
+        } catch (Exception e) {
+//            Messages.showMessageDialog(
+//                    e.getMessage(),
+//                    "Error",
+//                    Messages.getErrorIcon());
+            LOG.error("Error connection to VersionOne", e);
+            throw new ConnectException(e.getMessage());
         }
-        refresh();
+//        } catch (V1Exception e) {
+////            Messages.showMessageDialog(
+////                    "Error connection to VersionOne:\n" + e.getMessage(),
+////                    "Error",
+////                    Messages.getErrorIcon());
+//            LOG.error("Error connection to VersionOne", e);
+//            throw new ConnectException(e.getMessage());
+//        } catch (MetaException e) {
+////            Messages.showMessageDialog(
+////                    "Error connection to VersionOne:\n" + e.getMessage(),
+////                    "Error",
+////                    Messages.getErrorIcon());
+//            LOG.error("Error connection to VersionOne", e);
+//            throw new ConnectException(e.getMessage());
+//        }
+
+        return result;
     }
 
-    public void refresh() {
+    public void refresh() throws ConnectException {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
+
+        tasksData = new Object[0][0];
+        defaultTaskData = new Object[0][0];
+        serverTaskList = new Task[0];
+
+        if (!isConnectionValid()) {
+            connect();
+        }
         synchronized (v1) {
             final Project project;
             try {
                 project = v1.get().projectByName(cfg.projectName);
-            } catch (SDKException e) {
+            } catch (Exception e) {
+//                Messages.showMessageDialog(
+//                        "Can't get '" + cfg.projectName + "' project:\n" + e.getMessage(),
+//                        "Error",
+//                        Messages.getErrorIcon());
                 LOG.error("Error on SDK level", e);
-                return;
-            }
+                throw new SDKException(e);
+            }// catch (MetaException e) {
+////                Messages.showMessageDialog(
+////                        "Can't get '" + cfg.projectName + "' project:\n" + e.getMessage(),
+////                        "Error",
+////                        Messages.getErrorIcon());
+//                LOG.error("Error on SDK level", e);
+//                return;
+//            }
             if (project == null) {
+                Messages.showMessageDialog(
+                        "There is no project:" + cfg.projectName,
+                        "Error",
+                        Messages.getErrorIcon());
                 LOG.error("There is no project: " + cfg.projectName);
                 return;
             }
@@ -166,7 +222,8 @@ public final class DataLayer {
         return data != null ? Double.parseDouble(data.toString()) : null;
     }
 
-    public synchronized void setNewTaskValue(int task, TasksProperties property) {
+    //TODO synchronized???
+    public void setNewTaskValue(int task, TasksProperties property) {
         System.out.print("Id=" + task);
         if (property != null) {
             System.out.println(" // name=" + property.name());
@@ -188,12 +245,16 @@ public final class DataLayer {
         }
     }
 
-    public synchronized int getTasksCount() {
-        return tasksData.length;
+    public int getTasksCount() {
+        synchronized (tasksData) {
+            return tasksData.length;
+        }
     }
 
-    public synchronized Object getTaskPropertyValue(int task, TasksProperties property) {
-        return tasksData[task][property.num];
+    public Object getTaskPropertyValue(int task, TasksProperties property) {
+        synchronized (tasksData) {
+            return tasksData[task][property.num];
+        }
     }
 
     public String[] getAllStatuses() {
@@ -207,23 +268,25 @@ public final class DataLayer {
         return instance;
     }
 
-    public synchronized void setTaskPropertyValue(int task, TasksProperties property, Object value) {
+    public void setTaskPropertyValue(int task, TasksProperties property, Object value) {
         Object data = null;
-        if (value != null) {
-            switch (property.type) {
-                case Text:
-                    data = value.toString();
-                    break;
-                case StatusList:
-                    if (!value.equals("")) {
+        synchronized (tasksData) {
+            if (value != null) {
+                switch (property.type) {
+                    case Text:
                         data = value.toString();
-                    }
-                    break;
-                case Number:
-                    if (!value.equals("")) {
-                        data = value;
-                    }
-                    break;
+                        break;
+                    case StatusList:
+                        if (!value.equals("")) {
+                            data = value.toString();
+                        }
+                        break;
+                    case Number:
+                        if (!value.equals("")) {
+                            data = value;
+                        }
+                        break;
+                }
             }
         }
 
@@ -238,24 +301,66 @@ public final class DataLayer {
         this.progressIndicator = null;
     }
 
+    private boolean isConnectionValid() {
+        boolean result = true;
+
+        if (v1 != null) {
+            try {
+                v1.validate();
+            } catch (ApplicationUnavailableException e) {
+                result = false;
+            }
+        }
+        else {
+            result = false;
+        }
+
+        return result;
+    }
+
     @NotNull
-    public ProjectTreeNode getProjects() {
+    public ProjectTreeNode getProjects() throws ConnectException {
         ProjectFilter filter = new ProjectFilter();
         filter.getState().add(BaseAssetFilter.State.Active);
-        Collection<Project> projects = v1.getProjects();
+        Collection<Project> projects;
+        ProjectTreeNode treeProjects = new ProjectTreeNode("", null, 0, "");
 
-        Project mainProject = projects.iterator().next();
-
-        ProjectTreeNode treeProjects = new ProjectTreeNode(mainProject.getName(), null, 0, mainProject.getID().getToken());
-
-        /*
-        Collection<Project> projects = v1.getProjects().iterator().next().getChildProjects(filter, true);
-        for(Project project : projects) {
-            getAllChildren(project, projects);
+        if (!isConnectionValid()) {
+            connect();
         }
-        */
 
         synchronized (v1) {
+            try {
+                projects = v1.getProjects();
+            } catch (Exception e) {
+//                Messages.showMessageDialog(
+//                        "Can't get projects list:\n" + e.getMessage(),
+//                        "Error",
+//                        Messages.getErrorIcon());
+                LOG.error("Error on SDK level", e);
+                throw new SDKException(e);
+//                return treeProjects;
+            } //catch (MetaException e) {
+//                Messages.showMessageDialog(
+//                        "Can't get projects list:\n" + e.getMessage(),
+//                        "Error",
+//                        Messages.getErrorIcon());
+//                LOG.error("Error connection to VersionOne", e);
+//                return treeProjects;
+//            }
+
+            Project mainProject = projects.iterator().next();
+
+            treeProjects = new ProjectTreeNode(mainProject.getName(), null, 0, mainProject.getID().getToken());
+
+            /*
+            Collection<Project> projects = v1.getProjects().iterator().next().getChildProjects(filter, true);
+            for(Project project : projects) {
+                getAllChildren(project, projects);
+            }
+            */
+
+
             recurseAndAddNodes(treeProjects.children, mainProject.getChildProjects(filter), null);
         }
 
@@ -278,42 +383,45 @@ public final class DataLayer {
     }
 
 
-    public synchronized boolean isTaskDataChanged(int task) {
+    public boolean isTaskDataChanged(int task) {
         boolean result = true;
 
-        for (TasksProperties property : TasksProperties.values()) {
 
-            // if property is not editable - next iteration
-            if (!property.isEditable) {
-                continue;
-            }
+        synchronized (tasksData) {
+            for (TasksProperties property : TasksProperties.values()) {
 
-            if (tasksData[task][property.num] != null &&
-                    defaultTaskData[task][property.num] != null) {
-                switch (property.type) {
-                    case Number:
-//                        Double editedNumber = Double.parseDouble(tasksData[task][property.num].toString());
-//                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.num].toString());
-                        BigDecimal editedNumber = (BigDecimal) tasksData[task][property.num];
-                        BigDecimal defaultNumber = (BigDecimal) defaultTaskData[task][property.num];
-                        result = result && editedNumber.equals(defaultNumber);
-                        break;
-                    case StatusList:
-                    case Text:
-                        String editedData = tasksData[task][property.num].toString();
-                        String defaultData = defaultTaskData[task][property.num].toString();
-                        result = result && editedData.equals(defaultData);
-                        break;
+                // if property is not editable - next iteration
+                if (!property.isEditable) {
+                    continue;
                 }
-            } else if (tasksData[task][property.num] == null &&
-                    defaultTaskData[task][property.num] == null) {
-                result = true;
-            } else {
-                result = false;
-            }
 
-            if (!result) {
-                break;
+                if (tasksData[task][property.num] != null &&
+                        defaultTaskData[task][property.num] != null) {
+                    switch (property.type) {
+                        case Number:
+    //                        Double editedNumber = Double.parseDouble(tasksData[task][property.num].toString());
+    //                        Double defaultNumber = Double.parseDouble(defaultTaskData[task][property.num].toString());
+                            BigDecimal editedNumber = (BigDecimal) tasksData[task][property.num];
+                            BigDecimal defaultNumber = (BigDecimal) defaultTaskData[task][property.num];
+                            result = result && editedNumber.equals(defaultNumber);
+                            break;
+                        case StatusList:
+                        case Text:
+                            String editedData = tasksData[task][property.num].toString();
+                            String defaultData = defaultTaskData[task][property.num].toString();
+                            result = result && editedData.equals(defaultData);
+                            break;
+                    }
+                } else if (tasksData[task][property.num] == null &&
+                        defaultTaskData[task][property.num] == null) {
+                    result = true;
+                } else {
+                    result = false;
+                }
+
+                if (!result) {
+                    break;
+                }
             }
         }
 

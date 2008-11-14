@@ -9,7 +9,11 @@ import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.ui.Messages;
 import com.versionone.integration.idea.DataLayer;
+import com.versionone.apiclient.V1Exception;
+
+import java.net.ConnectException;
 
 /**
  *
@@ -21,7 +25,8 @@ public class SaveData extends AnAction {
         final DataContext dataContext = e.getDataContext();
         final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final DataLayer data = DataLayer.getInstance();
+        final DataLayer data;
+        data = DataLayer.getInstance();
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {

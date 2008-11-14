@@ -3,7 +3,9 @@ package com.versionone.integration.idea;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.util.ui.Table;
+import com.versionone.apiclient.V1Exception;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -11,6 +13,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.net.ConnectException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,7 +34,8 @@ public class TasksTable extends Table {
     @Override
     public TableCellEditor getCellEditor(final int row, final int col) {
         if (col == 7) {
-            JComboBox comboEditor = new JComboBox(DataLayer.getInstance().getAllStatuses());
+            JComboBox comboEditor = null;
+            comboEditor = new JComboBox(DataLayer.getInstance().getAllStatuses());
             //select current value
             //comboEditor.setSelectedItem(DataLayer.getInstance().getValue(col, row));
             ItemListener listener = new ItemListener() {
