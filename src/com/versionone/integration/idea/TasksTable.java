@@ -8,11 +8,14 @@ import com.intellij.util.ui.Table;
 import com.versionone.apiclient.V1Exception;
 
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.help.plaf.basic.BasicFavoritesNavigatorUI;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Clipboard;
+import java.awt.event.*;
 import java.net.ConnectException;
 
 /**
@@ -50,6 +53,32 @@ public class TasksTable extends Table {
 
             comboEditor.addItemListener(listener);
             return new DefaultCellEditor(comboEditor);
+        } else if (col == 1 ) {
+
+            // create text field for ID
+            final JTextField textFild = new JTextField();
+            textFild.setEditable(false);
+            textFild.setEnabled(true);
+            textFild.setFocusable(true);
+            // popup menu with copy functionality
+            JPopupMenu menu = new JPopupMenu();
+            JMenuItem menuItem1 = new JMenuItem("Copy");
+            menuItem1.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    // Get the clipboard
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    // Set the sent text as the new content of the clipboard
+                    //clipboard.setContents(new StringSelection(textFild.getText()), null);
+                    textFild.copy();
+                }
+            });
+            menu.add(menuItem1);
+            textFild.add(menu);
+
+            MouseListener popupListener = new PopupListener(menu);
+            textFild.addMouseListener(popupListener);
+
+            return new DefaultCellEditor(textFild);
         } else {
             return super.getCellEditor(row, col);
         }
@@ -80,4 +109,30 @@ public class TasksTable extends Table {
 
         return c;
     }
+
+    /**
+     * Listens for debug window popup dialog events.
+     */
+    private class PopupListener extends MouseAdapter {
+        JPopupMenu popup;
+
+        PopupListener(JPopupMenu popupMenu) {
+            popup = popupMenu;
+        }
+
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        private void maybeShowPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
+    }
+
 }

@@ -4,7 +4,7 @@ package com.versionone.integration.idea;
 public enum TasksProperties {
 
     Title(0, "Task", Type.Text, true),
-    ID(1, "ID", Type.Text, false),
+    ID(1, "ID", Type.Text, true),
     Parent(2, "Story", Type.Text, false),
     DetailEstimeate(3, "Detailed Estimate", Type.Number, true),
     Done(4, "Done", Type.Number, false),
