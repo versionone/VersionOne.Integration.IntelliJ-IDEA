@@ -116,36 +116,28 @@ public final class DataLayer {
                     setTaskData(tasksData[i++], task);
                 }
             }
-            tasksData = copyOfArray(tasksData, i);
+            tasksData = copyOf2DArray(tasksData, i);
             serverTaskList = copyOfArray(serverTaskList, i);
-
-            saveDefaultTaskData();
+            defaultTaskData = copyOf2DArray(tasksData, i);
 
             System.out.println("=============== Got " + tasks.size() + " tasks, used " + tasksData.length + " ============");
             wr();
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T[] copyOfArray(T[] source, int i) {
         T[] result = (T[]) Array.newInstance(source.getClass().getComponentType(), i);
         System.arraycopy(source, 0, result, 0, i);
         return result;
     }
 
-    private static Object[][] copyOfArray(Object[][] source, int i) {
-        Object[][] res;
-        if (source == null) {
-            res = null;
-        } else if (source.length == 0 || i == 0) {
-            res = new Object[source.length][];
-        } else {
-            res = new Object[i][];
-            for (int j = 0; j < i; j++) {
-                Object[] src = source[j];
-                Object[] dest = new Object[src.length];
-                System.arraycopy(src, 0, dest, 0, src.length);
-                res[j] = dest;
-            }
+    @SuppressWarnings("unchecked")
+    private static <T> T[][] copyOf2DArray(@NotNull T[][] source, int i) {
+        T[][] res;
+        res = (T[][]) Array.newInstance(source.getClass().getComponentType(), i);
+        for (int j = 0; j < i; j++) {
+            res[j] = copyOfArray(source[j], source[j].length);
         }
         return res;
     }
@@ -163,19 +155,6 @@ public final class DataLayer {
 
     private static BigDecimal getBigDecimal(Double toDo) {
         return toDo == null ? null : BigDecimal.valueOf(toDo).setScale(2, BigDecimal.ROUND_HALF_UP);
-    }
-
-    private void saveDefaultTaskData() {
-        // TODO defaultTaskData = tasksData.clone();
-        if (tasksData.length > 0) {
-            defaultTaskData = new Object[tasksData.length][tasksData[0].length];
-
-            for (int i = 0; i < tasksData.length; i++) {
-                for (int j = 0; j < tasksData[i].length; j++) {
-                    defaultTaskData[i][j] = tasksData[i][j];
-                }
-            }
-        }
     }
 
     public void commitChangedTaskData() {
@@ -199,7 +178,7 @@ public final class DataLayer {
     }
 
     private Double getDoubleValue(Object data) {
-        return data != null ? ((BigDecimal) data).doubleValue() : null;
+        return data != null ? ((Number) data).doubleValue() : null;
     }
 
     /**
