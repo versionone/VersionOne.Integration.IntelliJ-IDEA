@@ -176,7 +176,7 @@
             </fileset>
         </cobertura-instrument>
 
-        <junit fork="yes" printsummary="withOutAndErr">
+        <junit fork="true" printsummary="withOutAndErr" jvm="${java.dir}\..\jre\bin\java.exe">
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${coverage.file}"/>
             <!--<sysproperty key="test.websiteurl" value="${test.websiteurl}"/>-->
 
