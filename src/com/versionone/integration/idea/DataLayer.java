@@ -19,9 +19,9 @@ import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.net.ConnectException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -116,14 +116,38 @@ public final class DataLayer {
                     setTaskData(tasksData[i++], task);
                 }
             }
-            tasksData = Arrays.copyOf(tasksData, i);
-            serverTaskList = Arrays.copyOf(serverTaskList, i);
+            tasksData = copyOfArray(tasksData, i);
+            serverTaskList = copyOfArray(serverTaskList, i);
 
             saveDefaultTaskData();
 
             System.out.println("=============== Got " + tasks.size() + " tasks, used " + tasksData.length + " ============");
             wr();
         }
+    }
+
+    private static <T> T[] copyOfArray(T[] source, int i) {
+        T[] result = (T[]) Array.newInstance(source.getClass().getComponentType(), i);
+        System.arraycopy(source, 0, result, 0, i);
+        return result;
+    }
+
+    private static Object[][] copyOfArray(Object[][] source, int i) {
+        Object[][] res;
+        if (source == null) {
+            res = null;
+        } else if (source.length == 0 || i == 0) {
+            res = new Object[source.length][];
+        } else {
+            res = new Object[i][];
+            for (int j = 0; j < i; j++) {
+                Object[] src = source[j];
+                Object[] dest = new Object[src.length];
+                System.arraycopy(src, 0, dest, 0, src.length);
+                res[j] = dest;
+            }
+        }
+        return res;
     }
 
     private static void setTaskData(Object[] data, Task task) {

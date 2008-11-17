@@ -11,12 +11,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.peer.PeerFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.ide.structureView.StructureView;
 import static com.versionone.integration.idea.TasksProperties.DetailEstimeate;
 import static com.versionone.integration.idea.TasksProperties.Done;
 import static com.versionone.integration.idea.TasksProperties.Effort;
@@ -87,8 +84,8 @@ public class TasksComponent implements ProjectComponent {
 
         ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
         ContentFactory contentFactory;
-//        contentFactory = ContentFactory.SERVICE.getInstance();
-        contentFactory = PeerFactory.getInstance().getContentFactory();
+        contentFactory = ContentFactory.SERVICE.getInstance();
+//        contentFactory = PeerFactory.getInstance().getContentFactory();
         content = contentFactory.createContent(contentPanel, cfg.projectName, false);
         toolWindow.getContentManager().addContent(content);
     }
@@ -116,7 +113,6 @@ public class TasksComponent implements ProjectComponent {
     private TasksTable createTable() {
         TasksTable table = new TasksTable(new HorizontalTableModel(tasksColumnData));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setFillsViewportHeight(true);
         return table;
     }
 

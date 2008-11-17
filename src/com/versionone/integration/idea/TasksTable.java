@@ -10,10 +10,15 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
- * Created by IntelliJ IDEA.
  */
 public class TasksTable extends Table {
 
@@ -47,8 +52,7 @@ public class TasksTable extends Table {
 
             comboEditor.addItemListener(listener);
             return new DefaultCellEditor(comboEditor);
-        } else if (col == 1 ) {
-
+        } else if (col == 1) {
             // create text field for ID
             final JTextField textFild = new JTextField();
             textFild.setEditable(false);
@@ -80,7 +84,6 @@ public class TasksTable extends Table {
 
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int vColIndex) {
-
         Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
         if (rowIndex != getSelectedRow()) {
             if (getModel().isRowChanged(rowIndex)) {
@@ -93,12 +96,6 @@ public class TasksTable extends Table {
         } else {
             c.setBackground(getSelectionBackground());
             c.setForeground(getSelectionForeground());
-        }
-
-        JTable.DropLocation dropLocation = getDropLocation();
-        if (dropLocation != null) {
-            System.out.println("rowIndex=" + rowIndex + " vColIndex=" + vColIndex);
-            System.out.println("dropLocation.getColumn()=" + dropLocation.getColumn() + " dropLocation.getRow()=" + dropLocation.getRow());
         }
 
         return c;
@@ -128,5 +125,4 @@ public class TasksTable extends Table {
             }
         }
     }
-
 }
