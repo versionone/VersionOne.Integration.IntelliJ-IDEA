@@ -1,13 +1,14 @@
 package com.versionone.integration.idea;
 
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 
-/*
+
 @State(name = "V1PluginSettings", storages = {
         @Storage(id = "other",
                 file = "$WORKSPACE_FILE$"
         )})
-*/
 public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSettings> {
     public String v1Path = "http://jsdksrv01/VersionOne/";
     public String user = "admin";

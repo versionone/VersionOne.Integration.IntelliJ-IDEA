@@ -1,10 +1,7 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea.actions;
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -24,7 +21,8 @@ public class FilterAction extends AnAction {
 
     public void actionPerformed(AnActionEvent e) {
         final DataContext dataContext = e.getDataContext();
-        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
+//        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
+        final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
         if (ideaProject != null && filterDialog(ideaProject)) {
             //DataLayer.getInstance().refresh();
             ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);

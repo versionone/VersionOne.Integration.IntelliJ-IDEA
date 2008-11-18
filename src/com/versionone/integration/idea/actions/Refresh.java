@@ -4,6 +4,7 @@ package com.versionone.integration.idea.actions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.progress.ProgressManager;
@@ -19,7 +20,8 @@ public class Refresh extends AnAction {
         System.out.println("Refresh.actionPerformed()");//TODO delete trace output
 
         final DataContext dataContext = e.getDataContext();
-        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
+//        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
+        final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
         final DataLayer data;
         try {
             data = DataLayer.getInstance();
