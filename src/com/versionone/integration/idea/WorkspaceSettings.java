@@ -3,7 +3,6 @@ package com.versionone.integration.idea;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.util.xmlb.XmlSerializerUtil;
 
 
 @State(name = "V1PluginSettings", storages = {
@@ -19,9 +18,9 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
 
     private static WorkspaceSettings setting = new WorkspaceSettings();
 
-//    // singelton
-//    private WorkspaceSettings() {
-//    }
+    // singelton
+    private WorkspaceSettings() {
+    }
 
     public WorkspaceSettings getState() {
         return this;
@@ -33,8 +32,6 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
         v1Path = state.v1Path;
         projectName = state.projectName;
         isShowAllTask = state.isShowAllTask;
-        //XmlSerializerUtil.copyBean(state, this);
-
     }
 
     public static WorkspaceSettings getInstance() {
