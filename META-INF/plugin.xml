@@ -26,6 +26,10 @@
 
             <!--<interface-class>com.versionone.integration.idea.TasksComponent</interface-class>-->
         </component>
+        <component>
+            <implementation-class>com.versionone.integration.idea.WorkspaceSettings</implementation-class>
+        </component>
+
     </project-components>
 
     <actions>
