@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.Table;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -35,11 +36,11 @@ public class TasksTable extends Table {
 
     @Override
     public TableCellEditor getCellEditor(final int row, final int col) {
-        if (col == 7) {
-            JComboBox comboEditor = null;
-            comboEditor = new JComboBox(DataLayer.getInstance().getAllStatuses());
+        if (getModel().getColumnType(col) == TasksProperties.Type.StatusList) {
+            JComboBox comboEditor = new JComboBox(DataLayer.getInstance().getAllStatuses());
             //select current value
             //comboEditor.setSelectedItem(DataLayer.getInstance().getValue(col, row));
+            comboEditor.setBorder(null);
             ItemListener listener = new ItemListener() {
 
                 public void itemStateChanged(ItemEvent e) {
@@ -52,12 +53,13 @@ public class TasksTable extends Table {
 
             comboEditor.addItemListener(listener);
             return new DefaultCellEditor(comboEditor);
-        } else if (col == 1) {
+        } else if (getModel().getColumnName(col).equals("ID")) {
             // create text field for ID
             final JTextField textFild = new JTextField();
             textFild.setEditable(false);
             textFild.setEnabled(true);
             textFild.setFocusable(true);
+            textFild.setBorder(new LineBorder(Color.black));
             // popup menu with copy functionality
             JPopupMenu menu = new JPopupMenu();
             JMenuItem menuItem1 = new JMenuItem("Copy");

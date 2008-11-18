@@ -89,4 +89,8 @@ public class HorizontalTableModel extends AbstractTableModel {
     private TasksProperties getColumnData(int column) {
         return data.isTrackEffort() ? tasksColumnDataEffort[column] : tasksColumnData[column];
     }
+
+    public TasksProperties.Type getColumnType(int column) {
+        return getColumnData(column).type;
+    }
 }
