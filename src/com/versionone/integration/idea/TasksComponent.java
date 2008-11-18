@@ -14,14 +14,6 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
-import static com.versionone.integration.idea.TasksProperties.DetailEstimeate;
-import static com.versionone.integration.idea.TasksProperties.Done;
-import static com.versionone.integration.idea.TasksProperties.Effort;
-import static com.versionone.integration.idea.TasksProperties.ID;
-import static com.versionone.integration.idea.TasksProperties.Parent;
-import static com.versionone.integration.idea.TasksProperties.Status;
-import static com.versionone.integration.idea.TasksProperties.Title;
-import static com.versionone.integration.idea.TasksProperties.ToDo;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +26,6 @@ public class TasksComponent implements ProjectComponent {
     private static final Logger LOG = Logger.getLogger(TasksComponent.class);
     @NonNls
     public static final String TOOL_WINDOW_ID = "V1Integration";
-    private static final TasksProperties[] tasksColumnData = {Title, ID, Parent, DetailEstimeate, Done, Effort, ToDo, Status};
 
     private final Project project;
 
@@ -111,7 +102,7 @@ public class TasksComponent implements ProjectComponent {
     }
 
     private TasksTable createTable() {
-        TasksTable table = new TasksTable(new HorizontalTableModel(tasksColumnData));
+        final TasksTable table = new TasksTable(new HorizontalTableModel());
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         return table;
     }

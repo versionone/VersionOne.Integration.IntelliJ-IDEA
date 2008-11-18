@@ -1,41 +1,47 @@
 package com.versionone.integration.idea;
 
-import com.versionone.apiclient.V1Exception;
-import com.intellij.openapi.ui.Messages;
+import static com.versionone.integration.idea.TasksProperties.DETAIL_ESTIMATE;
+import static com.versionone.integration.idea.TasksProperties.DONE;
+import static com.versionone.integration.idea.TasksProperties.EFFORT;
+import static com.versionone.integration.idea.TasksProperties.ID;
+import static com.versionone.integration.idea.TasksProperties.PARENT;
+import static com.versionone.integration.idea.TasksProperties.STATUS;
+import static com.versionone.integration.idea.TasksProperties.TITLE;
+import static com.versionone.integration.idea.TasksProperties.TO_DO;
 
 import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;
-import java.net.ConnectException;
 
 /**
  *
  */
 public class HorizontalTableModel extends AbstractTableModel {
 
-    private final TasksProperties[] columnData;
+    private static final TasksProperties[] tasksColumnDataEffort =
+            {TITLE, ID, PARENT, DETAIL_ESTIMATE, DONE, EFFORT, TO_DO, STATUS};
+    private static final TasksProperties[] tasksColumnData =
+            {TITLE, ID, PARENT, DETAIL_ESTIMATE, TO_DO, STATUS};
+
     private final DataLayer data;
 
-    public HorizontalTableModel(TasksProperties[] columnData) {
-        this.columnData = columnData;
-        
+    public HorizontalTableModel() {
         data = DataLayer.getInstance();
     }
 
     public int getRowCount() {
         if (data != null) {
             return data.getTasksCount();
-        }
-        else {
+        } else {
             return 0;
         }
     }
 
     public int getColumnCount() {
-        return columnData.length;
+        return data.isTrackEffort() ? tasksColumnDataEffort.length : tasksColumnData.length;
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return roundIfBigDecimal(data.getTaskPropertyValue(rowIndex, columnData[columnIndex]));
+        return roundIfBigDecimal(data.getTaskPropertyValue(rowIndex, getColumnData(columnIndex)));
     }
 
     private static Object roundIfBigDecimal(Object value) {
@@ -49,17 +55,17 @@ public class HorizontalTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        return columnData[column].columnName;
+        return getColumnData(column).columnName;
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnData[columnIndex].isEditable;
+        return getColumnData(columnIndex).isEditable;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnData[columnIndex].type == TasksProperties.Type.Number) {
+        if (getColumnData(columnIndex).type == TasksProperties.Type.Number) {
             try {
                 aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
             } catch (Exception e) {
@@ -67,7 +73,7 @@ public class HorizontalTableModel extends AbstractTableModel {
                 return;
             }
         }
-        data.setTaskPropertyValue(rowIndex, columnData[columnIndex], aValue);
+        data.setTaskPropertyValue(rowIndex, getColumnData(columnIndex), aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
@@ -77,6 +83,10 @@ public class HorizontalTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return columnData[columnIndex].type.columnClass;
+        return getColumnData(columnIndex).type.columnClass;
+    }
+
+    private TasksProperties getColumnData(int column) {
+        return data.isTrackEffort() ? tasksColumnDataEffort[column] : tasksColumnData[column];
     }
 }

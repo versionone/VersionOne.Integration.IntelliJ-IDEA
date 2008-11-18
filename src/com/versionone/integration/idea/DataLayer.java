@@ -38,7 +38,7 @@ public final class DataLayer {
     private V1Instance v1;
     private Member member;
     private IStatusCodes statusList;
-    private boolean trackEffort;
+    private Boolean trackEffort;
     private Object[][] tasksData = new Object[0][];
     private Object[][] defaultTaskData = new Object[0][0];
     private Task[] serverTaskList = new Task[0];
@@ -64,7 +64,7 @@ public final class DataLayer {
             trackEffort = v1.getConfiguration().effortTrackingEnabled;
             member = v1.get().memberByUserName(cfg.user);
         } catch (Exception e) {
-            LOG.error("Error connection to VersionOne", e);
+            LOG.warn("Error connection to VersionOne", e);
             throw new ConnectException(e.getMessage());
         }
     }
@@ -84,12 +84,12 @@ public final class DataLayer {
             try {
                 project = v1.get().projectByName(cfg.projectName);
             } catch (Exception e) {
-                LOG.error("Cannot get project from server", e);
+                LOG.warn("Cannot get project from server", e);
                 throw new SDKException(e);
             }
             if (project == null) {
                 final SDKException ex = new SDKException("There is no project: " + cfg.projectName);
-                LOG.error(ex.getMessage(), ex);
+                LOG.warn(ex.getMessage(), ex);
                 throw ex;
             }
 
@@ -143,25 +143,28 @@ public final class DataLayer {
     }
 
     private static void setTaskData(Object[] data, Task task) {
-        data[TasksProperties.Title.num] = task.getName();
+        data[TasksProperties.TITLE.num] = task.getName();
         data[TasksProperties.ID.num] = task.getDisplayID();
-        data[TasksProperties.Parent.num] = task.getParent().getName();
-        data[TasksProperties.DetailEstimeate.num] = getBigDecimal(task.getDetailEstimate());
-        data[TasksProperties.Done.num] = getBigDecimal(task.getDone());
-        data[TasksProperties.Effort.num] = getBigDecimal(0D);
-        data[TasksProperties.ToDo.num] = getBigDecimal(task.getToDo());
-        data[TasksProperties.Status.num] = task.getStatus().getCurrentValue();
+        data[TasksProperties.PARENT.num] = task.getParent().getName();
+        data[TasksProperties.DETAIL_ESTIMATE.num] = getBigDecimal(task.getDetailEstimate());
+        data[TasksProperties.DONE.num] = getBigDecimal(task.getDone());
+        data[TasksProperties.EFFORT.num] = getBigDecimal(0D);
+        data[TasksProperties.TO_DO.num] = getBigDecimal(task.getToDo());
+        data[TasksProperties.STATUS.num] = task.getStatus().getCurrentValue();
     }
 
     private static BigDecimal getBigDecimal(Double toDo) {
         return toDo == null ? null : BigDecimal.valueOf(toDo).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
-    public void commitChangedTaskData() {
+    /**
+     * @throws IllegalStateException if trying to commit Efforts when EffortTracking disabled.
+     */
+    public void commitChangedTaskData() throws IllegalStateException {
         synchronized (v1) {
             for (int i = 0; i < tasksData.length; i++) {
                 if (isTaskDataChanged(i)) {
-                    updateServerTask(serverTaskList[i], tasksData[i]);
+                    updateServerTask(i);
                     serverTaskList[i].save();
                     System.out.println("Saved:" + i);
                 }
@@ -169,15 +172,27 @@ public final class DataLayer {
         }
     }
 
-    private void updateServerTask(Task task, Object[] data) {
-        task.setName(data[TasksProperties.Title.num].toString());
-        task.setDetailEstimate(getDoubleValue(data[TasksProperties.DetailEstimeate.num]));
-        task.createEffort(getDoubleValue(data[TasksProperties.Effort.num]), member);
-        task.setToDo(getDoubleValue(data[TasksProperties.ToDo.num]));
-        task.getStatus().setCurrentValue(data[TasksProperties.Status.num] != null ? data[TasksProperties.Status.num].toString() : null);
+    private void updateServerTask(int i) {
+        Task task = serverTaskList[i];
+        Object[] data = tasksData[i];
+        if (isTaskPropertyChanged(i, TasksProperties.TITLE)) {
+            task.setName(data[TasksProperties.TITLE.num].toString());
+        }
+        if (isTaskPropertyChanged(i, TasksProperties.DETAIL_ESTIMATE)) {
+            task.setDetailEstimate(getDoubleValue(data[TasksProperties.DETAIL_ESTIMATE.num]));
+        }
+        if (isTaskPropertyChanged(i, TasksProperties.EFFORT)) {
+            task.createEffort(getDoubleValue(data[TasksProperties.EFFORT.num]), member);
+        }
+        if (isTaskPropertyChanged(i, TasksProperties.TO_DO)) {
+            task.setToDo(getDoubleValue(data[TasksProperties.TO_DO.num]));
+        }
+        if (isTaskPropertyChanged(i, TasksProperties.STATUS)) {
+            task.getStatus().setCurrentValue(data[TasksProperties.STATUS.num] != null ? data[TasksProperties.STATUS.num].toString() : null);
+        }
     }
 
-    private Double getDoubleValue(Object data) {
+    private static Double getDoubleValue(Object data) {
         return data != null ? ((Number) data).doubleValue() : null;
     }
 
@@ -206,6 +221,10 @@ public final class DataLayer {
         synchronized (tasksData) {
             return tasksData[task][property.num];
         }
+    }
+
+    public boolean isTrackEffort() {
+        return trackEffort == null ? false : trackEffort;
     }
 
     public String[] getAllStatuses() {
@@ -279,7 +298,7 @@ public final class DataLayer {
             try {
                 projects = v1.getProjects();
             } catch (Exception e) {
-                LOG.error("Can't get projects list.", e);
+                LOG.warn("Can't get projects list.", e);
                 throw new SDKException("Can't get projects list.", e);
             }
             Project mainProject = projects.iterator().next();
@@ -308,24 +327,22 @@ public final class DataLayer {
     public boolean isTaskDataChanged(int task) {
         synchronized (tasksData) {
             for (TasksProperties property : TasksProperties.values()) {
-                // skip not editable properties
-                if (!property.isEditable) {
-                    continue;
-                }
-
-                final Object actual = tasksData[task][property.num];
-                final Object expected = defaultTaskData[task][property.num];
-                if (actual == null) {
-                    if (expected != null) {
-                        return true;
-                    }
-                } else {
-                    if (!actual.equals(expected)) {
-                        return true;
-                    }
+                if (property.isEditable && isTaskPropertyChanged(task, property)) {
+                    return true;
                 }
             }
         }
         return false;
+    }
+
+    public boolean isTaskPropertyChanged(int task, TasksProperties property) {
+        synchronized (tasksData) {
+            final Object actual = tasksData[task][property.num];
+            final Object expected = defaultTaskData[task][property.num];
+            if (actual == null) {
+                return expected != null;
+            }
+            return !actual.equals(expected);
+        }
     }
 }

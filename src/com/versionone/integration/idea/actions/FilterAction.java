@@ -1,8 +1,11 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea.actions;
 
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -24,10 +27,7 @@ public class FilterAction extends AnAction {
 //        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
         final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
         if (ideaProject != null && filterDialog(ideaProject)) {
-            //DataLayer.getInstance().refresh();
             ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
-            //final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
-            //tc.updateDisplayName();
         }
     }
 
@@ -35,25 +35,7 @@ public class FilterAction extends AnAction {
 
         final ProgressManager progressManager = ProgressManager.getInstance();
         final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
-        final boolean[] isError = new boolean[]{true};
-
-//        new Task.Modal(ideaProject, "Loading project list", false) {
-
-//            public void run(ProgressIndicator indicator) {
-//                indicator.setFraction(0.000001);
-//
-////                for (Double i=0.001; i<1; i += 0.001) {
-////                    try {
-////                        Thread.sleep(1);
-////                    } catch (InterruptedException e) {
-////                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-////                    }
-////
-////                }
-//                projectsRoot[0] = DataLayer.getInstance().getProjects();
-//            }
-//
-//        }.queue();
+        final boolean[] isError = new boolean[]{false};
 
         final DataLayer data;
         data = DataLayer.getInstance();
@@ -66,7 +48,7 @@ public class FilterAction extends AnAction {
                 try {
                     projectsRoot[0] = data.getProjects();
                 } catch (ConnectException e) {
-                    isError[0] = false;
+                    isError[0] = true;
                 }
                 data.setProgressIndicator(null);
             }
@@ -80,11 +62,10 @@ public class FilterAction extends AnAction {
             return false;
         }
 
-        if (!isError[0]) {
-            Messages.showMessageDialog(
+        if (isError[0]) {
+            Messages.showErrorDialog(
                     "Error connection to the VesionOne server",
-                    "Error",
-                    Messages.getErrorIcon());
+                    "Error");
             return false;
         }
 
