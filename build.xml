@@ -184,6 +184,7 @@
                 <pathelement location="${coverage.classes}"/>
                 <pathelement location="${bin.product.dir}"/>
                 <path refid="classpath"/>
+                <path refid="idea.classpath"/>
             </classpath>
             <formatter type="xml"/>
 
