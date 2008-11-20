@@ -30,15 +30,15 @@
 
     <actions>
         <group id="V1.ToolWindow">
+            <action id="V1.SaveData" icon="/actions/menu-saveall.png"
+                    class="com.versionone.integration.idea.actions.SaveData"
+                    text="Save" description="Save data to VersionOne."/>
+
             <action id="V1.toolRefresh" icon="/actions/sync.png"
                     class="com.versionone.integration.idea.actions.Refresh"
                     text="Refresh" description="Refresh tasks data from VersionOne.">
                 <keyboard-shortcut keymap="$default" first-keystroke="F5"/>
             </action>
-
-            <action id="V1.SaveData" icon="/actions/menu-saveall.png"
-                    class="com.versionone.integration.idea.actions.SaveData"
-                    text="Save" description="Save data to VersionOne."/>
 
             <action id="Filter" icon="/debugger/class_filter.png"
                     class="com.versionone.integration.idea.actions.FilterAction"
