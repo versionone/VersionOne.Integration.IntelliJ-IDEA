@@ -1,0 +1,3 @@
+To manually install VersionOne IDEA plugin you need download V1IdeaPlugin.8.1.xx.zip from
+http://corp.versionone.net:60082/Builds/Java/Idea/PlugIn/
+and extract it to plugins/ subdirectory of IDEA installation directory. 
