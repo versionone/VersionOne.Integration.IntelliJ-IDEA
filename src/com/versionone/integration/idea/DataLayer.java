@@ -59,8 +59,6 @@ public final class DataLayer {
         try {
             v1 = new V1Instance(cfg.v1Path, cfg.user, cfg.passwd);
             v1.validate();
-            final ApiClientInternals apiClient = v1.getApiClient();
-            statusList = new TaskStatusCodes(apiClient.getMetaModel(), apiClient.getServices());
             trackEffort = v1.getConfiguration().effortTrackingEnabled;
             member = v1.get().memberByUserName(cfg.user);
         } catch (Exception e) {
@@ -71,6 +69,14 @@ public final class DataLayer {
 
     public void refresh() throws ConnectException {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
+
+        try {
+            final ApiClientInternals apiClient = v1.getApiClient();
+            statusList = new TaskStatusCodes(apiClient.getMetaModel(), apiClient.getServices());
+        } catch (Exception e) {
+            LOG.warn("Error connection to VersionOne", e);
+            throw new ConnectException(e.getMessage());
+        }
 
         tasksData = new Object[0][];
         defaultTaskData = new Object[0][];
