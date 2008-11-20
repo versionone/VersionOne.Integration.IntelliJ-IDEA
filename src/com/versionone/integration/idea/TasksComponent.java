@@ -81,14 +81,10 @@ public class TasksComponent implements ProjectComponent {
         toolWindow.getContentManager().addContent(content);
     }
 
-    public void updateDisplayName() {
+    public void update() {
         if (content != null) {
             content.setDisplayName(cfg.projectName);
         }
-        revalidate();
-    }
-
-    public void revalidate() {
         table.revalidate();
         table.repaint();
     }

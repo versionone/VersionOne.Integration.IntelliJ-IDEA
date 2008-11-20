@@ -70,64 +70,63 @@ public final class DataLayer {
     public void refresh() throws ConnectException {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
 
+        Object[][] newTasksData = new Object[0][];
+        Task[] newServerTaskList = new Task[0];
+
         try {
             final ApiClientInternals apiClient = v1.getApiClient();
             statusList = new TaskStatusCodes(apiClient.getMetaModel(), apiClient.getServices());
+
+            if (!isConnectionValid()) {
+                connect();
+            }
+            synchronized (v1) {
+                final Project project;
+                project = v1.get().projectByName(cfg.projectName);
+                if (project == null) {
+                    final SDKException ex = new SDKException("There is no project: " + cfg.projectName);
+                    LOG.warn(ex.getMessage(), ex);
+                    throw ex;
+                }
+
+                final TaskFilter filter = new TaskFilter();
+                final Collection<Project> childProjects = project.getThisAndAllChildProjects();
+
+                for (Project prj : childProjects) {
+                    if (prj.isActive()) {
+                        filter.project.add(prj);
+                    }
+                }
+                filter.getState().add(BaseAssetFilter.State.Active);
+                if (!cfg.isShowAllTask) {
+                    filter.owners.add(member);
+                }
+                Collection<Task> tasks = v1.get().tasks(filter);
+                newTasksData = new Object[tasks.size()][TasksProperties.values().length];
+                newServerTaskList = new Task[tasks.size()];
+                int i = 0;
+                for (Task task : tasks) {
+                    final Iteration iteration = task.getParent().getIteration();
+                    if (iteration != null && iteration.isActive()) {
+                        newServerTaskList[i] = task;
+                        setTaskData(newTasksData[i++], task);
+                    }
+                }
+                newTasksData = copyOf2DArray(newTasksData, i);
+                newServerTaskList = copyOfArray(newServerTaskList, i);
+
+                System.out.println("=============== Got " + tasks.size() + " tasks, used " + tasksData.length + " ============");
+                wr();
+            }
         } catch (Exception e) {
             LOG.warn("Error connection to VersionOne", e);
             throw new ConnectException(e.getMessage());
-        }
-
-        tasksData = new Object[0][];
-        defaultTaskData = new Object[0][];
-        serverTaskList = new Task[0];
-
-        if (!isConnectionValid()) {
-            connect();
-        }
-        synchronized (v1) {
-            final Project project;
-            try {
-                project = v1.get().projectByName(cfg.projectName);
-            } catch (Exception e) {
-                LOG.warn("Cannot get project from server", e);
-                throw new SDKException(e);
+        } finally {
+            synchronized (tasksData) {
+                tasksData = newTasksData;
+                serverTaskList = newServerTaskList;
+                defaultTaskData = copyOf2DArray(newTasksData, newTasksData.length);
             }
-            if (project == null) {
-                final SDKException ex = new SDKException("There is no project: " + cfg.projectName);
-                LOG.warn(ex.getMessage(), ex);
-                throw ex;
-            }
-
-            final TaskFilter filter = new TaskFilter();
-            final Collection<Project> childProjects = project.getThisAndAllChildProjects();
-
-            for (Project prj : childProjects) {
-                if (prj.isActive()) {
-                    filter.project.add(prj);
-                }
-            }
-            filter.getState().add(BaseAssetFilter.State.Active);
-            if (!cfg.isShowAllTask) {
-                filter.owners.add(member);
-            }
-            Collection<Task> tasks = v1.get().tasks(filter);
-            tasksData = new Object[tasks.size()][TasksProperties.values().length];
-            serverTaskList = new Task[tasks.size()];
-            int i = 0;
-            for (Task task : tasks) {
-                final Iteration iteration = task.getParent().getIteration();
-                if (iteration != null && iteration.isActive()) {
-                    serverTaskList[i] = task;
-                    setTaskData(tasksData[i++], task);
-                }
-            }
-            tasksData = copyOf2DArray(tasksData, i);
-            serverTaskList = copyOfArray(serverTaskList, i);
-            defaultTaskData = copyOf2DArray(tasksData, i);
-
-            System.out.println("=============== Got " + tasks.size() + " tasks, used " + tasksData.length + " ============");
-            wr();
         }
     }
 
