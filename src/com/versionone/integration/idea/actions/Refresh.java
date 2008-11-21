@@ -14,13 +14,15 @@ import com.versionone.integration.idea.TasksComponent;
 import java.net.ConnectException;
 
 public class Refresh extends AnAction {
+    private DataLayer dataLayer;
+
     public void actionPerformed(AnActionEvent e) {
         System.out.println("Refresh.actionPerformed()");//TODO delete trace output
 
         final DataContext dataContext = e.getDataContext();
 //        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
         final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
-        final DataLayer data = DataLayer.getInstance();
+        final DataLayer data = dataLayer;
         try {
             if (ideaProject == null) {
                 data.refresh();
@@ -59,5 +61,9 @@ public class Refresh extends AnAction {
 
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         tc.update();
+    }
+
+    public void setDataLayer(DataLayer data) {
+        this.dataLayer = data;
     }
 }

@@ -4,6 +4,7 @@ package com.versionone.integration.idea;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.colors.ColorKey;
@@ -14,6 +15,9 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
+import com.versionone.integration.idea.actions.FilterAction;
+import com.versionone.integration.idea.actions.SaveData;
+import com.versionone.integration.idea.actions.Refresh;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -30,14 +34,23 @@ public class TasksComponent implements ProjectComponent {
     private final Project project;
 
     private Content content;
-    private WorkspaceSettings cfg = WorkspaceSettings.getInstance();
+    private WorkspaceSettings cfg;
     private TasksTable table;
+    private DataLayer dataLayer;
+    //private String[] actions = new String[]{"V1.SaveData", "V1.toolRefresh", "Filter"};
 
 
     public TasksComponent(Project project, WorkspaceSettings settings) {
         this.project = project;
         cfg = settings;
-        WorkspaceSettings.setCfg(cfg);
+        dataLayer = new DataLayer(cfg);
+        // set DataLayer to all actions
+        ActionManager actions = ActionManager.getInstance();
+        ((SaveData)actions.getAction("V1.SaveData")).setDataLayer(dataLayer);
+        ((Refresh)actions.getAction("V1.toolRefresh")).setDataLayer(dataLayer);
+        //((FilterAction)actions.getAction("Filter")).setDataLayer(dataLayer);
+        ((FilterAction)actions.getAction("Filter")).setSettings(cfg);
+
     }
 
     public void projectOpened() {
@@ -100,7 +113,7 @@ public class TasksComponent implements ProjectComponent {
     }
 
     private TasksTable createTable() {
-        final TasksTable table = new TasksTable(new HorizontalTableModel());
+        final TasksTable table = new TasksTable(new HorizontalTableModel(dataLayer), dataLayer);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         return table;
     }

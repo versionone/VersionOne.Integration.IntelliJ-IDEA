@@ -24,8 +24,8 @@ public class HorizontalTableModel extends AbstractTableModel {
 
     private final DataLayer data;
 
-    public HorizontalTableModel() {
-        data = DataLayer.getInstance();
+    public HorizontalTableModel(DataLayer data) {
+        this.data = data;
     }
 
     public int getRowCount() {

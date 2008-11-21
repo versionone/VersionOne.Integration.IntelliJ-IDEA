@@ -17,12 +17,12 @@ public class DataLayerTest {
 
     @Before
     public void before() {
-        final WorkspaceSettings settings = WorkspaceSettings.getInstance();
+        final WorkspaceSettings settings = new WorkspaceSettings();
         settings.v1Path = "http://eval.versionone.net/ExigenTest/";
         settings.user = "admin";
         settings.passwd = "admin";
         settings.projectName = "System (All Projects)";
-        data = DataLayer.getInstance();
+        data = new DataLayer(settings);
     }
 
     /**

@@ -15,6 +15,8 @@ import com.versionone.integration.idea.DataLayer;
  *
  */
 public class SaveData extends AnAction {
+    private DataLayer dataLayer;
+
     public void actionPerformed(AnActionEvent e) {
         System.out.println("Save.actionPerformed()");
 
@@ -22,7 +24,7 @@ public class SaveData extends AnAction {
 //        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
         final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final DataLayer data = DataLayer.getInstance();
+        final DataLayer data = dataLayer;
         final boolean[] isErrors = {false};
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
@@ -47,5 +49,10 @@ public class SaveData extends AnAction {
         }
 
         ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+    }
+
+
+    public void setDataLayer(DataLayer data) {
+        this.dataLayer = data;
     }
 }

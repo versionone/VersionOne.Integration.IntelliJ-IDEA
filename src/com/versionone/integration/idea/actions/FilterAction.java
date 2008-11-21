@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.Messages;
 import com.versionone.integration.idea.DataLayer;
 import com.versionone.integration.idea.FilterForm;
 import com.versionone.integration.idea.ProjectTreeNode;
+import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
 
 import java.net.ConnectException;
@@ -21,6 +22,8 @@ import java.net.ConnectException;
 public class FilterAction extends AnAction {
 
     private static final Logger LOG = Logger.getLogger(FilterAction.class);
+    private DataLayer dataLayer;
+    private WorkspaceSettings settings;
 
     public void actionPerformed(AnActionEvent e) {
         final DataContext dataContext = e.getDataContext();
@@ -31,14 +34,13 @@ public class FilterAction extends AnAction {
         }
     }
 
-    public static boolean filterDialog(final Project ideaProject) {
+    public boolean filterDialog(final Project ideaProject) {
 
         final ProgressManager progressManager = ProgressManager.getInstance();
         final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
         final boolean[] isError = new boolean[]{false};
 
-        final DataLayer data;
-        data = DataLayer.getInstance();
+        final DataLayer data = dataLayer;
 
         boolean isCanceled = ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
@@ -69,7 +71,11 @@ public class FilterAction extends AnAction {
             return false;
         }
 
-        final FilterForm form = new FilterForm(projectsRoot[0]);
+        final FilterForm form = new FilterForm(projectsRoot[0], settings);
         return ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form);
+    }
+
+    public void setSettings(WorkspaceSettings settings) {
+        this.settings = settings;
     }
 }

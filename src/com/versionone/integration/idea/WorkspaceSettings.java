@@ -14,7 +14,7 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
     public String projectToken = "Scope:2689";
     public boolean isShowAllTask = true;
 
-    private static WorkspaceSettings setting = new WorkspaceSettings();
+    //private static WorkspaceSettings setting = new WorkspaceSettings();
 
     // singelton
 //    private WorkspaceSettings() {
@@ -33,11 +33,11 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
         projectToken = state.projectToken;
     }
 
-    public static void setCfg(WorkspaceSettings newSettings) {
-        setting = newSettings;
-    }
-
-    public static WorkspaceSettings getInstance() {
-        return setting;
-    }
+//    public static void setCfg(WorkspaceSettings newSettings) {
+//        setting = newSettings;
+//    }
+//
+//    public static WorkspaceSettings getInstance() {
+//        return setting;
+//    }
 }

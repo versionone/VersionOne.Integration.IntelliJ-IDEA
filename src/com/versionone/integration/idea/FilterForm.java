@@ -12,11 +12,13 @@ public class FilterForm implements Configurable {
     private JTree projectTree;
     private JPanel panel;
     private JCheckBox showAllTasksCheckBox;
+    private WorkspaceSettings settings;
 
     private final ProjectTreeNode projectRoot;
 
-    public FilterForm(ProjectTreeNode projectRoot) {
+    public FilterForm(ProjectTreeNode projectRoot, WorkspaceSettings settings) {
         this.projectRoot = projectRoot;
+        this.settings = settings;
     }
 
     @Nls
@@ -37,30 +39,30 @@ public class FilterForm implements Configurable {
     }
 
     public boolean isModified() {
-        if (WorkspaceSettings.getInstance().isShowAllTask != showAllTasksCheckBox.isSelected()) {
+        if (settings.isShowAllTask != showAllTasksCheckBox.isSelected()) {
             return true;
         }
         final Object selectedPrj = projectTree.getLastSelectedPathComponent();
         if (selectedPrj == null) {
             return false;
         }
-        final String cfgPrj = WorkspaceSettings.getInstance().projectName;
+        final String cfgPrj = settings.projectName;
         return !cfgPrj.equals(selectedPrj.toString());//TODO change to use IDs
     }
 
     public void apply() throws ConfigurationException {
         final ProjectTreeNode node = (ProjectTreeNode)projectTree.getLastSelectedPathComponent();
         if (node != null) {
-            WorkspaceSettings.getInstance().projectName = node.toString();
-            WorkspaceSettings.getInstance().projectToken = node.getToken();
+            settings.projectName = node.toString();
+            settings.projectToken = node.getToken();
         }
-        WorkspaceSettings.getInstance().isShowAllTask = showAllTasksCheckBox.isSelected();
+        settings.isShowAllTask = showAllTasksCheckBox.isSelected();
 
-        DataLayer.getInstance().setSettings(WorkspaceSettings.getInstance());
+        //dataLayer.setSettings(settings);
     }
 
     public void reset() {
-        showAllTasksCheckBox.setSelected(WorkspaceSettings.getInstance().isShowAllTask);
+        showAllTasksCheckBox.setSelected(settings.isShowAllTask);
         projectTree.clearSelection();
     }
 

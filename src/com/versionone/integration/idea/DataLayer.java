@@ -45,7 +45,7 @@ public final class DataLayer {
 
     private ProgressIndicator progressIndicator;
 
-    private DataLayer(WorkspaceSettings workspaceSettings) {
+    public DataLayer(WorkspaceSettings workspaceSettings) {
         setSettings(workspaceSettings);
         try {
             connect();
@@ -240,12 +240,12 @@ public final class DataLayer {
         return statusList.getDisplayValues();
     }
 
-    public static DataLayer getInstance() {
-        if (instance == null) {
-            instance = new DataLayer(WorkspaceSettings.getInstance());
-        }
-        return instance;
-    }
+//    public static DataLayer getInstance() {
+//        if (instance == null) {
+//            instance = new DataLayer(WorkspaceSettings.getInstance());
+//        }
+//        return instance;
+//    }
 
     public void setTaskPropertyValue(int task, TasksProperties property, Object value) {
         Object data = null;

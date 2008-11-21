@@ -24,9 +24,11 @@ import java.awt.event.MouseListener;
 public class TasksTable extends Table {
 
     private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
+    private final DataLayer data;
 
-    public TasksTable(HorizontalTableModel v1TableModel) {
+    public TasksTable(HorizontalTableModel v1TableModel, DataLayer data) {
         super(v1TableModel);
+        this.data = data;
     }
 
     @Override
@@ -37,7 +39,7 @@ public class TasksTable extends Table {
     @Override
     public TableCellEditor getCellEditor(final int row, final int col) {
         if (getModel().getColumnType(col) == TasksProperties.Type.StatusList) {
-            JComboBox comboEditor = new JComboBox(DataLayer.getInstance().getAllStatuses());
+            JComboBox comboEditor = new JComboBox(data.getAllStatuses());
             //select current value
             //comboEditor.setSelectedItem(DataLayer.getInstance().getValue(col, row));
             comboEditor.setBorder(null);
