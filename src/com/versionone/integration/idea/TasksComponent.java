@@ -44,11 +44,12 @@ public class TasksComponent implements ProjectComponent {
         this.project = project;
         cfg = settings;
         dataLayer = new DataLayer(cfg);
+        
         // set DataLayer to all actions
         ActionManager actions = ActionManager.getInstance();
         ((SaveData)actions.getAction("V1.SaveData")).setDataLayer(dataLayer);
         ((Refresh)actions.getAction("V1.toolRefresh")).setDataLayer(dataLayer);
-        //((FilterAction)actions.getAction("Filter")).setDataLayer(dataLayer);
+        ((FilterAction)actions.getAction("Filter")).setDataLayer(dataLayer);
         ((FilterAction)actions.getAction("Filter")).setSettings(cfg);
 
     }

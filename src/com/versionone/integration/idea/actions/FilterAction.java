@@ -75,6 +75,10 @@ public class FilterAction extends AnAction {
         return ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form);
     }
 
+    public void setDataLayer(DataLayer data) {
+        this.dataLayer = data;
+    }
+
     public void setSettings(WorkspaceSettings settings) {
         this.settings = settings;
     }
