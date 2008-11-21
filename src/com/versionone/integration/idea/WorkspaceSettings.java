@@ -5,22 +5,20 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 
 
-@State(name = "V1PluginSettings", storages = {
-        @Storage(id = "other",
-                file = "$WORKSPACE_FILE$"
-        )})
+@State(name = "v1ideaplugin.settings", storages = @Storage(id = "ws", file = "$WORKSPACE_FILE$"))
 public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSettings> {
     public String v1Path = "http://jsdksrv01/VersionOne/";
     public String user = "admin";
     public String passwd = "admin";
     public String projectName = "V1EclipseTestPrj";
+    public String projectToken = "Scope:2689";
     public boolean isShowAllTask = true;
 
     private static WorkspaceSettings setting = new WorkspaceSettings();
 
     // singelton
-    private WorkspaceSettings() {
-    }
+//    private WorkspaceSettings() {
+//    }
 
     public WorkspaceSettings getState() {
         return this;
@@ -32,6 +30,11 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
         v1Path = state.v1Path;
         projectName = state.projectName;
         isShowAllTask = state.isShowAllTask;
+        projectToken = state.projectToken;
+    }
+
+    public static void setCfg(WorkspaceSettings newSettings) {
+        setting = newSettings;
     }
 
     public static WorkspaceSettings getInstance() {

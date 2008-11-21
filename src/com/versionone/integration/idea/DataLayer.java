@@ -33,7 +33,7 @@ public final class DataLayer {
     private static final Logger LOG = Logger.getLogger(DataLayer.class);
     private static DataLayer instance;
 
-    private final WorkspaceSettings cfg;
+    private WorkspaceSettings cfg;
 
     private V1Instance v1;
     private Member member;
@@ -46,13 +46,17 @@ public final class DataLayer {
     private ProgressIndicator progressIndicator;
 
     private DataLayer(WorkspaceSettings workspaceSettings) {
-        cfg = workspaceSettings;
+        setSettings(workspaceSettings);
         try {
             connect();
             refresh();
         } catch (ConnectException e) {
             // do nothing
         }
+    }
+
+    public void setSettings(WorkspaceSettings workspaceSettings) {
+        cfg = workspaceSettings;
     }
 
     private void connect() throws ConnectException {

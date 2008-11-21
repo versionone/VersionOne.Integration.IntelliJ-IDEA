@@ -49,11 +49,14 @@ public class FilterForm implements Configurable {
     }
 
     public void apply() throws ConfigurationException {
-        final Object node = projectTree.getLastSelectedPathComponent();
+        final ProjectTreeNode node = (ProjectTreeNode)projectTree.getLastSelectedPathComponent();
         if (node != null) {
             WorkspaceSettings.getInstance().projectName = node.toString();
+            WorkspaceSettings.getInstance().projectToken = node.getToken();
         }
         WorkspaceSettings.getInstance().isShowAllTask = showAllTasksCheckBox.isSelected();
+
+        DataLayer.getInstance().setSettings(WorkspaceSettings.getInstance());
     }
 
     public void reset() {

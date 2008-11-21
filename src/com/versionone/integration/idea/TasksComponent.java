@@ -30,12 +30,14 @@ public class TasksComponent implements ProjectComponent {
     private final Project project;
 
     private Content content;
-    private final WorkspaceSettings cfg = WorkspaceSettings.getInstance();
+    private WorkspaceSettings cfg = WorkspaceSettings.getInstance();
     private TasksTable table;
 
 
-    public TasksComponent(Project project) {
+    public TasksComponent(Project project, WorkspaceSettings settings) {
         this.project = project;
+        cfg = settings;
+        WorkspaceSettings.setCfg(cfg);
     }
 
     public void projectOpened() {
@@ -111,7 +113,7 @@ public class TasksComponent implements ProjectComponent {
      * Temporary method for testing purposes. TODO delete
      */
     public static void main(String[] args) {
-        TasksComponent plugin = new TasksComponent(null);
+        TasksComponent plugin = new TasksComponent(null, new WorkspaceSettings());
         JPanel panel = plugin.createContentPanel();
         JFrame frame = new JFrame("IDEA V1 Plugin");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

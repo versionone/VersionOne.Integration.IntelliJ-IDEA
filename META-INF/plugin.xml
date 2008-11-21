@@ -20,11 +20,17 @@
 
     <idea-version since-build="7000"/>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceInterface="com.versionone.integration.idea.WorkspaceSettings"
+                            serviceImplementation="com.versionone.integration.idea.WorkspaceSettings"/>
+    </extensions>
+
     <project-components>
         <component>
             <implementation-class>com.versionone.integration.idea.TasksComponent</implementation-class>
-
-            <!--<interface-class>com.versionone.integration.idea.TasksComponent</interface-class>-->
+        </component>
+        <component>
+            <implementation-class>com.versionone.integration.idea.WorkspaceSettings</implementation-class>
         </component>
     </project-components>
 
