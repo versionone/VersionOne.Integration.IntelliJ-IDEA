@@ -3,6 +3,7 @@ package com.versionone.integration.idea;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.versionone.common.sdk.ProjectTreeNode;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;

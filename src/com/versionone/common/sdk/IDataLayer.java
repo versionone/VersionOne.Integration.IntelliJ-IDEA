@@ -1,5 +1,5 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
-package com.versionone.integration.idea;
+package com.versionone.common.sdk;
 
 import org.jetbrains.annotations.NotNull;
 

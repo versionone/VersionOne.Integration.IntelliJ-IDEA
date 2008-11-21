@@ -1,17 +1,17 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea.tests;
 
-import com.versionone.integration.idea.DataLayer;
-import com.versionone.integration.idea.IDataLayer;
-import com.versionone.integration.idea.ProjectTreeNode;
-import com.versionone.integration.idea.TasksProperties;
+import com.versionone.common.sdk.DataLayer;
+import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.sdk.ProjectTreeNode;
+import com.versionone.common.sdk.TasksProperties;
 import com.versionone.integration.idea.WorkspaceSettings;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.net.ConnectException;
-import java.util.ArrayList;
+import java.util.Enumeration;
 
 public class DataLayerTest {
     private IDataLayer data;
@@ -44,18 +44,19 @@ public class DataLayerTest {
      */
     @Test
     public void testGetProjects() throws ConnectException {
-        com.versionone.integration.idea.ProjectTreeNode projects = data.getProjects();
+        ProjectTreeNode projects = data.getProjects();
 
         //for(Project project : projects) {
 
         System.out.println(projects.toString() + " --- " + projects.getToken() + " child:" + projects.getChildCount());
-        displayAllProjects(projects.children, 0);
+        displayAllProjects(projects.children(), 0);
 
         //}
     }
 
-    private void displayAllProjects(ArrayList<ProjectTreeNode> projectTreeNodes, int pos) {
-        for (ProjectTreeNode project : projectTreeNodes) {
+    private void displayAllProjects(Enumeration projectTreeNodes, int pos) {
+        while (projectTreeNodes.hasMoreElements()) {
+            ProjectTreeNode project = (ProjectTreeNode) projectTreeNodes.nextElement();
             System.out.print(pos);
             for (int i = 0; i < pos * 2; i++) {
                 System.out.print("-");
@@ -65,7 +66,7 @@ public class DataLayerTest {
                 System.out.println(project.toString() + " --- " + project.getToken() + " child:" + project.getChildCount() + " data:" + ((ProjectTreeNode) project.getParent()).getToken());
             }
             if (project.getAllowsChildren()) {
-                displayAllProjects(project.children, pos + 1);
+                displayAllProjects(project.children(), pos + 1);
             }
         }
     }

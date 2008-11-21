@@ -1,5 +1,5 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
-package com.versionone.integration.idea;
+package com.versionone.common.sdk;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -16,10 +16,10 @@ public enum TasksProperties {
     STATUS(7, "Status", Type.StatusList, true, "Status");
 
     final int num;
-    final String columnName;
-    final Type type;
-    final boolean isEditable;
-    final private String propertyName;
+    public final String columnName;
+    public final Type type;
+    public final boolean isEditable;
+    public final String propertyName;
 
     TasksProperties(int num, String name, Type type, boolean editable) {
         this.num = num;
@@ -41,15 +41,11 @@ public enum TasksProperties {
         final TasksProperties[] v = TasksProperties.values();
         final LinkedList<String> res = new LinkedList<String>();
         for (TasksProperties property : v) {
-            final String pName = property.getName();
+            final String pName = property.propertyName;
             if (pName != null)
                 res.add(pName);
         }
         return res;
-    }
-
-    public String getName() {
-        return propertyName;
     }
 
     public static enum Type {

@@ -1,4 +1,4 @@
-package com.versionone.integration.idea;
+package com.versionone.common.sdk;
 
 import com.versionone.apiclient.APIException;
 import com.versionone.apiclient.Asset;
@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * This class represents one Task in the VersionOne system
  */
-public class Task {
+class Task {
 
     private static final String TASK_PREFIX = "Task.";
 
@@ -53,7 +53,7 @@ public class Task {
             effort = (BigDecimal) value;
         } else {
             try {
-                asset.setAttributeValue(getDefinition(property.getName()), value);
+                asset.setAttributeValue(getDefinition(property.propertyName), value);
             } catch (APIException e) {
                 System.out.println("Task.setProperty() " + property + " value:" + value);
                 System.out.println("\troperty class: " + property.getClass() + " value class:" + value.getClass());
@@ -79,7 +79,7 @@ public class Task {
         if (property.equals(TasksProperties.EFFORT)) {
             return effort;
         }
-        return getValue(property.getName());
+        return getValue(property.propertyName);
     }
 
 //    public boolean isPropertyChanged(TasksProperties property) {

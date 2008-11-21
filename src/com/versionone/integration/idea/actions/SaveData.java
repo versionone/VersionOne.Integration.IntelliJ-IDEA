@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.integration.idea.IDataLayer;
+import com.versionone.common.sdk.IDataLayer;
 
 /**
  *

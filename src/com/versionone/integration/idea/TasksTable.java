@@ -4,6 +4,8 @@ import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.Table;
+import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.sdk.TasksProperties;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

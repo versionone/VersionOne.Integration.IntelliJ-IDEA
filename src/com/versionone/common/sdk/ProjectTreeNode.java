@@ -1,5 +1,5 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
-package com.versionone.integration.idea;
+package com.versionone.common.sdk;
 
 import com.intellij.util.enumeration.ArrayEnumeration;
 
@@ -8,25 +8,25 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 public class ProjectTreeNode implements TreeNode {
-    public final ProjectTreeNode parent;
-    public final int index;
-    public final String name;
-    public final String token;
+    private final ProjectTreeNode parent;
+    private final int index;
+    private final String name;
+    private final String token;
 
-    public final ArrayList<ProjectTreeNode> children = new ArrayList<ProjectTreeNode>();
+    final ArrayList<ProjectTreeNode> children = new ArrayList<ProjectTreeNode>();
 
-    public ProjectTreeNode(String projectName, ProjectTreeNode parent, int index, String token) {
+    ProjectTreeNode(String projectName, ProjectTreeNode parent, int index, String token) {
         this.name = projectName;
         this.parent = parent;
         this.index = index;
         this.token = token;
     }
 
-    public ProjectTreeNode(String projectName, String token, ProjectTreeNode parent, int index) {
+    ProjectTreeNode(String projectName, String token, ProjectTreeNode parent, int index) {
         this(projectName, parent, index, token);
     }
 
-    public ProjectTreeNode() {
+    ProjectTreeNode() {
         this(null, null, 0, null);
     }
 

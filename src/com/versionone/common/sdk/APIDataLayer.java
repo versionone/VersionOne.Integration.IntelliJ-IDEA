@@ -1,5 +1,5 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
-package com.versionone.integration.idea;
+package com.versionone.common.sdk;
 
 import com.versionone.Oid;
 import com.versionone.apiclient.Asset;
@@ -18,8 +18,7 @@ import com.versionone.apiclient.Services;
 import com.versionone.apiclient.V1APIConnector;
 import com.versionone.apiclient.V1Configuration;
 import com.versionone.apiclient.V1Exception;
-import com.versionone.common.sdk.IStatusCodes;
-import com.versionone.common.sdk.TaskStatusCodes;
+import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,21 +34,8 @@ import java.util.List;
 public final class APIDataLayer implements IDataLayer {
 
     private static final Logger LOG = Logger.getLogger(DataLayer.class);
-    private static APIDataLayer instance;
-
-    /**
-     * URL Suffix for VersionOne Meta API
-     */
     private static final String META_URL_SUFFIX = "meta.v1/";
-
-    /**
-     * URL Suffix for VersionOne Data API
-     */
     private static final String DATA_URL_SUFFIX = "rest-1.v1/";
-
-    /**
-     * URL Suffix for VersionOne Configuration API
-     */
     private static final String CONFIG_URL_SUFFIX = "config.v1/";
 
     // APIClient objects
@@ -145,7 +131,9 @@ public final class APIDataLayer implements IDataLayer {
         FilterTerm[] terms = new FilterTerm[5];
         terms[0] = new FilterTerm(taskType.getAttributeDefinition("Scope.AssetState"), FilterTerm.Operator.NotEqual, AssetState.Closed);
         terms[1] = new FilterTerm(taskType.getAttributeDefinition("Scope.ParentMeAndUp"), FilterTerm.Operator.Equal, cfg.projectToken);
-        terms[2] = new FilterTerm(taskType.getAttributeDefinition("Owners"), FilterTerm.Operator.Equal, member);
+        if (!cfg.isShowAllTask) {
+            terms[2] = new FilterTerm(taskType.getAttributeDefinition("Owners"), FilterTerm.Operator.Equal, member);
+        }
         terms[3] = new FilterTerm(taskType.getAttributeDefinition("Timebox.State.Code"), FilterTerm.Operator.Equal, "ACTV");
         terms[4] = new FilterTerm(taskType.getAttributeDefinition("AssetState"), FilterTerm.Operator.NotEqual, AssetState.Closed);
         query.setFilter(Query.and(terms));
@@ -156,7 +144,9 @@ public final class APIDataLayer implements IDataLayer {
      * @throws IllegalStateException if trying to commit Efforts when EffortTracking disabled.
      */
     public void commitChangedTaskData() throws Exception {
-        save(taskList);
+        synchronized (taskList) {
+            save(taskList);
+        }
     }
 
     private void save(Task[] tasks) throws Exception {
@@ -176,23 +166,27 @@ public final class APIDataLayer implements IDataLayer {
     }
 
     public int getTasksCount() {
-        return taskList.length;
+        synchronized (taskList) {
+            return taskList.length;
+        }
     }
 
     public Object getTaskPropertyValue(int task, TasksProperties property) {
-        Object res = taskList[task].getProperty(property);
+        synchronized (taskList) {
+            Object res = taskList[task].getProperty(property);
 
-        if (res instanceof Oid) {
-            Oid oid = (Oid) res;
-            if (oid.isNull()) {
-                res = null;
-            } else if (property.equals(TasksProperties.STATUS)) {
-                res = statusList.getDisplayFromOid(oid.toString());
+            if (res instanceof Oid) {
+                Oid oid = (Oid) res;
+                if (oid.isNull()) {
+                    res = null;
+                } else if (property.equals(TasksProperties.STATUS)) {
+                    res = statusList.getDisplayFromOid(oid.toString());
+                }
+            } else if (res instanceof Double) {
+                res = BigDecimal.valueOf((Double) res).setScale(2, BigDecimal.ROUND_HALF_DOWN);
             }
-        } else if (res instanceof Double) {
-            res = BigDecimal.valueOf((Double) res).setScale(2, BigDecimal.ROUND_HALF_DOWN);
+            return res;
         }
-        return res;
     }
 
     public boolean isTrackEffort() {
@@ -204,10 +198,12 @@ public final class APIDataLayer implements IDataLayer {
     }
 
     public void setTaskPropertyValue(int task, TasksProperties property, Object value) {
-        if (property.equals(TasksProperties.STATUS)) {
-            value = statusList.getID((String) value);
+        synchronized (taskList) {
+            if (property.equals(TasksProperties.STATUS)) {
+                value = statusList.getID((String) value);
+            }
+            taskList[task].setProperty(property, value);
         }
-        taskList[task].setProperty(property, value);
     }
 
     @NotNull

@@ -1,13 +1,15 @@
 package com.versionone.integration.idea;
 
-import static com.versionone.integration.idea.TasksProperties.DETAIL_ESTIMATE;
-import static com.versionone.integration.idea.TasksProperties.DONE;
-import static com.versionone.integration.idea.TasksProperties.EFFORT;
-import static com.versionone.integration.idea.TasksProperties.ID;
-import static com.versionone.integration.idea.TasksProperties.PARENT;
-import static com.versionone.integration.idea.TasksProperties.STATUS;
-import static com.versionone.integration.idea.TasksProperties.TITLE;
-import static com.versionone.integration.idea.TasksProperties.TO_DO;
+import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.sdk.TasksProperties;
+import static com.versionone.common.sdk.TasksProperties.DETAIL_ESTIMATE;
+import static com.versionone.common.sdk.TasksProperties.DONE;
+import static com.versionone.common.sdk.TasksProperties.EFFORT;
+import static com.versionone.common.sdk.TasksProperties.ID;
+import static com.versionone.common.sdk.TasksProperties.PARENT;
+import static com.versionone.common.sdk.TasksProperties.STATUS;
+import static com.versionone.common.sdk.TasksProperties.TITLE;
+import static com.versionone.common.sdk.TasksProperties.TO_DO;
 
 import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;

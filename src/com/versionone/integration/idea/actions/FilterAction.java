@@ -11,9 +11,9 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.sdk.ProjectTreeNode;
 import com.versionone.integration.idea.FilterForm;
-import com.versionone.integration.idea.IDataLayer;
-import com.versionone.integration.idea.ProjectTreeNode;
 import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
 
