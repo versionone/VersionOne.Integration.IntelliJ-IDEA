@@ -32,7 +32,7 @@ public class SaveData extends AnAction {
                 progressManager.getProgressIndicator().setText("Save task's data");
                 try {
                     data.commitChangedTaskData();
-                } catch (IllegalStateException e1) {
+                } catch (Exception e1) {
                     isErrors[0] = true;
                 }
             }

@@ -41,5 +41,7 @@ public interface IStatusCodes {
      * @param oid
      * @return
      */
-	String getDisplayFromOid(String oid);
+    String getDisplayFromOid(String oid);
+
+    String getID(String name);
 }

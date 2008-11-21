@@ -42,7 +42,7 @@ public class TasksComponent implements ProjectComponent {
     public TasksComponent(Project project, WorkspaceSettings settings) {
         this.project = project;
         cfg = settings;
-        dataLayer = new DataLayer(cfg);
+        dataLayer = new APIDataLayer(cfg);
 
         // set DataLayer to all actions
         ActionManager actions = ActionManager.getInstance();

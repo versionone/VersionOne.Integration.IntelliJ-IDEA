@@ -11,7 +11,7 @@ public interface IDataLayer {
     /**
      * @throws IllegalStateException if trying to commit Efforts when EffortTracking disabled.
      */
-    void commitChangedTaskData() throws IllegalStateException;
+    void commitChangedTaskData() throws Exception;
 
     int getTasksCount();
 
@@ -28,5 +28,5 @@ public interface IDataLayer {
 
     boolean isTaskDataChanged(int task);
 
-    boolean isTaskPropertyChanged(int task, TasksProperties property);
+//    boolean isTaskPropertyChanged(int task, TasksProperties property);
 }

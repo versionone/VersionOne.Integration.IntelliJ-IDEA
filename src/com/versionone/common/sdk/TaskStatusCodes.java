@@ -2,6 +2,7 @@ package com.versionone.common.sdk;
 
 import com.versionone.Oid;
 import com.versionone.apiclient.Asset;
+import com.versionone.apiclient.FilterTerm;
 import com.versionone.apiclient.IAssetType;
 import com.versionone.apiclient.IAttributeDefinition;
 import com.versionone.apiclient.IMetaModel;
@@ -9,7 +10,6 @@ import com.versionone.apiclient.IServices;
 import com.versionone.apiclient.Query;
 import com.versionone.apiclient.QueryResult;
 import com.versionone.apiclient.V1Exception;
-import com.versionone.apiclient.FilterTerm;
 
 /**
  * Implementation of IStatusCodes using VercionOne
@@ -44,7 +44,7 @@ public final class TaskStatusCodes implements IStatusCodes {
         statusList = new StatusCode[assets.length + 1];
         statusList[0] = new StatusCode(Oid.Null, "");
         for (int i = 1; i < statusList.length; i++) {
-            statusList[i] = new StatusCode(assets[i-1].getOid(), assets[i-1].getAttribute(name).getValue().toString());
+            statusList[i] = new StatusCode(assets[i - 1].getOid(), assets[i - 1].getAttribute(name).getValue().toString());
         }
     }
 
@@ -66,6 +66,14 @@ public final class TaskStatusCodes implements IStatusCodes {
                 return i;
         }
         return 0;
+    }
+
+    public String getID(String name) {
+        for (StatusCode code : statusList) {
+            if (name.equals(code.name))
+                return code.id;
+        }
+        return null;
     }
 
     public String getID(int index) {
