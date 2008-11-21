@@ -12,6 +12,8 @@ public enum TasksProperties {
     TO_DO(6, "Todo", Type.Number, true),
     STATUS(7, "Status", Type.StatusList, true);
 
+    static String[] TASK_ATTRIBUTES = "Name,Description,Category,Customer,DetailEstimate,Estimate,LastVersion,Number,Owners,Parent,Reference,Scope,Source,Status,Timebox,ToDo,Actuals.Value.@Sum".split(",");
+
     final int num;
     final String columnName;
     final Type type;

@@ -42,7 +42,7 @@ public class FilterForm implements Configurable {
         if (settings.isShowAllTask != showAllTasksCheckBox.isSelected()) {
             return true;
         }
-        final Object selectedPrj = projectTree.getLastSelectedPathComponent();
+        final ProjectTreeNode selectedPrj = (ProjectTreeNode) projectTree.getLastSelectedPathComponent();
         if (selectedPrj == null) {
             return false;
         }
@@ -51,7 +51,7 @@ public class FilterForm implements Configurable {
     }
 
     public void apply() throws ConfigurationException {
-        final ProjectTreeNode node = (ProjectTreeNode)projectTree.getLastSelectedPathComponent();
+        final ProjectTreeNode node = (ProjectTreeNode) projectTree.getLastSelectedPathComponent();
         if (node != null) {
             settings.projectName = node.toString();
             settings.projectToken = node.getToken();
@@ -64,6 +64,7 @@ public class FilterForm implements Configurable {
     public void reset() {
         showAllTasksCheckBox.setSelected(settings.isShowAllTask);
         projectTree.clearSelection();
+        projectTree.expandRow(0);//TODO make current project selected
     }
 
     public void disposeUIResources() {

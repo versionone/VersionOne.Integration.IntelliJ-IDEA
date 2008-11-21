@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * This class requests, stores data from VersionOne server and send changed data back.
  */
-public final class DataLayer {
+public final class DataLayer implements IDataLayer {
 
     private static final Logger LOG = Logger.getLogger(DataLayer.class);
     private static DataLayer instance;
@@ -166,9 +166,6 @@ public final class DataLayer {
         return toDo == null ? null : BigDecimal.valueOf(toDo).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
-    /**
-     * @throws IllegalStateException if trying to commit Efforts when EffortTracking disabled.
-     */
     public void commitChangedTaskData() throws IllegalStateException {
         synchronized (v1) {
             for (int i = 0; i < tasksData.length; i++) {

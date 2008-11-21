@@ -2,6 +2,7 @@
 package com.versionone.integration.idea.tests;
 
 import com.versionone.integration.idea.DataLayer;
+import com.versionone.integration.idea.IDataLayer;
 import com.versionone.integration.idea.ProjectTreeNode;
 import com.versionone.integration.idea.TasksProperties;
 import com.versionone.integration.idea.WorkspaceSettings;
@@ -13,7 +14,7 @@ import java.net.ConnectException;
 import java.util.ArrayList;
 
 public class DataLayerTest {
-    private DataLayer data;
+    private IDataLayer data;
 
     @Before
     public void before() {

@@ -22,9 +22,9 @@ public class HorizontalTableModel extends AbstractTableModel {
     private static final TasksProperties[] tasksColumnData =
             {TITLE, ID, PARENT, DETAIL_ESTIMATE, TO_DO, STATUS};
 
-    private final DataLayer data;
+    private final IDataLayer data;
 
-    public HorizontalTableModel(DataLayer data) {
+    public HorizontalTableModel(IDataLayer data) {
         this.data = data;
     }
 

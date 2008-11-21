@@ -11,8 +11,8 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.integration.idea.DataLayer;
 import com.versionone.integration.idea.FilterForm;
+import com.versionone.integration.idea.IDataLayer;
 import com.versionone.integration.idea.ProjectTreeNode;
 import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
@@ -22,7 +22,7 @@ import java.net.ConnectException;
 public class FilterAction extends AnAction {
 
     private static final Logger LOG = Logger.getLogger(FilterAction.class);
-    private DataLayer dataLayer;
+    private IDataLayer dataLayer;
     private WorkspaceSettings settings;
 
     public void actionPerformed(AnActionEvent e) {
@@ -40,19 +40,19 @@ public class FilterAction extends AnAction {
         final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
         final boolean[] isError = new boolean[]{false};
 
-        final DataLayer data = dataLayer;
+        final IDataLayer data = dataLayer;
 
         boolean isCanceled = ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
                 final ProgressIndicator indicator = progressManager.getProgressIndicator();
-                data.setProgressIndicator(indicator);
+//                data.setProgressIndicator(indicator);
                 indicator.setText("Loading project list");
                 try {
                     projectsRoot[0] = data.getProjects();
                 } catch (ConnectException e) {
                     isError[0] = true;
                 }
-                data.setProgressIndicator(null);
+//                data.setProgressIndicator(null);
             }
         },
                 "Loading project list",
@@ -75,7 +75,7 @@ public class FilterAction extends AnAction {
         return ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form);
     }
 
-    public void setDataLayer(DataLayer data) {
+    public void setDataLayer(IDataLayer data) {
         this.dataLayer = data;
     }
 

@@ -4,22 +4,30 @@ package com.versionone.integration.idea;
 import com.intellij.util.enumeration.ArrayEnumeration;
 
 import javax.swing.tree.TreeNode;
-import java.util.Enumeration;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 public class ProjectTreeNode implements TreeNode {
-    private final ProjectTreeNode parent;
-    private final int index;
-    private String name;
-    private String token;
+    public final ProjectTreeNode parent;
+    public final int index;
+    public final String name;
+    public final String token;
 
-    public ArrayList<ProjectTreeNode> children = new ArrayList<ProjectTreeNode>();
+    public final ArrayList<ProjectTreeNode> children = new ArrayList<ProjectTreeNode>();
 
     public ProjectTreeNode(String projectName, ProjectTreeNode parent, int index, String token) {
         this.name = projectName;
         this.parent = parent;
         this.index = index;
         this.token = token;
+    }
+
+    public ProjectTreeNode(String projectName, String token, ProjectTreeNode parent, int index) {
+        this(projectName, parent, index, token);
+    }
+
+    public ProjectTreeNode() {
+        this(null, null, 0, null);
     }
 
     public TreeNode getChildAt(int childIndex) {

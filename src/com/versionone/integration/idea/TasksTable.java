@@ -24,9 +24,9 @@ import java.awt.event.MouseListener;
 public class TasksTable extends Table {
 
     private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
-    private final DataLayer data;
+    private final IDataLayer data;
 
-    public TasksTable(HorizontalTableModel v1TableModel, DataLayer data) {
+    public TasksTable(HorizontalTableModel v1TableModel, IDataLayer data) {
         super(v1TableModel);
         this.data = data;
     }

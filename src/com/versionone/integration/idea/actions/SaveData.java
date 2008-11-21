@@ -9,13 +9,13 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.integration.idea.DataLayer;
+import com.versionone.integration.idea.IDataLayer;
 
 /**
  *
  */
 public class SaveData extends AnAction {
-    private DataLayer dataLayer;
+    private IDataLayer dataLayer;
 
     public void actionPerformed(AnActionEvent e) {
         System.out.println("Save.actionPerformed()");
@@ -24,7 +24,7 @@ public class SaveData extends AnAction {
 //        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
         final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final DataLayer data = dataLayer;
+        final IDataLayer data = dataLayer;
         final boolean[] isErrors = {false};
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
@@ -52,7 +52,7 @@ public class SaveData extends AnAction {
     }
 
 
-    public void setDataLayer(DataLayer data) {
+    public void setDataLayer(IDataLayer data) {
         this.dataLayer = data;
     }
 }
