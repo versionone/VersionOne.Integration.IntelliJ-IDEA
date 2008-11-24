@@ -123,6 +123,14 @@ public class TasksComponent implements ProjectComponent {
         ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_ID);
     }
 
+
+    public IDataLayer getDataLayer() {
+        if (dataLayer == null) {
+            throw new IllegalComponentStateException("method call before creating object");
+        }
+        return dataLayer;
+    }
+
     /**
      * Temporary method for testing purposes. TODO delete
      */
