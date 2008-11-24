@@ -13,7 +13,14 @@ public enum TasksProperties {
     DONE(4, "Done", Type.Number, false, "Actuals.Value.@Sum"),
     EFFORT(5, "Effort", Type.Number, true),
     TO_DO(6, "Todo", Type.Number, true, "ToDo"),
-    STATUS(7, "Status", Type.StatusList, true, "Status");
+    STATUS(7, "Status", Type.StatusList, true, "Status"),
+    DESCRIPTION(8, "Description", Type.RichText, true, "Description"),
+    OWNER(9, "Owner", Type.Text, false, "Owners.Nickname"),
+    PROJECT(10, "Project", Type.Text, false, "Scope.Name"),
+    REFERENCE(11, "Reference", Type.Text, true, "Reference"),
+    SOURCE(12, "Source", Type.List, true, "Source"),
+    SPRINT(13, "Sprint", Type.Text, false, "Timebox.Name"),
+    TYPE(14, "Type", Type.List, true, "Category");
 
     final int num;
     public final String columnName;
@@ -49,7 +56,7 @@ public enum TasksProperties {
     }
 
     public static enum Type {
-        Number, Text, StatusList;
+        Number, RichText, Text, StatusList, List;
 
         public final Class<?> columnClass;
 

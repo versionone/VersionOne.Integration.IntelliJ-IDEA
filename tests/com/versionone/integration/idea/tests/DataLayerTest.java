@@ -1,7 +1,7 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea.tests;
 
-import com.versionone.common.sdk.DataLayer;
+import com.versionone.common.sdk.APIDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ProjectTreeNode;
 import com.versionone.common.sdk.TasksProperties;
@@ -19,11 +19,12 @@ public class DataLayerTest {
     @Before
     public void before() {
         final WorkspaceSettings settings = new WorkspaceSettings();
-        settings.v1Path = "http://eval.versionone.net/ExigenTest/";
+//        settings.v1Path = "http://eval.versionone.net/ExigenTest/";
+        settings.v1Path = "http://jsdksrv01/VersionOne/";
         settings.user = "admin";
         settings.passwd = "admin";
         settings.projectName = "System (All Projects)";
-        data = new DataLayer(settings);
+        data = new APIDataLayer(settings);
     }
 
     /**
@@ -33,9 +34,11 @@ public class DataLayerTest {
     public void testGetMainData() {
         int list = data.getTasksCount();
         for (int i = 0; i < list; i++) {
+            System.out.print("* ");
             for (TasksProperties property : TasksProperties.values()) {
-                System.out.println(data.getTaskPropertyValue(i, property));
+                System.out.print(data.getTaskPropertyValue(i, property) + "\t|");
             }
+            System.out.println();
         }
     }
 
