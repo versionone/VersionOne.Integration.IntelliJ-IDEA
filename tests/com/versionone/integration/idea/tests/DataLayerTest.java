@@ -19,8 +19,8 @@ public class DataLayerTest {
     @Before
     public void before() {
         final WorkspaceSettings settings = new WorkspaceSettings();
-//        settings.v1Path = "http://eval.versionone.net/ExigenTest/";
-        settings.v1Path = "http://jsdksrv01/VersionOne/";
+        settings.v1Path = "http://eval.versionone.net/ExigenTest/";
+//        settings.v1Path = "http://jsdksrv01/VersionOne/";
         settings.user = "admin";
         settings.passwd = "admin";
         settings.projectName = "System (All Projects)";
