@@ -4,31 +4,52 @@ package com.versionone.integration.idea;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.project.Project;
+import com.versionone.common.sdk.IDataLayer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.net.ConnectException;
 
 public class ConfigForm implements UnnamedConfigurable {
     private JTextField serverUrl;
-    private JTextField textField1;
-    private JTextField textField2;
+    private JTextField userName;
+    private JTextField password;
     private JButton validateConnectionButton;
     private JPanel generalPanel;
     private WorkspaceSettings settings;
+    //private Project project;
+    private final IDataLayer dataLayer;
+    private final TasksComponent tc;
+    private boolean isConnectionCorrect = true;
 
-    public ConfigForm(WorkspaceSettings settings) {
-        validateConnectionButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Messages.showWarningDialog("Button pressed", e.paramString());
-            }
-        });
+    public ConfigForm(WorkspaceSettings settings, Project project) {
         validateConnectionButton.setEnabled(false);
 
         this.settings = settings;
+        //this.project = project;
+        tc = project.getComponent(TasksComponent.class);
+        dataLayer = tc.getDataLayer();
+
+        validateConnectionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                verifyConnection();
+            }
+        });
 
         reset();
+    }
+
+    private void verifyConnection() {
+        if (dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText())) {
+            Messages.showInfoMessage("Connection is correct", "Connction status");
+        }
+        else {
+            Messages.showInfoMessage("Connection is not correct", "Connction status");
+        }
+
     }
 
     public Component getContentPanel() {
@@ -44,11 +65,12 @@ public class ConfigForm implements UnnamedConfigurable {
         boolean result;
 
         result = !serverUrl.getText().equals(settings.v1Path);
-        result = result || !textField1.getText().equals(settings.user);
-        result = result || !textField2.getText().equals(settings.passwd);
+        result = result || !userName.getText().equals(settings.user);
+        result = result || !password.getText().equals(settings.passwd);
 
         validateConnectionButton.setEnabled(result);
 
+        isConnectionCorrect = !result;
 
         return result;
     }
@@ -61,9 +83,21 @@ public class ConfigForm implements UnnamedConfigurable {
 
     public void apply() throws ConfigurationException {
 
-        settings.v1Path = serverUrl.getText();
-        settings.user = textField1.getText();
-        settings.passwd = textField2.getText();
+        if (isModified()) {
+            settings.v1Path = serverUrl.getText();
+            settings.user = userName.getText();
+            settings.passwd = password.getText();
+
+            try {
+                dataLayer.reconnect();
+            } catch (ConnectException e) {
+                Messages.showErrorDialog(
+                    "Error connection to the VesionOne server",
+                    "Error");
+            }
+
+            tc.update();
+        }
 
 //        final RApplicationSettings settings = RApplicationSettings.getInstance();
 //        settings.useConsoleOutputOtherFilters = otherFiltersCheckBox.isSelected();
@@ -75,15 +109,15 @@ public class ConfigForm implements UnnamedConfigurable {
 //        settings.useRubySpecificProjectView = useRubyProjectViewBox.isSelected();
 //        if (isProjectViewStyleChanged){
 //            final int result = Messages.showYesNoDialog(myContentPane.getParent(),
-//                    RBundle.message("settings.plugin.general.tab.use.ruby.project.view.changed.message"),
-//                    RBundle.message("settings.plugin.general.tab.use.ruby.project.view.changed.title"),
+//                    RBundle.message("settings.plugin.general.tab.use.ruby.dataLayer.view.changed.message"),
+//                    RBundle.message("settings.plugin.general.tab.use.ruby.dataLayer.view.changed.title"),
 //                    Messages.getQuestionIcon());
 //            if (result == DialogWrapper.OK_EXIT_CODE){
 //                ApplicationManager.getApplication().invokeLater(new Runnable() {
 //                    public void run() {
 //                        // reload all projects
-//                        for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-//                            ProjectManager.getInstance().reloadProject(project);
+//                        for (Project dataLayer : ProjectManager.getInstance().getOpenProjects()) {
+//                            ProjectManager.getInstance().reloadProject(dataLayer);
 //                        }
 //                    }
 //                }, ModalityState.NON_MODAL);
@@ -94,8 +128,8 @@ public class ConfigForm implements UnnamedConfigurable {
     public void reset() {
 
         serverUrl.setText(settings.v1Path);
-        textField1.setText(settings.user);
-        textField2.setText(settings.passwd);
+        userName.setText(settings.user);
+        password.setText(settings.passwd);
 
 //        final RApplicationSettings settings = RApplicationSettings.getInstance();
 //        rubyStacktraceFilterCheckBox.setSelected(settings.useConsoleOutputRubyStacktraceFilter);

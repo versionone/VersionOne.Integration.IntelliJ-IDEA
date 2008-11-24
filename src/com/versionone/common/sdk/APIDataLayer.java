@@ -18,6 +18,7 @@ import com.versionone.apiclient.Services;
 import com.versionone.apiclient.V1APIConnector;
 import com.versionone.apiclient.V1Configuration;
 import com.versionone.apiclient.V1Exception;
+import com.versionone.apiclient.IAPIConnector;
 import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -248,6 +249,24 @@ public final class APIDataLayer implements IDataLayer {
 
     public boolean isTaskDataChanged(int task) {
         return taskList[task].isChanged();
+    }
+
+    public void reconnect() throws ConnectException {
+        connect();
+        refresh();
+    }
+
+    public boolean verifyConnection(String path, String userName, String password) {
+        boolean result = true;
+
+        IAPIConnector connector = new V1APIConnector(path + "loc.v1/?Member", userName, password);
+        try {
+            connector.getData().close();
+        } catch (Exception e) {
+            result = false;
+        }
+
+        return result;
     }
 
 //    public boolean isTaskPropertyChanged(int task, TasksProperties property) {

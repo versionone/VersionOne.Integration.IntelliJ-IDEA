@@ -10,12 +10,12 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
+import com.versionone.integration.idea.TasksComponent;
 
 /**
  *
  */
 public class SaveData extends AnAction {
-    private IDataLayer dataLayer;
 
     public void actionPerformed(AnActionEvent e) {
         System.out.println("Save.actionPerformed()");
@@ -23,8 +23,13 @@ public class SaveData extends AnAction {
         final DataContext dataContext = e.getDataContext();
 //        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
         final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
+
+        if (ideaProject == null) {
+            return;
+        }
+        final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
+        final IDataLayer data = tc.getDataLayer();
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final IDataLayer data = dataLayer;
         final boolean[] isErrors = {false};
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
@@ -49,10 +54,5 @@ public class SaveData extends AnAction {
         }
 
         ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
-    }
-
-
-    public void setDataLayer(IDataLayer data) {
-        this.dataLayer = data;
     }
 }

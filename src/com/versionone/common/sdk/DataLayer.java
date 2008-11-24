@@ -340,6 +340,15 @@ public final class DataLayer implements IDataLayer {
         return false;
     }
 
+    public void reconnect() throws ConnectException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean verifyConnection(String path, String userName, String password) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
     public boolean isTaskPropertyChanged(int task, TasksProperties property) {
         synchronized (tasksData) {
             final Object actual = tasksData[task][property.num];

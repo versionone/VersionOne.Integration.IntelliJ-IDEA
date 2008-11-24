@@ -14,9 +14,11 @@ import javax.swing.*;
 public class MainSettings implements ApplicationComponent, Configurable {
     private ConfigForm form;
     private WorkspaceSettings settings;
+    private Project project;
 
-    public MainSettings(Project project,  WorkspaceSettings settings) {
+    public MainSettings(Project project, WorkspaceSettings settings) {
         this.settings = settings;
+        this.project = project;
     }
 
     public void initComponent() {
@@ -45,7 +47,7 @@ public class MainSettings implements ApplicationComponent, Configurable {
 
     public JComponent createComponent() {
         if (form == null) {
-            form = new ConfigForm(settings);
+            form = new ConfigForm(settings, project);
         }
         return form.getPanel();
     }

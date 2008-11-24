@@ -14,27 +14,18 @@ import com.versionone.integration.idea.TasksComponent;
 import java.net.ConnectException;
 
 public class Refresh extends AnAction {
-    private IDataLayer dataLayer;
 
     public void actionPerformed(AnActionEvent e) {
         System.out.println("Refresh.actionPerformed()");//TODO delete trace output
 
         final DataContext dataContext = e.getDataContext();
-//        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
         final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
-        final IDataLayer data = dataLayer;
-        try {
-            if (ideaProject == null) {
-                data.refresh();
-                return;
-            }
-        } catch (ConnectException e1) {
-            Messages.showErrorDialog(
-                    "Error connection to the VesionOne server",
-                    "Error");
+        
+        if (ideaProject == null) {
             return;
         }
-
+        final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
+        final IDataLayer data = tc.getDataLayer();
         final ProgressManager progressManager = ProgressManager.getInstance();
         final boolean[] isErrors = {false};
 
@@ -59,11 +50,6 @@ public class Refresh extends AnAction {
                     "Error");
         }
 
-        final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         tc.update();
-    }
-
-    public void setDataLayer(IDataLayer data) {
-        this.dataLayer = data;
     }
 }

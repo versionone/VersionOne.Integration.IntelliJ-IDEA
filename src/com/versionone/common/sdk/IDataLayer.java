@@ -29,4 +29,8 @@ public interface IDataLayer {
     boolean isTaskDataChanged(int task);
 
 //    boolean isTaskPropertyChanged(int task, TasksProperties property);
+
+    void reconnect() throws ConnectException;
+
+    boolean verifyConnection(String path, String userName, String password);
 }
