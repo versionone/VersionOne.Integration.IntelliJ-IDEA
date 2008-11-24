@@ -32,6 +32,9 @@
         <component>
             <implementation-class>com.versionone.integration.idea.WorkspaceSettings</implementation-class>
         </component>
+        <component>
+            <implementation-class>com.versionone.integration.idea.MainSettings</implementation-class>
+        </component>
     </project-components>
 
     <actions>
