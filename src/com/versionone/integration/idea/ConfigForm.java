@@ -11,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.net.ConnectException;
 
 public class ConfigForm implements UnnamedConfigurable {
@@ -24,6 +26,7 @@ public class ConfigForm implements UnnamedConfigurable {
     private final IDataLayer dataLayer;
     private final TasksComponent tc;
     private boolean isConnectionCorrect = true;
+    private boolean isConnectionVerified = true;
 
     public ConfigForm(WorkspaceSettings settings, Project project) {
         validateConnectionButton.setEnabled(false);
@@ -39,17 +42,32 @@ public class ConfigForm implements UnnamedConfigurable {
             }
         });
 
+        KeyAdapter keyListener = new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+                verifyChanges();                
+            }
+        };
+
+        serverUrl.addKeyListener(keyListener);
+        userName.addKeyListener(keyListener);
+        password.addKeyListener(keyListener);
+
+
         reset();
     }
 
     private void verifyConnection() {
+        isConnectionCorrect = dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText());
         if (dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText())) {
-            Messages.showInfoMessage("Connection is correct", "Connction status");
+            Messages.showInfoMessage("Connection is correct", "Connection status");
+            isConnectionCorrect = true;
+            validateConnectionButton.setEnabled(false);
         }
         else {
-            Messages.showInfoMessage("Connection is not correct", "Connction status");
+            Messages.showInfoMessage("Connection is not correct", "Connection status");
+            isConnectionCorrect = false;
         }
-
+        isConnectionVerified = true;
     }
 
     public Component getContentPanel() {
@@ -68,11 +86,15 @@ public class ConfigForm implements UnnamedConfigurable {
         result = result || !userName.getText().equals(settings.user);
         result = result || !password.getText().equals(settings.passwd);
 
-        validateConnectionButton.setEnabled(result);
-
-        isConnectionCorrect = !result;
-
         return result;
+    }
+
+    public void verifyChanges() {
+
+        if (isModified()) {
+            isConnectionVerified = false;
+            validateConnectionButton.setEnabled(true);
+        }
     }
 
 //    public boolean isProjectViewStyleChanged() {
@@ -123,6 +145,14 @@ public class ConfigForm implements UnnamedConfigurable {
 //                }, ModalityState.NON_MODAL);
 //            }
 //        }
+    }
+
+    public boolean isConnectValid() {
+        return isConnectionCorrect;
+    }
+
+    public boolean isConnectVerified() {
+        return isConnectionVerified;
     }
 
     public void reset() {

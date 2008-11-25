@@ -58,8 +58,14 @@ public class MainSettings implements ApplicationComponent, Configurable {
 
     public void apply() throws ConfigurationException {
         if (form != null) {
-            // Get data from form to component
-            form.apply();
+            if (form.isConnectVerified() && form.isConnectValid()) {
+                // Get data from form to component
+                form.apply();
+            }
+            else {
+                throw new ConfigurationException("Connect is not validated or is not correct");
+            }
+
         }
     }
 
