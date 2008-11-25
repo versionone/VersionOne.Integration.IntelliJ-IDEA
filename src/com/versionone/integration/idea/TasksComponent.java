@@ -17,8 +17,6 @@ import com.intellij.util.ui.UIUtil;
 import com.versionone.common.sdk.APIDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.actions.FilterAction;
-import com.versionone.integration.idea.actions.Refresh;
-import com.versionone.integration.idea.actions.SaveData;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,10 +33,9 @@ public class TasksComponent implements ProjectComponent {
     private final Project project;
 
     private Content content;
-    private WorkspaceSettings cfg;
+    private final WorkspaceSettings cfg;
     private TasksTable table;
-    private IDataLayer dataLayer;
-    //private String[] actions = new String[]{"V1.SaveData", "V1.toolRefresh", "Filter"};
+    private final IDataLayer dataLayer;
 
 
     public TasksComponent(Project project, WorkspaceSettings settings) {
@@ -81,6 +78,7 @@ public class TasksComponent implements ProjectComponent {
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         JPanel contentPanel = createContentPanel();
 
+        //Adding ActionToolbar
         ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
         ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
         contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
@@ -119,10 +117,10 @@ public class TasksComponent implements ProjectComponent {
         ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_ID);
     }
 
-
+    @NotNull
     public IDataLayer getDataLayer() {
         if (dataLayer == null) {
-            throw new IllegalComponentStateException("method call before creating object");
+            throw new IllegalStateException("method call before creating object");
         }
         return dataLayer;
     }

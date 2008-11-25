@@ -5,6 +5,7 @@ import com.versionone.Oid;
 import com.versionone.apiclient.Asset;
 import com.versionone.apiclient.AssetState;
 import com.versionone.apiclient.FilterTerm;
+import com.versionone.apiclient.IAPIConnector;
 import com.versionone.apiclient.IAssetType;
 import com.versionone.apiclient.IAttributeDefinition;
 import com.versionone.apiclient.IMetaModel;
@@ -18,7 +19,6 @@ import com.versionone.apiclient.Services;
 import com.versionone.apiclient.V1APIConnector;
 import com.versionone.apiclient.V1Configuration;
 import com.versionone.apiclient.V1Exception;
-import com.versionone.apiclient.IAPIConnector;
 import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -180,7 +180,7 @@ public final class APIDataLayer implements IDataLayer {
                 Oid oid = (Oid) res;
                 if (oid.isNull()) {
                     res = null;
-                } else if (property.equals(TasksProperties.STATUS)) {
+                } else if (property.equals(TasksProperties.STATUS_NAME)) {
                     res = statusList.getDisplayFromOid(oid.toString());
                 }
             } else if (res instanceof Double) {
@@ -200,7 +200,7 @@ public final class APIDataLayer implements IDataLayer {
 
     public void setTaskPropertyValue(int task, TasksProperties property, Object value) {
         synchronized (taskList) {
-            if (property.equals(TasksProperties.STATUS)) {
+            if (property.equals(TasksProperties.STATUS_NAME)) {
                 value = statusList.getID((String) value);
             }
             taskList[task].setProperty(property, value);

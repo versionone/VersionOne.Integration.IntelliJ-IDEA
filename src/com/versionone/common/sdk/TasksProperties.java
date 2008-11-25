@@ -6,14 +6,18 @@ import java.util.LinkedList;
 
 public enum TasksProperties {
 
-    TITLE(0, "Task", Type.Text, true, "Name"),
+    TITLE(0, "Title", Type.Text, true, "Name"),
     ID(1, "ID", Type.Text, false, "Number"),
     PARENT(2, "Story", Type.Text, false, "Parent.Name"),
     DETAIL_ESTIMATE(3, "Detailed Estimate", Type.Number, true, "DetailEstimate"),
     DONE(4, "Done", Type.Number, false, "Actuals.Value.@Sum"),
     EFFORT(5, "Effort", Type.Number, true),
     TO_DO(6, "Todo", Type.Number, true, "ToDo"),
-    STATUS(7, "Status", Type.StatusList, true, "Status"),
+    /**
+     * @deprecated
+     */
+    STATUS_NAME(7, "Status", Type.StatusList, true, "Status"),
+    STATUS(15, "Status", Type.List, true, "Status"),
     DESCRIPTION(8, "Description", Type.RichText, true, "Description"),
     OWNER(9, "Owner", Type.Text, false, "Owners.Nickname"),
     PROJECT(10, "Project", Type.Text, false, "Scope.Name"),
@@ -21,6 +25,7 @@ public enum TasksProperties {
     SOURCE(12, "Source", Type.List, true, "Source"),
     SPRINT(13, "Sprint", Type.Text, false, "Timebox.Name"),
     TYPE(14, "Type", Type.List, true, "Category");
+    //TODO BUILD
 
     final int num;
     public final String columnName;

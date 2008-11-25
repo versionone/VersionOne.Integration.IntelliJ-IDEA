@@ -158,7 +158,7 @@ public final class DataLayer implements IDataLayer {
         data[TasksProperties.DONE.num] = getBigDecimal(task.getDone());
         data[TasksProperties.EFFORT.num] = getBigDecimal(0D);
         data[TasksProperties.TO_DO.num] = getBigDecimal(task.getToDo());
-        data[TasksProperties.STATUS.num] = task.getStatus().getCurrentValue();
+        data[TasksProperties.STATUS_NAME.num] = task.getStatus().getCurrentValue();
     }
 
     private static BigDecimal getBigDecimal(Double toDo) {
@@ -192,8 +192,8 @@ public final class DataLayer implements IDataLayer {
         if (isTaskPropertyChanged(i, TasksProperties.TO_DO)) {
             task.setToDo(getDoubleValue(data[TasksProperties.TO_DO.num]));
         }
-        if (isTaskPropertyChanged(i, TasksProperties.STATUS)) {
-            task.getStatus().setCurrentValue(data[TasksProperties.STATUS.num] != null ? data[TasksProperties.STATUS.num].toString() : null);
+        if (isTaskPropertyChanged(i, TasksProperties.STATUS_NAME)) {
+            task.getStatus().setCurrentValue(data[TasksProperties.STATUS_NAME.num] != null ? data[TasksProperties.STATUS_NAME.num].toString() : null);
         }
     }
 

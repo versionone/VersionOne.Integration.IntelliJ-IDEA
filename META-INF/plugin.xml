@@ -35,6 +35,9 @@
         <component>
             <implementation-class>com.versionone.integration.idea.MainSettings</implementation-class>
         </component>
+        <component>
+            <implementation-class>com.versionone.integration.idea.DetailsComponent</implementation-class>
+        </component>
     </project-components>
 
     <actions>
