@@ -259,7 +259,7 @@ public final class APIDataLayer implements IDataLayer {
     public boolean verifyConnection(String path, String userName, String password) {
         boolean result = true;
 
-        IAPIConnector connector = new V1APIConnector(path + "loc.v1/?Member", userName, password);
+        IAPIConnector connector = new V1APIConnector(path + DATA_URL_SUFFIX + "Data/StoryStatus", userName, password);
         try {
             connector.getData().close();
         } catch (Exception e) {

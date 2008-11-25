@@ -58,13 +58,13 @@ public class ConfigForm implements UnnamedConfigurable {
 
     private void verifyConnection() {
         isConnectionCorrect = dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText());
-        if (dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText())) {
+        if (isConnectionCorrect) {
             Messages.showInfoMessage("Connection is correct", "Connection status");
             isConnectionCorrect = true;
             validateConnectionButton.setEnabled(false);
         }
         else {
-            Messages.showInfoMessage("Connection is not correct", "Connection status");
+            Messages.showWarningDialog("Connection is not correct", "Connection status");
             isConnectionCorrect = false;
         }
         isConnectionVerified = true;
