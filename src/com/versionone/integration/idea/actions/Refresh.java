@@ -9,10 +9,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
+import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.V1PluginException;
-
-import java.net.ConnectException;
 
 public class Refresh extends AnAction {
 
@@ -21,7 +20,7 @@ public class Refresh extends AnAction {
 
         final DataContext dataContext = e.getDataContext();
         final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
-        
+
         if (ideaProject == null) {
             return;
         }
@@ -46,12 +45,13 @@ public class Refresh extends AnAction {
                 ideaProject
         );
 
-        if ((Boolean)isErrors[0]) {
+        if ((Boolean) isErrors[0]) {
             Messages.showWarningDialog(
                     isErrors[1].toString(),
                     "Error");
         }
 
         tc.update();
+        ideaProject.getComponent(DetailsComponent.class).update();
     }
 }

@@ -32,6 +32,7 @@ public class DetailsComponent implements ProjectComponent {
     private Content content;
     private WorkspaceSettings cfg;
     private Table table;
+    private VerticalTableModel model;
 
 
     public DetailsComponent(Project project, WorkspaceSettings settings) {
@@ -88,7 +89,8 @@ public class DetailsComponent implements ProjectComponent {
     }
 
     private JPanel createContentPanel(IDataLayer dataLayer) {
-        table = new DetailsTable(new VerticalTableModel(dataLayer), dataLayer);
+        model = new VerticalTableModel(dataLayer);
+        table = new DetailsTable(model, dataLayer);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
@@ -98,6 +100,11 @@ public class DetailsComponent implements ProjectComponent {
 
     private void unregisterToolWindow() {
         ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_NAME);
+    }
+
+    public void setCurrentTask(int task) {
+        model.setTask(task);
+        table.repaint();
     }
 
     /**

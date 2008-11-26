@@ -24,8 +24,8 @@ public enum TasksProperties {
     REFERENCE(11, "Reference", Type.Text, true, "Reference"),
     SOURCE(12, "Source", Type.List, true, "Source"),
     SPRINT(13, "Sprint", Type.Text, false, "Timebox.Name"),
-    TYPE(14, "Type", Type.List, true, "Category");
-    //TODO BUILD
+    TYPE(14, "Type", Type.List, true, "Category"),
+    BUILD(16, "Build", Type.Text, false, "LastVersion");
 
     final int num;
     public final String columnName;

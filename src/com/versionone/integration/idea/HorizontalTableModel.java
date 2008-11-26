@@ -76,7 +76,7 @@ public class HorizontalTableModel extends AbstractTableModel {
                 return;
             }
         }
-        data.setTaskPropertyValue(rowIndex, getColumnData(columnIndex), aValue);
+        data.setTaskPropertyValue(rowIndex, getColumnData(columnIndex), aValue.toString());
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 

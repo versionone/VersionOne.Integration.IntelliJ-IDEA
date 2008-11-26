@@ -1,11 +1,10 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.common.sdk;
 
+import com.versionone.integration.idea.V1PluginException;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.ConnectException;
-
-import com.versionone.integration.idea.V1PluginException;
+import java.util.Vector;
 
 public interface IDataLayer {
     void refresh() throws V1PluginException;
@@ -17,13 +16,15 @@ public interface IDataLayer {
 
     int getTasksCount();
 
-    Object getTaskPropertyValue(int task, TasksProperties property);
+    String getTaskPropertyValue(int task, TasksProperties property);
+
+    Vector<String> getAvailableValues(int task, TasksProperties property);
 
     boolean isTrackEffort();
 
     String[] getAllStatuses();
 
-    void setTaskPropertyValue(int task, TasksProperties property, Object value);
+    void setTaskPropertyValue(int task, TasksProperties property, String value);
 
     @NotNull
     ProjectTreeNode getProjects() throws V1PluginException;

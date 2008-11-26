@@ -3,6 +3,7 @@ package com.versionone.integration.idea;
 
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.TasksProperties;
+import static com.versionone.common.sdk.TasksProperties.BUILD;
 import static com.versionone.common.sdk.TasksProperties.DESCRIPTION;
 import static com.versionone.common.sdk.TasksProperties.DETAIL_ESTIMATE;
 import static com.versionone.common.sdk.TasksProperties.DONE;
@@ -20,21 +21,20 @@ import static com.versionone.common.sdk.TasksProperties.TYPE;
 
 import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;
+import java.util.Vector;
 
 /**
  *
  */
 public class VerticalTableModel extends AbstractTableModel {
 
-    private static final TasksProperties[] tasksRowDataEffort =
-            {/*BUILD,*/DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT, OWNER, PARENT, PROJECT,
-                    REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
-    private static final TasksProperties[] tasksRowData =
-            {/*BUILD,*/DESCRIPTION, DETAIL_ESTIMATE, OWNER, PARENT, PROJECT,
-                    REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
+    private static final TasksProperties[] tasksRowDataEffort = {BUILD, DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT,
+            OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
+    private static final TasksProperties[] tasksRowData = {BUILD, DESCRIPTION, DETAIL_ESTIMATE,
+            OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
 
     private final IDataLayer data;
-    private final int task = 0;//TODO
+    private int task = 0;//TODO
 
     public VerticalTableModel(IDataLayer data) {
         this.data = data;
@@ -48,11 +48,30 @@ public class VerticalTableModel extends AbstractTableModel {
         return 2;
     }
 
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        if (columnIndex == 0) {
-            return getRowData(rowIndex).columnName;
+    public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
+        if (columnIndex != 0 && isTaskSet()) {
+            return data.getAvailableValues(task, getRowData(rowIndex));
         }
-        return roundIfBigDecimal(data.getTaskPropertyValue(task, getRowData(rowIndex)));
+        return null;
+    }
+
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        Object res = null;
+        if (columnIndex == 0) {
+            res = getRowData(rowIndex).columnName;
+        } else if (isTaskSet()) {
+//            res = roundIfBigDecimal(data.getTaskPropertyValue(task, getRowData(rowIndex)));
+            res = data.getTaskPropertyValue(task, getRowData(rowIndex));
+        }
+        return res;
+    }
+
+    public void setTask(int task) {
+        this.task = task;
+    }
+
+    private boolean isTaskSet() {
+        return task >= 0;
     }
 
     private static Object roundIfBigDecimal(Object value) {
@@ -66,30 +85,25 @@ public class VerticalTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        return null;
-//        return column == 0 ? "Property" : "Value";
+        return column == 0 ? "Property" : "Value";
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if (columnIndex == 0 || !isTaskSet()) {
+            return false;
+        }
         return getRowData(rowIndex).isEditable;
     }
 
-/*
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (getColumnData(columnIndex).type == TasksProperties.Type.Number) {
-            try {
-                aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
-            } catch (Exception e) {
-                //We can popup error message there.
-                return;
-            }
-        }
-        data.setTaskPropertyValue(rowIndex, getColumnData(columnIndex), aValue);
+//        if (getRowData(rowIndex).type == TasksProperties.Type.Number) {
+//            aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
+//        }
+        data.setTaskPropertyValue(task, getRowData(rowIndex), (String) aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
-*/
 
     public boolean isColumnChanged(int columnIndex) {
         return data.isTaskDataChanged(columnIndex);

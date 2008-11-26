@@ -19,8 +19,9 @@ import com.versionone.apiclient.Services;
 import com.versionone.apiclient.V1APIConnector;
 import com.versionone.apiclient.V1Configuration;
 import com.versionone.apiclient.V1Exception;
-import com.versionone.integration.idea.WorkspaceSettings;
+import static com.versionone.common.sdk.TasksProperties.STATUS;
 import com.versionone.integration.idea.V1PluginException;
+import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * This class requests, stores data from VersionOne server and send changed data back.
@@ -51,7 +53,7 @@ public final class APIDataLayer implements IDataLayer {
     private boolean trackEffort = false;
 
     private Task[] taskList = new Task[0];
-    
+
     private static String ERROR_CONNECTION_TO_V1 = "Error connection to VersionOne";
 
     public APIDataLayer(WorkspaceSettings workspaceSettings) {
@@ -90,8 +92,7 @@ public final class APIDataLayer implements IDataLayer {
 
         if (!isConnectionValid(cfg.v1Path, cfg.user, cfg.passwd)) {
             throw new V1PluginException(ERROR_CONNECTION_TO_V1);
-        }
-        else if (cfg.projectToken.equals("")) {
+        } else if (cfg.projectToken.equals("")) {
             throw new V1PluginException("Project is not selected. Please use filter for set it.");
         }
 
@@ -182,25 +183,38 @@ public final class APIDataLayer implements IDataLayer {
         }
     }
 
-    public Object getTaskPropertyValue(int task, TasksProperties property) {
-        Object res = null;
-        if (taskList.length > 0) {
-            synchronized (taskList) {
-                res = taskList[task].getProperty(property);
-
-                if (res instanceof Oid) {
-                    Oid oid = (Oid) res;
-                    if (oid.isNull()) {
-                        res = null;
-                    } else if (property.equals(TasksProperties.STATUS_NAME)) {
-                        res = statusList.getDisplayFromOid(oid.toString());
-                    }
-                } else if (res instanceof Double) {
-                    res = BigDecimal.valueOf((Double) res).setScale(2, BigDecimal.ROUND_HALF_DOWN);
+    public String getTaskPropertyValue(int task, TasksProperties property) {
+        if (taskList.length == 0) {
+            return null;
+        }
+        Object value;
+        synchronized (taskList) {
+            value = taskList[task].getProperty(property);
+        }
+        if (value == null) {
+            return null;
+        }
+        String res = value.toString();
+        if (value instanceof Oid) {
+            Oid oid = (Oid) value;
+            if (!oid.isNull()) {
+                if (property.equals(TasksProperties.STATUS)) {
+                    res = statusList.getDisplayFromOid(oid.toString());
                 }
             }
+        } else if (value instanceof Double) {
+            res = BigDecimal.valueOf((Double) value).setScale(2, BigDecimal.ROUND_HALF_DOWN).toPlainString();
+        } else {
+            res = value.toString();
         }
-        return res; 
+        return res;
+    }
+
+    public Vector<String> getAvailableValues(int task, TasksProperties property) {
+        if (property.equals(STATUS)) {
+            return new Vector<String>(Arrays.asList(statusList.getDisplayValues()));
+        }
+        return new Vector<String>(0);
     }
 
     public boolean isTrackEffort() {
@@ -211,17 +225,17 @@ public final class APIDataLayer implements IDataLayer {
         return statusList.getDisplayValues();
     }
 
-    public void setTaskPropertyValue(int task, TasksProperties property, Object value) {
+    public void setTaskPropertyValue(int task, TasksProperties property, String value) {
         synchronized (taskList) {
-            if (property.equals(TasksProperties.STATUS_NAME)) {
-                value = statusList.getID((String) value);
+            if (property.equals(TasksProperties.STATUS)) {
+                value = statusList.getID(value);
             }
             taskList[task].setProperty(property, value);
         }
     }
 
     @NotNull
-    public ProjectTreeNode getProjects() throws V1PluginException {        
+    public ProjectTreeNode getProjects() throws V1PluginException {
         if (!isConnectionValid(cfg.v1Path, cfg.user, cfg.passwd)) {
             throw new V1PluginException(ERROR_CONNECTION_TO_V1);
         }

@@ -97,6 +97,11 @@ public class TasksComponent implements ProjectComponent {
         }
         table.revalidate();
         table.repaint();
+
+        //update Details
+//        final DetailsComponent dc = project.getComponent(DetailsComponent.class);
+//        int task = table.getSelectedRow();
+//        dc.setCurrentTask(task);
     }
 
     private JPanel createContentPanel() {
