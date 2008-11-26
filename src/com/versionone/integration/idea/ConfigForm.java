@@ -1,16 +1,16 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
-import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -43,7 +43,7 @@ public class ConfigForm implements UnnamedConfigurable {
 
         KeyAdapter keyListener = new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                verifyChanges();                
+                verifyChanges();
             }
         };
 
@@ -61,8 +61,7 @@ public class ConfigForm implements UnnamedConfigurable {
             Messages.showInfoMessage("Connection is correct", "Connection status");
             isConnectionCorrect = true;
             validateConnectionButton.setEnabled(false);
-        }
-        else {
+        } else {
             Messages.showWarningDialog("Connection is not correct", "Connection status");
             isConnectionCorrect = false;
         }
@@ -116,8 +115,8 @@ public class ConfigForm implements UnnamedConfigurable {
                 dataLayer.reconnect();
             } catch (V1PluginException e) {
                 Messages.showWarningDialog(
-                    e.getMessage(),
-                    "Error");
+                        e.getMessage(),
+                        "Error");
             }
 
             tc.update();
