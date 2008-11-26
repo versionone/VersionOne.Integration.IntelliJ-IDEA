@@ -20,11 +20,11 @@ import com.versionone.apiclient.V1APIConnector;
 import com.versionone.apiclient.V1Configuration;
 import com.versionone.apiclient.V1Exception;
 import com.versionone.integration.idea.WorkspaceSettings;
+import com.versionone.integration.idea.V1PluginException;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.List;
  */
 public final class APIDataLayer implements IDataLayer {
 
-    private static final Logger LOG = Logger.getLogger(DataLayer.class);
+    private static final Logger LOG = Logger.getLogger(APIDataLayer.class);
     private static final String META_URL_SUFFIX = "meta.v1/";
     private static final String DATA_URL_SUFFIX = "rest-1.v1/";
     private static final String CONFIG_URL_SUFFIX = "config.v1/";
@@ -51,6 +51,8 @@ public final class APIDataLayer implements IDataLayer {
     private boolean trackEffort = false;
 
     private Task[] taskList = new Task[0];
+    
+    private static String ERROR_CONNECTION_TO_V1 = "Error connection to VersionOne";
 
     public APIDataLayer(WorkspaceSettings workspaceSettings) {
         cfg = workspaceSettings;
@@ -58,12 +60,12 @@ public final class APIDataLayer implements IDataLayer {
         try {
             connect();
             refresh();
-        } catch (ConnectException e) {
+        } catch (V1PluginException e) {
             // do nothing
         }
     }
 
-    private void connect() throws ConnectException {
+    private void connect() throws V1PluginException {
         try {
             V1APIConnector metaConnector = new V1APIConnector(cfg.v1Path + META_URL_SUFFIX);
             metaModel = new MetaModel(metaConnector);
@@ -78,18 +80,26 @@ public final class APIDataLayer implements IDataLayer {
             member = services.getLoggedIn().getToken();
             statusList = new TaskStatusCodes(metaModel, services);
         } catch (Exception e) {
-            LOG.warn("Error connection to VersionOne", e);
-            throw new ConnectException(e.getMessage());
+            LOG.warn(ERROR_CONNECTION_TO_V1, e);
+            throw new V1PluginException(ERROR_CONNECTION_TO_V1, e);
         }
     }
 
-    public void refresh() throws ConnectException {
+    public void refresh() throws V1PluginException {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
+
+        if (!isConnectionValid(cfg.v1Path, cfg.user, cfg.passwd)) {
+            throw new V1PluginException(ERROR_CONNECTION_TO_V1);
+        }
+        else if (cfg.projectToken.equals("")) {
+            throw new V1PluginException("Project is not selected. Please use filter for set it.");
+        }
+
         try {
             statusList = new TaskStatusCodes(metaModel, services);
             taskList = getTasks();
         } catch (Exception e) {
-            throw new ConnectException(e.getMessage());
+            throw new V1PluginException(ERROR_CONNECTION_TO_V1, e);
         }
     }
 
@@ -173,21 +183,24 @@ public final class APIDataLayer implements IDataLayer {
     }
 
     public Object getTaskPropertyValue(int task, TasksProperties property) {
-        synchronized (taskList) {
-            Object res = taskList[task].getProperty(property);
+        Object res = null;
+        if (taskList.length > 0) {
+            synchronized (taskList) {
+                res = taskList[task].getProperty(property);
 
-            if (res instanceof Oid) {
-                Oid oid = (Oid) res;
-                if (oid.isNull()) {
-                    res = null;
-                } else if (property.equals(TasksProperties.STATUS_NAME)) {
-                    res = statusList.getDisplayFromOid(oid.toString());
+                if (res instanceof Oid) {
+                    Oid oid = (Oid) res;
+                    if (oid.isNull()) {
+                        res = null;
+                    } else if (property.equals(TasksProperties.STATUS_NAME)) {
+                        res = statusList.getDisplayFromOid(oid.toString());
+                    }
+                } else if (res instanceof Double) {
+                    res = BigDecimal.valueOf((Double) res).setScale(2, BigDecimal.ROUND_HALF_DOWN);
                 }
-            } else if (res instanceof Double) {
-                res = BigDecimal.valueOf((Double) res).setScale(2, BigDecimal.ROUND_HALF_DOWN);
             }
-            return res;
         }
+        return res; 
     }
 
     public boolean isTrackEffort() {
@@ -208,7 +221,11 @@ public final class APIDataLayer implements IDataLayer {
     }
 
     @NotNull
-    public ProjectTreeNode getProjects() throws ConnectException {
+    public ProjectTreeNode getProjects() throws V1PluginException {        
+        if (!isConnectionValid(cfg.v1Path, cfg.user, cfg.passwd)) {
+            throw new V1PluginException(ERROR_CONNECTION_TO_V1);
+        }
+
         try {
             IAssetType scopeType = metaModel.getAssetType("Scope");
 
@@ -231,7 +248,7 @@ public final class APIDataLayer implements IDataLayer {
             return root;
         } catch (Exception e) {
             LOG.warn("Can't get projects list.", e);
-            throw new ConnectException("Can't get projects list: " + e.getMessage());
+            throw new V1PluginException("Can't get projects list.", e);
         }
     }
 
@@ -251,12 +268,12 @@ public final class APIDataLayer implements IDataLayer {
         return taskList[task].isChanged();
     }
 
-    public void reconnect() throws ConnectException {
+    public void reconnect() throws V1PluginException {
         connect();
         refresh();
     }
 
-    public boolean verifyConnection(String path, String userName, String password) {
+    public boolean isConnectionValid(String path, String userName, String password) {
         boolean result = true;
 
         IAPIConnector connector = new V1APIConnector(path + DATA_URL_SUFFIX + "Data/StoryStatus", userName, password);

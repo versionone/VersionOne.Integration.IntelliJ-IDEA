@@ -16,9 +16,8 @@ import com.versionone.common.sdk.ProjectTreeNode;
 import com.versionone.integration.idea.FilterForm;
 import com.versionone.integration.idea.WorkspaceSettings;
 import com.versionone.integration.idea.TasksComponent;
+import com.versionone.integration.idea.V1PluginException;
 import org.apache.log4j.Logger;
-
-import java.net.ConnectException;
 
 public class FilterAction extends AnAction {
 
@@ -38,7 +37,7 @@ public class FilterAction extends AnAction {
 
         final ProgressManager progressManager = ProgressManager.getInstance();
         final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
-        final boolean[] isError = new boolean[]{false};
+        final Object[] isError = {false, ""};
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final IDataLayer data = tc.getDataLayer();
 
@@ -49,8 +48,9 @@ public class FilterAction extends AnAction {
                 indicator.setText("Loading project list");
                 try {
                     projectsRoot[0] = data.getProjects();
-                } catch (ConnectException e) {
+                } catch (V1PluginException e) {
                     isError[0] = true;
+                    isError[1] = e.getMessage();
                 }
 //                data.setProgressIndicator(null);
             }
@@ -64,9 +64,9 @@ public class FilterAction extends AnAction {
             return false;
         }
 
-        if (isError[0]) {
+        if ((Boolean)isError[0]) {
             Messages.showErrorDialog(
-                    "Error connection to the VesionOne server",
+                    isError[1].toString(),
                     "Error");
             return false;
         }

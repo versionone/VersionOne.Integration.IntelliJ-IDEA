@@ -5,8 +5,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.ConnectException;
 
+import com.versionone.integration.idea.V1PluginException;
+
 public interface IDataLayer {
-    void refresh() throws ConnectException;
+    void refresh() throws V1PluginException;
 
     /**
      * @throws IllegalStateException if trying to commit Efforts when EffortTracking disabled.
@@ -24,13 +26,13 @@ public interface IDataLayer {
     void setTaskPropertyValue(int task, TasksProperties property, Object value);
 
     @NotNull
-    ProjectTreeNode getProjects() throws ConnectException;
+    ProjectTreeNode getProjects() throws V1PluginException;
 
     boolean isTaskDataChanged(int task);
 
 //    boolean isTaskPropertyChanged(int task, TasksProperties property);
 
-    void reconnect() throws ConnectException;
+    void reconnect() throws V1PluginException;
 
-    boolean verifyConnection(String path, String userName, String password);
+    boolean isConnectionValid(String path, String userName, String password);
 }

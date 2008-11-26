@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.net.ConnectException;
 
 public class ConfigForm implements UnnamedConfigurable {
     private JTextField serverUrl;
@@ -57,7 +56,7 @@ public class ConfigForm implements UnnamedConfigurable {
     }
 
     private void verifyConnection() {
-        isConnectionCorrect = dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText());
+        isConnectionCorrect = dataLayer.isConnectionValid(serverUrl.getText(), userName.getText(), password.getText());
         if (isConnectionCorrect) {
             Messages.showInfoMessage("Connection is correct", "Connection status");
             isConnectionCorrect = true;
@@ -110,11 +109,14 @@ public class ConfigForm implements UnnamedConfigurable {
             settings.user = userName.getText();
             settings.passwd = password.getText();
 
+            settings.projectToken = "";
+            settings.projectName = "";
+
             try {
                 dataLayer.reconnect();
-            } catch (ConnectException e) {
-                Messages.showErrorDialog(
-                    "Error connection to the VesionOne server",
+            } catch (V1PluginException e) {
+                Messages.showWarningDialog(
+                    e.getMessage(),
                     "Error");
             }
 

@@ -6,11 +6,11 @@ import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ProjectTreeNode;
 import com.versionone.common.sdk.TasksProperties;
 import com.versionone.integration.idea.WorkspaceSettings;
+import com.versionone.integration.idea.V1PluginException;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.ConnectException;
 import java.util.Enumeration;
 
 public class DataLayerTest {
@@ -44,9 +44,10 @@ public class DataLayerTest {
 
     /**
      * Integration test. Need access to V1 server.
+     * @throws com.versionone.integration.idea.V1PluginException
      */
     @Test
-    public void testGetProjects() throws ConnectException {
+    public void testGetProjects() throws V1PluginException {
         ProjectTreeNode projects = data.getProjects();
 
         //for(Project project : projects) {

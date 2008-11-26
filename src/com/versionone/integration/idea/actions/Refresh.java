@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.TasksComponent;
+import com.versionone.integration.idea.V1PluginException;
 
 import java.net.ConnectException;
 
@@ -27,15 +28,16 @@ public class Refresh extends AnAction {
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final IDataLayer data = tc.getDataLayer();
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final boolean[] isErrors = {false};
+        final Object[] isErrors = {false, ""};
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
                 progressManager.getProgressIndicator().setText("Update tasks list");
                 try {
                     data.refresh();
-                } catch (ConnectException e1) {
+                } catch (V1PluginException e1) {
                     isErrors[0] = true;
+                    isErrors[1] = e1.getMessage();
                 }
             }
         },
@@ -44,9 +46,9 @@ public class Refresh extends AnAction {
                 ideaProject
         );
 
-        if (isErrors[0]) {
-            Messages.showErrorDialog(
-                    "Error connection to the VesionOne server",
+        if ((Boolean)isErrors[0]) {
+            Messages.showWarningDialog(
+                    isErrors[1].toString(),
                     "Error");
         }
 
