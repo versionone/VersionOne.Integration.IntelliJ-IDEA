@@ -20,6 +20,7 @@ import com.versionone.apiclient.V1APIConnector;
 import com.versionone.apiclient.V1Configuration;
 import com.versionone.apiclient.V1Exception;
 import static com.versionone.common.sdk.TasksProperties.STATUS;
+import static com.versionone.common.sdk.TasksProperties.TYPE;
 import com.versionone.integration.idea.V1PluginException;
 import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
@@ -50,6 +51,7 @@ public final class APIDataLayer implements IDataLayer {
 
     private String member;
     private IStatusCodes statusList;
+    private TaskTypesCodes typesList;
     private boolean trackEffort = false;
 
     private Task[] taskList = new Task[0];
@@ -69,6 +71,9 @@ public final class APIDataLayer implements IDataLayer {
         }
     }
 
+    /**
+     * Does refresh() too.
+     */
     private void connect() throws V1PluginException {
         isConnectSet = false;
         try {
@@ -83,7 +88,8 @@ public final class APIDataLayer implements IDataLayer {
             actualType = metaModel.getAssetType("Actual");
             trackEffort = v1Config.isEffortTracking();
             member = services.getLoggedIn().getToken();
-            statusList = new TaskStatusCodes(metaModel, services);
+//            statusList = new TaskStatusCodes(metaModel, services);
+//            typesList = new TaskTypesCodes(metaModel, services);
         } catch (Exception e) {
             LOG.warn(ERROR_CONNECTION_TO_V1, e);
             throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
@@ -97,7 +103,7 @@ public final class APIDataLayer implements IDataLayer {
         if (!isConnectSet) {
             try {
                 connect();
-            } catch (V1PluginException e){
+            } catch (V1PluginException e) {
                 throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
             }
         }
@@ -110,8 +116,10 @@ public final class APIDataLayer implements IDataLayer {
 
         try {
             statusList = new TaskStatusCodes(metaModel, services);
+            typesList = new TaskTypesCodes(metaModel, services);
             taskList = getTasks();
         } catch (Exception e) {
+            LOG.warn(ERROR_CONNECTION_TO_V1, e);
             throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
         }
     }
@@ -171,7 +179,7 @@ public final class APIDataLayer implements IDataLayer {
         if (!isConnectSet) {
             try {
                 connect();
-            } catch (V1PluginException e){
+            } catch (V1PluginException e) {
                 throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
             }
         }
@@ -208,6 +216,7 @@ public final class APIDataLayer implements IDataLayer {
     }
 
     public String getTaskPropertyValue(int task, TasksProperties property) {
+        //TODO redesign
         if (taskList.length == 0) {
             return null;
         }
@@ -222,12 +231,14 @@ public final class APIDataLayer implements IDataLayer {
         if (value instanceof Oid) {
             Oid oid = (Oid) value;
             if (!oid.isNull()) {
-                if (property.equals(TasksProperties.STATUS)) {
+                if (property.equals(STATUS)) {
                     res = statusList.getDisplayFromOid(oid.toString());
+                } else if (property.equals(TYPE)) {
+                    res = typesList.getDisplayFromOid(oid);
                 }
             }
         } else if (value instanceof Double) {
-            res = BigDecimal.valueOf((Double) value).setScale(2, BigDecimal.ROUND_HALF_DOWN).toPlainString();
+            res = BigDecimal.valueOf((Double) value).setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
         } else {
             res = value.toString();
         }
@@ -237,6 +248,8 @@ public final class APIDataLayer implements IDataLayer {
     public Vector<String> getAvailableValues(int task, TasksProperties property) {
         if (property.equals(STATUS)) {
             return new Vector<String>(Arrays.asList(statusList.getDisplayValues()));
+        } else if (property.equals(TYPE)) {
+            return typesList.getDisplayValues();
         }
         return new Vector<String>(0);
     }
@@ -245,16 +258,24 @@ public final class APIDataLayer implements IDataLayer {
         return trackEffort;
     }
 
+    /**
+     * @deprecated
+     */
     public String[] getAllStatuses() {
         return statusList.getDisplayValues();
     }
 
     public void setTaskPropertyValue(int task, TasksProperties property, String value) {
         synchronized (taskList) {
-            if (property.equals(TasksProperties.STATUS)) {
-                value = statusList.getID(value);
+            final Object x;
+            if (property.equals(STATUS)) {
+                x = statusList.getID(value);
+            } else if (property.equals(TYPE)) {
+                x = typesList.getID(value);
+            } else {
+                x = value;
             }
-            taskList[task].setProperty(property, value);
+            taskList[task].setProperty(property, x);
         }
     }
 
@@ -263,7 +284,7 @@ public final class APIDataLayer implements IDataLayer {
         if (!isConnectSet) {
             try {
                 connect();
-            } catch (V1PluginException e){
+            } catch (V1PluginException e) {
                 throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
             }
         }
