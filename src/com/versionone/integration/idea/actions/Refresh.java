@@ -13,6 +13,8 @@ import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.V1PluginException;
 
+import javax.swing.*;
+
 public class Refresh extends AnAction {
 
     public void actionPerformed(AnActionEvent e) {
@@ -27,7 +29,7 @@ public class Refresh extends AnAction {
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final IDataLayer data = tc.getDataLayer();
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final Object[] isErrors = {false, ""};
+        final Object[] isError = {false, "", false};
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
@@ -35,8 +37,9 @@ public class Refresh extends AnAction {
                 try {
                     data.refresh();
                 } catch (V1PluginException e1) {
-                    isErrors[0] = true;
-                    isErrors[1] = e1.getMessage();
+                    isError[0] = true;
+                    isError[1] = e1.getMessage();
+                    isError[2] = e1.isError();
                 }
             }
         },
@@ -45,10 +48,9 @@ public class Refresh extends AnAction {
                 ideaProject
         );
 
-        if ((Boolean) isErrors[0]) {
-            Messages.showWarningDialog(
-                    isErrors[1].toString(),
-                    "Error");
+        if ((Boolean) isError[0]) {
+            Icon icon = (Boolean)isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
+            Messages.showMessageDialog(isError[1].toString(), "Error", icon);
         }
 
         tc.update();

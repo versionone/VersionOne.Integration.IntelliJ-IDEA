@@ -19,6 +19,8 @@ import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.V1PluginException;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
+
 public class FilterAction extends AnAction {
 
     private static final Logger LOG = Logger.getLogger(FilterAction.class);
@@ -37,7 +39,7 @@ public class FilterAction extends AnAction {
 
         final ProgressManager progressManager = ProgressManager.getInstance();
         final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
-        final Object[] isError = {false, ""};
+        final Object[] isError = {false, "", false};
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final IDataLayer data = tc.getDataLayer();
 
@@ -51,6 +53,7 @@ public class FilterAction extends AnAction {
                 } catch (V1PluginException e) {
                     isError[0] = true;
                     isError[1] = e.getMessage();
+                    isError[2] = e.isError();
                 }
 //                data.setProgressIndicator(null);
             }
@@ -65,9 +68,8 @@ public class FilterAction extends AnAction {
         }
 
         if ((Boolean)isError[0]) {
-            Messages.showErrorDialog(
-                    isError[1].toString(),
-                    "Error");
+            Icon icon = (Boolean)isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
+            Messages.showMessageDialog(isError[1].toString(), "Error", icon);
             return false;
         }
 

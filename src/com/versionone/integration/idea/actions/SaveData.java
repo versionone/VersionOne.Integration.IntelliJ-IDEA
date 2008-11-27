@@ -11,6 +11,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.TasksComponent;
+import com.versionone.integration.idea.V1PluginException;
+
+import javax.swing.*;
 
 /**
  *
@@ -30,15 +33,21 @@ public class SaveData extends AnAction {
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final IDataLayer data = tc.getDataLayer();
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final boolean[] isErrors = {false};
+        final Object[] isError = {false, "", false};
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
                 progressManager.getProgressIndicator().setText("Save task's data");
                 try {
                     data.commitChangedTaskData();
+                } catch (V1PluginException e1) {
+                    isError[0] = true;
+                    isError[1] = e1.getMessage();
+                    isError[2] = e1.isError();
                 } catch (Exception e1) {
-                    isErrors[0] = true;
+                    isError[0] = true;
+                    isError[1] = "Error connection to the VesionOne";
+                    isError[2] = true;
                 }
             }
         },
@@ -47,10 +56,10 @@ public class SaveData extends AnAction {
                 ideaProject
         );
 
-        if (isErrors[0]) {
-            Messages.showErrorDialog(
-                    "Error connection to the VesionOne server",
-                    "Error");
+        if ((Boolean)isError[0]) {
+            Icon icon = (Boolean)isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
+            Messages.showMessageDialog(isError[1].toString(), "Error", icon);
+            return;
         }
 
         ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);

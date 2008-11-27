@@ -20,6 +20,7 @@ import com.versionone.om.filters.TaskFilter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.Date;
@@ -31,14 +32,19 @@ public class DataLayerTest {
     final WorkspaceSettings settings = new WorkspaceSettings();
     private String SCOPE_ZERO = "Scope:0";
 
-    @Before
-    public void before() {
+    //@Before
+    private void connect() {
+        settings();
+        data = new APIDataLayer(settings);
+    }
+
+    private void settings() {
         settings.v1Path = "http://eval.versionone.net/ExigenTest/";
         //settings.v1Path = "http://jsdksrv01/VersionOne/";
         settings.user = "admin";
         settings.passwd = "admin";
         settings.projectName = "System (All Projects)";
-        data = new APIDataLayer(settings);
+        settings.projectToken = "Scope:0";
     }
 
 //    /**
@@ -64,6 +70,7 @@ public class DataLayerTest {
      */
     @Test
     public void testGetProjects() throws V1PluginException {
+        connect();
         ProjectTreeNode projects = data.getProjects();
 
         //for(Project project : projects) {
@@ -99,6 +106,7 @@ public class DataLayerTest {
      */
     @Test
     public void testGettingData() throws Exception {
+        settings();
         Project project = null;
         Story story = null;
         Task task = null;
@@ -188,6 +196,7 @@ public class DataLayerTest {
      */
     @Test
     public void testChangeData() throws Exception {
+        settings();
         Project project = null;
         Story story = null;
         Task task = null;
@@ -235,8 +244,6 @@ public class DataLayerTest {
             task.getStatus().setCurrentValue(status);
             task.save();
 
-            final String storyId = story.getID().toString();
-
             settings.projectToken = project.getID().toString();
             data = new APIDataLayer(settings);
 
@@ -244,6 +251,12 @@ public class DataLayerTest {
             data.setTaskPropertyValue(0, TasksProperties.TITLE, taskName + newTextInFileds);
             data.setTaskPropertyValue(0, TasksProperties.STATUS, newStatus);
             data.setTaskPropertyValue(0, TasksProperties.EFFORT, effort.toString());
+            Assert.assertTrue( data.isTaskDataChanged(0));
+            Assert.assertTrue( data.isPropertyChanged(0, TasksProperties.DESCRIPTION));
+            Assert.assertTrue( data.isPropertyChanged(0, TasksProperties.TITLE));
+            Assert.assertTrue( data.isPropertyChanged(0, TasksProperties.STATUS));
+            Assert.assertTrue( data.isPropertyChanged(0, TasksProperties.EFFORT));
+
             data.commitChangedTaskData();
             data.refresh();
 
@@ -266,7 +279,6 @@ public class DataLayerTest {
             Assert.assertEquals(taskName + newTextInFileds, taskTest.getName());
             Assert.assertEquals(newStatus, taskTest.getStatus().getCurrentValue());
             Assert.assertEquals(effort, taskTest.getDone(), 0.0001);
-
 
         }
         finally {
@@ -295,6 +307,38 @@ public class DataLayerTest {
         }
     }
 
+    @Test
+    public void testInvalidConnection() {
+        settings();
+        settings.v1Path = "http://incorectdomant/VersionOne/";
+
+        data = new APIDataLayer(settings);
+
+        try {
+            data.refresh();
+            fail("Error: no exception on refresh method");
+        } catch (V1PluginException e) {
+
+        }
+
+        try {
+            data.getProjects();
+            fail();
+            fail("Error: no exception on getProject method");
+        } catch (V1PluginException e) {
+
+        }
+
+        try {
+            data.commitChangedTaskData();
+            fail("Error: no exception on the commitChangeTaskData");
+        } catch (V1PluginException e) {
+
+        } catch (Exception e) {
+            fail("Incorrect exception");
+        }
+
+    }
 
 
 

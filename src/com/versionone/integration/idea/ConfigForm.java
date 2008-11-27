@@ -114,9 +114,8 @@ public class ConfigForm implements UnnamedConfigurable {
             try {
                 dataLayer.reconnect();
             } catch (V1PluginException e) {
-                Messages.showWarningDialog(
-                        e.getMessage(),
-                        "Error");
+                Icon icon = e.isError() ? Messages.getErrorIcon() : Messages.getWarningIcon();
+                Messages.showMessageDialog(e.getMessage(), "Error", icon);
             }
 
             tc.update();

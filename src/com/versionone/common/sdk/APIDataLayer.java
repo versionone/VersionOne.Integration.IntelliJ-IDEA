@@ -56,6 +56,8 @@ public final class APIDataLayer implements IDataLayer {
 
     private static String ERROR_CONNECTION_TO_V1 = "Error connection to VersionOne";
 
+    private boolean isConnectSet = false;
+
     public APIDataLayer(WorkspaceSettings workspaceSettings) {
         cfg = workspaceSettings;
 
@@ -68,6 +70,7 @@ public final class APIDataLayer implements IDataLayer {
     }
 
     private void connect() throws V1PluginException {
+        isConnectSet = false;
         try {
             V1APIConnector metaConnector = new V1APIConnector(cfg.v1Path + META_URL_SUFFIX);
             metaModel = new MetaModel(metaConnector);
@@ -83,24 +86,33 @@ public final class APIDataLayer implements IDataLayer {
             statusList = new TaskStatusCodes(metaModel, services);
         } catch (Exception e) {
             LOG.warn(ERROR_CONNECTION_TO_V1, e);
-            throw new V1PluginException(ERROR_CONNECTION_TO_V1, e);
+            throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
         }
+        isConnectSet = true;
     }
 
     public void refresh() throws V1PluginException {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
 
+        if (!isConnectSet) {
+            try {
+                connect();
+            } catch (V1PluginException e){
+                throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
+            }
+        }
+
         if (!isConnectionValid(cfg.v1Path, cfg.user, cfg.passwd)) {
-            throw new V1PluginException(ERROR_CONNECTION_TO_V1);
+            throw new V1PluginException(ERROR_CONNECTION_TO_V1, true);
         } else if (cfg.projectToken.equals("")) {
-            throw new V1PluginException("Project is not selected. Please use filter for set it.");
+            throw new V1PluginException("Project is not selected. Please use filter for set it.", false);
         }
 
         try {
             statusList = new TaskStatusCodes(metaModel, services);
             taskList = getTasks();
         } catch (Exception e) {
-            throw new V1PluginException(ERROR_CONNECTION_TO_V1, e);
+            throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
         }
     }
 
@@ -156,6 +168,18 @@ public final class APIDataLayer implements IDataLayer {
      * @throws IllegalStateException if trying to commit Efforts when EffortTracking disabled.
      */
     public void commitChangedTaskData() throws Exception {
+        if (!isConnectSet) {
+            try {
+                connect();
+            } catch (V1PluginException e){
+                throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
+            }
+        }
+        if (!isConnectionValid(cfg.v1Path, cfg.user, cfg.passwd)) {
+            throw new V1PluginException(ERROR_CONNECTION_TO_V1, true);
+        } else if (cfg.projectToken.equals("")) {
+            throw new V1PluginException("Project is not selected. Please use filter for set it.", false);
+        }
         synchronized (taskList) {
             save(taskList);
         }
@@ -236,8 +260,15 @@ public final class APIDataLayer implements IDataLayer {
 
     @NotNull
     public ProjectTreeNode getProjects() throws V1PluginException {
+        if (!isConnectSet) {
+            try {
+                connect();
+            } catch (V1PluginException e){
+                throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
+            }
+        }
         if (!isConnectionValid(cfg.v1Path, cfg.user, cfg.passwd)) {
-            throw new V1PluginException(ERROR_CONNECTION_TO_V1);
+            throw new V1PluginException(ERROR_CONNECTION_TO_V1, true);
         }
 
         try {
@@ -262,7 +293,7 @@ public final class APIDataLayer implements IDataLayer {
             return root;
         } catch (Exception e) {
             LOG.warn("Can't get projects list.", e);
-            throw new V1PluginException("Can't get projects list.", e);
+            throw new V1PluginException("Can't get projects list.", e, false);
         }
     }
 
