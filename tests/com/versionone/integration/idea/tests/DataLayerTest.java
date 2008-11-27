@@ -24,6 +24,7 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.math.BigDecimal;
 
 public class DataLayerTest {
     private IDataLayer data;
@@ -148,10 +149,10 @@ public class DataLayerTest {
             Assert.assertEquals(taskDesc, data.getTaskPropertyValue(0, TasksProperties.DESCRIPTION));
             Assert.assertEquals(taskName, data.getTaskPropertyValue(0, TasksProperties.TITLE));
             Assert.assertEquals(storyName, data.getTaskPropertyValue(0, TasksProperties.PARENT));
-            Assert.assertEquals(status, data.getTaskPropertyValue(0, TasksProperties.STATUS_NAME).toString());
+            Assert.assertEquals(status, data.getTaskPropertyValue(0, TasksProperties.STATUS));
             Assert.assertEquals(itarationName, data.getTaskPropertyValue(0, TasksProperties.SPRINT));
-            Assert.assertEquals(toDO, Double.parseDouble(data.getTaskPropertyValue(0, TasksProperties.TO_DO).toString()), 0.0001);
-            Assert.assertEquals(detailEstimate, Double.parseDouble(data.getTaskPropertyValue(0, TasksProperties.DETAIL_ESTIMATE).toString()), 0.0001);
+            Assert.assertEquals(toDO, Double.parseDouble(data.getTaskPropertyValue(0, TasksProperties.TO_DO)), 0.0001);
+            Assert.assertEquals(detailEstimate, Double.parseDouble(data.getTaskPropertyValue(0, TasksProperties.DETAIL_ESTIMATE)), 0.0001);
         }
         finally {
             if (task != null) {
@@ -175,13 +176,14 @@ public class DataLayerTest {
             if (schedule != null) {
                 schedule.delete();
             }
+
         }
     }
 
 
+
     /**
      * Integrational test. Need access to V1 server.
-     *
      * @throws Exception if any error occure
      */
     @Test
@@ -204,7 +206,7 @@ public class DataLayerTest {
 
         final String newTextInFileds = " this fields was changed";
         final String newStatus = "Completed";
-        final String effort = "3.50";
+        final Double effort = 3.5D;
 
         try {
             final V1Instance v1 = new V1Instance(settings.v1Path, settings.user, settings.passwd);
@@ -240,8 +242,8 @@ public class DataLayerTest {
 
             data.setTaskPropertyValue(0, TasksProperties.DESCRIPTION, taskDesc + newTextInFileds);
             data.setTaskPropertyValue(0, TasksProperties.TITLE, taskName + newTextInFileds);
-            data.setTaskPropertyValue(0, TasksProperties.STATUS_NAME, newStatus);
-            data.setTaskPropertyValue(0, TasksProperties.EFFORT, effort);
+            data.setTaskPropertyValue(0, TasksProperties.STATUS, newStatus);
+            data.setTaskPropertyValue(0, TasksProperties.EFFORT, effort.toString());
             data.commitChangedTaskData();
             data.refresh();
 
@@ -249,21 +251,23 @@ public class DataLayerTest {
             Assert.assertEquals(taskDesc + newTextInFileds, data.getTaskPropertyValue(0, TasksProperties.DESCRIPTION));
             Assert.assertEquals(taskName + newTextInFileds, data.getTaskPropertyValue(0, TasksProperties.TITLE));
             //Assert.assertEquals(newStatus, data.getTaskPropertyValue(0, TasksProperties.STATUS));
-            Assert.assertEquals(newStatus, data.getTaskPropertyValue(0, TasksProperties.STATUS_NAME));
+            Assert.assertEquals(newStatus, data.getTaskPropertyValue(0, TasksProperties.STATUS));
             //Assert.assertEquals(effort, data.getTaskPropertyValue(0, TasksProperties.DONE));
-            Assert.assertEquals(effort, data.getTaskPropertyValue(0, TasksProperties.DONE));
+            Assert.assertEquals(effort, Double.parseDouble(data.getTaskPropertyValue(0, TasksProperties.DONE)), 0.0001);
 
 
             final V1Instance v1Test = new V1Instance(settings.v1Path, settings.user, settings.passwd);
             TaskFilter filter = new TaskFilter();
             filter.status.add(newStatus);
-            Collection<Task> tasks = v1Test.get().tasks(filter);
+            Collection<Task> tasks  = v1Test.get().tasks(filter);
             Assert.assertEquals(1, tasks.size());
             Task taskTest = tasks.iterator().next();
             Assert.assertEquals(taskDesc + newTextInFileds, taskTest.getDescription());
             Assert.assertEquals(taskName + newTextInFileds, taskTest.getName());
             Assert.assertEquals(newStatus, taskTest.getStatus().getCurrentValue());
-            Assert.assertEquals(Double.parseDouble(effort), taskTest.getDone(), 0.0001);
+            Assert.assertEquals(effort, taskTest.getDone(), 0.0001);
+
+
         }
         finally {
             if (task != null) {
@@ -287,8 +291,11 @@ public class DataLayerTest {
             if (schedule != null) {
                 schedule.delete();
             }
+
         }
     }
+
+
 
 
 //    @Test
