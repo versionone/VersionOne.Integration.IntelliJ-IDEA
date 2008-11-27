@@ -19,8 +19,9 @@ import static com.versionone.common.sdk.TasksProperties.TITLE;
 import static com.versionone.common.sdk.TasksProperties.TO_DO;
 import static com.versionone.common.sdk.TasksProperties.TYPE;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import java.math.BigDecimal;
+import javax.swing.table.TableCellEditor;
 import java.util.Vector;
 
 /**
@@ -60,7 +61,6 @@ public class VerticalTableModel extends AbstractTableModel {
         if (columnIndex == 0) {
             res = getRowData(rowIndex).columnName;
         } else if (isTaskSet()) {
-//            res = roundIfBigDecimal(data.getTaskPropertyValue(task, getRowData(rowIndex)));
             res = data.getTaskPropertyValue(task, getRowData(rowIndex));
         }
         return res;
@@ -72,15 +72,6 @@ public class VerticalTableModel extends AbstractTableModel {
 
     private boolean isTaskSet() {
         return task >= 0;
-    }
-
-    private static Object roundIfBigDecimal(Object value) {
-        if (value instanceof BigDecimal) {
-            BigDecimal b = (BigDecimal) value;
-            return b.setScale(2, BigDecimal.ROUND_HALF_UP);
-        } else {
-            return value;
-        }
     }
 
     @Override
@@ -98,15 +89,8 @@ public class VerticalTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-//        if (getRowData(rowIndex).type == TasksProperties.Type.Number) {
-//            aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
-//        }
         data.setTaskPropertyValue(task, getRowData(rowIndex), (String) aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
-    }
-
-    public boolean isColumnChanged(int columnIndex) {
-        return data.isTaskDataChanged(columnIndex);
     }
 
 /*
@@ -120,7 +104,24 @@ public class VerticalTableModel extends AbstractTableModel {
         return data.isTrackEffort() ? tasksRowDataEffort[row] : tasksRowData[row];
     }
 
-    public TasksProperties.Type getRowType(int column) {
-        return getRowData(column).type;
+    public TasksProperties.Type getRowType(int row) {
+        return getRowData(row).type;
+    }
+
+    public boolean isRowChanged(int row) {
+        return data.isPropertyChanged(task, getRowData(row));
+    }
+
+    public TableCellEditor getCellEditor(int row, int col) {
+        if (col != 1 || getRowType(row) != TasksProperties.Type.List) {
+            return null;
+        }
+        final Vector<String> values = getAvailableValuesAt(row, col);
+        final JComboBox comboEditor = new JComboBox(values);
+
+        //select current value
+        comboEditor.setSelectedItem(getValueAt(row, col));
+        comboEditor.setBorder(null);
+        return new DefaultCellEditor(comboEditor);
     }
 }

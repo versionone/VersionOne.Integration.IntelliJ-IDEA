@@ -1,17 +1,20 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
+import com.intellij.openapi.editor.colors.ColorKey;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.Table;
-import com.versionone.common.sdk.IDataLayer;
-import com.versionone.common.sdk.TasksProperties;
 
-import javax.swing.*;
 import javax.swing.table.TableCellEditor;
-import java.util.Vector;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 
 public class DetailsTable extends Table {
 
-    public DetailsTable(VerticalTableModel v1TableModel, IDataLayer data) {
+    private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
+
+    public DetailsTable(VerticalTableModel v1TableModel) {
         super(v1TableModel);
     }
 
@@ -21,15 +24,29 @@ public class DetailsTable extends Table {
     }
 
     public TableCellEditor getCellEditor(final int row, final int col) {
-        if (col == 1 && getModel().getRowType(row) == TasksProperties.Type.List) {
-            final Vector<String> values = getModel().getAvailableValuesAt(row, col);
-            JComboBox comboEditor = new JComboBox(values);
-            //select current value
-            comboEditor.setSelectedItem(getValueAt(row, col));
-            comboEditor.setBorder(null);
-            return new DefaultCellEditor(comboEditor);
-        } else {
-            return super.getCellEditor(row, col);
+        TableCellEditor editor = getModel().getCellEditor(row, col);
+        if (editor == null) {
+            editor = super.getCellEditor(row, col);
         }
+        return editor;
+    }
+
+    @Override
+    public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int vColIndex) {
+        Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
+        if (rowIndex != getSelectedRow()) {
+            if (getModel().isRowChanged(rowIndex)) {
+                c.setBackground(colorsScheme.getColor(ColorKey.find("V1_CHANGED_ROW")));
+                c.setForeground(Color.black);
+            } else {
+                c.setBackground(getBackground());
+                c.setForeground(getForeground());
+            }
+        } else {
+            c.setBackground(getSelectionBackground());
+            c.setForeground(getSelectionForeground());
+        }
+
+        return c;
     }
 }

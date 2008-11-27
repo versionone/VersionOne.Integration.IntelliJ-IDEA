@@ -17,7 +17,7 @@ class Task {
     private static final String TASK_PREFIX = "Task.";
 
     public final Asset asset;
-    private BigDecimal effort = BigDecimal.ZERO;
+    private BigDecimal effort = BigDecimal.ZERO.setScale(2);
     private Map<String, IAttributeDefinition> definitions = new HashMap<String, IAttributeDefinition>(TasksProperties.values().length);
 
     /**
@@ -50,18 +50,14 @@ class Task {
 
     public void setProperty(TasksProperties property, Object value) {
         if (property.equals(TasksProperties.EFFORT)) {
-            effort = (BigDecimal) value;
+            effort = new BigDecimal((String) value).setScale(2, BigDecimal.ROUND_HALF_UP);
         } else {
             try {
                 asset.setAttributeValue(getDefinition(property.propertyName), value);
             } catch (APIException e) {
-                System.out.println("Task.setProperty() " + property + " value:" + value);
-                System.out.println("\troperty class: " + property.getClass() + " value class:" + value.getClass());
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace(); //do nothing
             } catch (MetaException e) {
-                System.out.println("Task.setProperty() " + property + " value:" + value);
-                System.out.println("\troperty class: " + property.getClass() + " value class:" + value.getClass());
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace(); //do nothing
             }
         }
     }
@@ -82,11 +78,19 @@ class Task {
         return getValue(property.propertyName);
     }
 
-//    public boolean isPropertyChanged(TasksProperties property) {
-//        return true;
-//    }
+    public boolean isPropertyChanged(TasksProperties property) {
+        boolean value = false;
+        if (property.equals(TasksProperties.EFFORT)) {
+            value = effort.compareTo(BigDecimal.ZERO) != 0;
+        } else try {
+            value = asset.getAttributes().get(TASK_PREFIX + property.propertyName).hasChanged();
+        } catch (Exception e) {
+            //do nothing
+        }
+        return value;
+    }
 
     public boolean isChanged() {
-        return !effort.equals(BigDecimal.ZERO) || asset.hasChanged();
+        return effort.compareTo(BigDecimal.ZERO) != 0 || asset.hasChanged();
     }
 }

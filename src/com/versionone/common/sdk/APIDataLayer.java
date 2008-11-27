@@ -282,6 +282,10 @@ public final class APIDataLayer implements IDataLayer {
         return taskList[task].isChanged();
     }
 
+    public boolean isPropertyChanged(int task, TasksProperties property) {
+        return taskList[task].isPropertyChanged(property);
+    }
+
     public void reconnect() throws V1PluginException {
         connect();
         refresh();
@@ -299,8 +303,4 @@ public final class APIDataLayer implements IDataLayer {
 
         return result;
     }
-
-//    public boolean isTaskPropertyChanged(int task, TasksProperties property) {
-//        return taskList[task].isPropertyChanged(property);
-//    }
 }

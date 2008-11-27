@@ -31,7 +31,7 @@ public interface IDataLayer {
 
     boolean isTaskDataChanged(int task);
 
-//    boolean isTaskPropertyChanged(int task, TasksProperties property);
+    boolean isPropertyChanged(int task, TasksProperties property);
 
     void reconnect() throws V1PluginException;
 

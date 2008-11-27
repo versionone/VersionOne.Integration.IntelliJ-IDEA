@@ -1,30 +1,29 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea.tests;
 
+import com.versionone.DB;
+import com.versionone.Duration;
 import com.versionone.common.sdk.APIDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ProjectTreeNode;
 import com.versionone.common.sdk.TasksProperties;
-import com.versionone.integration.idea.WorkspaceSettings;
 import com.versionone.integration.idea.V1PluginException;
-import com.versionone.om.V1Instance;
+import com.versionone.integration.idea.WorkspaceSettings;
+import com.versionone.om.Iteration;
 import com.versionone.om.Project;
+import com.versionone.om.Schedule;
 import com.versionone.om.Story;
 import com.versionone.om.Task;
-import com.versionone.om.Iteration;
-import com.versionone.om.Schedule;
+import com.versionone.om.V1Instance;
 import com.versionone.om.filters.TaskFilter;
-import com.versionone.DB;
-import com.versionone.Duration;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
 
-import java.util.Enumeration;
-import java.util.Date;
 import java.util.Collection;
-import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Enumeration;
 
 public class DataLayerTest {
     private IDataLayer data;
@@ -58,7 +57,9 @@ public class DataLayerTest {
 
     /**
      * Integration test. Need access to V1 server.
+     *
      * @throws com.versionone.integration.idea.V1PluginException
+     *
      */
     @Test
     public void testGetProjects() throws V1PluginException {
@@ -92,6 +93,7 @@ public class DataLayerTest {
 
     /**
      * Integrational test. Need access to V1 server.
+     *
      * @throws Exception if any error occure
      */
     @Test
@@ -114,16 +116,16 @@ public class DataLayerTest {
 
         try {
             final V1Instance v1 = new V1Instance(settings.v1Path, settings.user, settings.passwd);
-            schedule = v1.create().schedule(scheduleName, new Duration(14, Duration.Unit.Days), new Duration(0, Duration.Unit.Days) );
+            schedule = v1.create().schedule(scheduleName, new Duration(14, Duration.Unit.Days), new Duration(0, Duration.Unit.Days));
 
             final Project rootProject = v1.get().projectByID(SCOPE_ZERO);
             project = rootProject.createSubProject(projectName, DB.DateTime.now());
             project.setSchedule(schedule);
             project.save();
-            
+
             final Date dateStart = new Date();
             final Date dateEnd = new Date();
-            dateEnd.setTime(new Date().getTime() + 100*60*60*24*31);
+            dateEnd.setTime(new Date().getTime() + 100 * 60 * 60 * 24 * 31);
             iteration = project.createIteration(itarationName, new DB.DateTime(dateStart), new DB.DateTime(dateEnd));
             iteration.activate();
             iteration.save();
@@ -173,14 +175,13 @@ public class DataLayerTest {
             if (schedule != null) {
                 schedule.delete();
             }
-
         }
     }
 
 
-
     /**
      * Integrational test. Need access to V1 server.
+     *
      * @throws Exception if any error occure
      */
     @Test
@@ -203,11 +204,11 @@ public class DataLayerTest {
 
         final String newTextInFileds = " this fields was changed";
         final String newStatus = "Completed";
-        final BigDecimal effort = BigDecimal.valueOf(3.5);
+        final String effort = "3.50";
 
         try {
             final V1Instance v1 = new V1Instance(settings.v1Path, settings.user, settings.passwd);
-            schedule = v1.create().schedule(scheduleName, new Duration(14, Duration.Unit.Days), new Duration(0, Duration.Unit.Days) );
+            schedule = v1.create().schedule(scheduleName, new Duration(14, Duration.Unit.Days), new Duration(0, Duration.Unit.Days));
 
             final Project rootProject = v1.get().projectByID(SCOPE_ZERO);
             project = rootProject.createSubProject(projectName, DB.DateTime.now());
@@ -216,7 +217,7 @@ public class DataLayerTest {
 
             final Date dateStart = new Date();
             final Date dateEnd = new Date();
-            dateEnd.setTime(new Date().getTime() + 100*60*60*24*31);
+            dateEnd.setTime(new Date().getTime() + 100 * 60 * 60 * 24 * 31);
             iteration = project.createIteration(itarationName, new DB.DateTime(dateStart), new DB.DateTime(dateEnd));
             iteration.activate();
             iteration.save();
@@ -250,21 +251,19 @@ public class DataLayerTest {
             //Assert.assertEquals(newStatus, data.getTaskPropertyValue(0, TasksProperties.STATUS));
             Assert.assertEquals(newStatus, data.getTaskPropertyValue(0, TasksProperties.STATUS_NAME));
             //Assert.assertEquals(effort, data.getTaskPropertyValue(0, TasksProperties.DONE));
-            Assert.assertEquals(effort.doubleValue(), Double.parseDouble(data.getTaskPropertyValue(0, TasksProperties.DONE).toString()), 0.0001);
+            Assert.assertEquals(effort, data.getTaskPropertyValue(0, TasksProperties.DONE));
 
 
             final V1Instance v1Test = new V1Instance(settings.v1Path, settings.user, settings.passwd);
             TaskFilter filter = new TaskFilter();
             filter.status.add(newStatus);
-            Collection<Task> tasks  = v1Test.get().tasks(filter);
+            Collection<Task> tasks = v1Test.get().tasks(filter);
             Assert.assertEquals(1, tasks.size());
             Task taskTest = tasks.iterator().next();
             Assert.assertEquals(taskDesc + newTextInFileds, taskTest.getDescription());
             Assert.assertEquals(taskName + newTextInFileds, taskTest.getName());
             Assert.assertEquals(newStatus, taskTest.getStatus().getCurrentValue());
-            Assert.assertEquals(effort.doubleValue(), taskTest.getDone(), 0.0001);
-
-
+            Assert.assertEquals(Double.parseDouble(effort), taskTest.getDone(), 0.0001);
         }
         finally {
             if (task != null) {
@@ -288,13 +287,10 @@ public class DataLayerTest {
             if (schedule != null) {
                 schedule.delete();
             }
-
         }
     }
 
 
-
-    
 //    @Test
 //    public void sdkTest() {
 //        WorkspaceSettings cfg = WorkspaceSettings.getInstance();
