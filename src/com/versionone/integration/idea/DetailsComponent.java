@@ -32,7 +32,7 @@ public class DetailsComponent implements ProjectComponent {
     private Content content;
     private WorkspaceSettings cfg;
     private Table table;
-    private VerticalTableModel model;
+    private DetailsModel model;
 
 
     public DetailsComponent(Project project, WorkspaceSettings settings) {
@@ -89,7 +89,7 @@ public class DetailsComponent implements ProjectComponent {
     }
 
     private JPanel createContentPanel(IDataLayer dataLayer) {
-        model = new VerticalTableModel(dataLayer);
+        model = new DetailsModel(dataLayer);
         table = new DetailsTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final JPanel panel = new JPanel(new BorderLayout());

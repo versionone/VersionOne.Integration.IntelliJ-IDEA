@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 /**
  *
  */
-public class HorizontalTableModel extends AbstractTableModel {
+public class TasksModel extends AbstractTableModel {
 
     private static final TasksProperties[] tasksColumnDataEffort =
             {TITLE, ID, PARENT, DETAIL_ESTIMATE, DONE, EFFORT, TO_DO, STATUS_NAME};
@@ -27,7 +27,7 @@ public class HorizontalTableModel extends AbstractTableModel {
 
     private final IDataLayer data;
 
-    public HorizontalTableModel(IDataLayer data) {
+    public TasksModel(IDataLayer data) {
         this.data = data;
     }
 

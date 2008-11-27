@@ -113,7 +113,7 @@ public class TasksComponent implements ProjectComponent {
     }
 
     private TasksTable createTable() {
-        final TasksTable table = new TasksTable(new HorizontalTableModel(dataLayer), dataLayer);
+        final TasksTable table = new TasksTable(new TasksModel(dataLayer), dataLayer);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         return table;
     }

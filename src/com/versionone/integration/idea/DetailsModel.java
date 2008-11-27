@@ -27,7 +27,7 @@ import java.util.Vector;
 /**
  *
  */
-public class VerticalTableModel extends AbstractTableModel {
+public class DetailsModel extends AbstractTableModel {
 
     private static final TasksProperties[] tasksRowDataEffort = {BUILD, DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT,
             OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
@@ -37,7 +37,7 @@ public class VerticalTableModel extends AbstractTableModel {
     private final IDataLayer data;
     private int task = 0;//TODO
 
-    public VerticalTableModel(IDataLayer data) {
+    public DetailsModel(IDataLayer data) {
         this.data = data;
     }
 

@@ -28,14 +28,14 @@ public class TasksTable extends Table {
     private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
     private final IDataLayer data;
 
-    public TasksTable(HorizontalTableModel v1TableModel, IDataLayer data) {
+    public TasksTable(TasksModel v1TableModel, IDataLayer data) {
         super(v1TableModel);
         this.data = data;
     }
 
     @Override
-    public HorizontalTableModel getModel() {
-        return (HorizontalTableModel) super.getModel();
+    public TasksModel getModel() {
+        return (TasksModel) super.getModel();
     }
 
     @Override
