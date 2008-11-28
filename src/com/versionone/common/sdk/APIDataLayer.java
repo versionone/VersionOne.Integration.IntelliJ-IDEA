@@ -236,6 +236,8 @@ public final class APIDataLayer implements IDataLayer {
                 } else if (property.equals(TYPE)) {
                     res = typesList.getDisplayFromOid(oid);
                 }
+            } else {
+                res = null;
             }
         } else if (value instanceof Double) {
             res = BigDecimal.valueOf((Double) value).setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();

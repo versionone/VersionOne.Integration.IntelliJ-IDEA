@@ -30,8 +30,7 @@ public class TaskTypesCodes {
         final QueryResult queryResults = services.retrieve(query);
         final Asset[] assets = queryResults.getAssets();
 
-        map = new HashMap<Oid, String>(assets.length + 1);
-        map.put(Oid.Null, null);
+        map = new HashMap<Oid, String>(assets.length);
         for (Asset asset : assets) {
             map.put(asset.getOid(), (String) asset.getAttribute(name).getValue());
         }
@@ -42,9 +41,7 @@ public class TaskTypesCodes {
         final Vector<String> vector = new Vector<String>(map.size());
         vector.add(null);
         for (String s : map.values()) {
-            if (s != null) {
-                vector.add(s);
-            }
+            vector.add(s);
         }
         return vector;
     }
@@ -54,8 +51,11 @@ public class TaskTypesCodes {
      */
     public Oid getID(String value) {
         //Name -> Oid ("Admin" -> "TaskCategory:123")
+        if (value == null)
+            return Oid.Null;
         for (Oid oid : map.keySet()) {
-            if (map.get(oid).equals(value)) {
+            final String name = map.get(oid);
+            if (name.equals(value)) {
                 return oid;
             }
         }
@@ -64,6 +64,8 @@ public class TaskTypesCodes {
 
     public String getDisplayFromOid(Oid oid) {
         //oid -> Name
+        if (oid.isNull())
+            return null;
         return map.get(oid);
     }
 }

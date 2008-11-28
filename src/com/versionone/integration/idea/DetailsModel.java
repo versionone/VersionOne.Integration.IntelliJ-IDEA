@@ -35,7 +35,7 @@ public class DetailsModel extends AbstractTableModel {
             OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
 
     private final IDataLayer data;
-    private int task = -1;//TODO
+    private int task = -1;
 
     public DetailsModel(IDataLayer data) {
         this.data = data;

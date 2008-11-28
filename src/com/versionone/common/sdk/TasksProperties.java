@@ -1,6 +1,8 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.common.sdk;
 
+import com.versionone.Oid;
+
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -58,11 +60,14 @@ public enum TasksProperties {
     }
 
     static boolean isEqual(Object oldProp, Object newProp) {
-        if (oldProp == null) {
-            return newProp != null;
+        if (oldProp == null || newProp == null) {
+            return oldProp != newProp;
         }
         if (oldProp instanceof Double) {
-            return Math.abs((Double) oldProp - Double.parseDouble((String) newProp)) < 0.005;
+            return Math.abs((Double) oldProp - Double.parseDouble(newProp.toString())) < 0.005;
+        }
+        if (oldProp instanceof Oid) {
+            return oldProp.toString().equals(newProp.toString());
         }
         return oldProp.equals(newProp);
     }
