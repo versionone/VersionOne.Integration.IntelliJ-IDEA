@@ -52,13 +52,14 @@ class Task {
         if (property.equals(TasksProperties.EFFORT)) {
             effort = new BigDecimal((String) value).setScale(2, BigDecimal.ROUND_HALF_UP);
         } else {
-            try {
-                asset.setAttributeValue(getDefinition(property.propertyName), value);
-            } catch (APIException e) {
-                e.printStackTrace(); //do nothing
-            } catch (MetaException e) {
-                e.printStackTrace(); //do nothing
-            }
+            if (!TasksProperties.isEqual(getProperty(property), value))
+                try {
+                    asset.setAttributeValue(getDefinition(property.propertyName), value);
+                } catch (APIException e) {
+                    e.printStackTrace(); //do nothing
+                } catch (MetaException e) {
+                    e.printStackTrace(); //do nothing
+                }
         }
     }
 
