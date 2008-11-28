@@ -4,8 +4,6 @@ package com.versionone.common.sdk;
 import com.versionone.integration.idea.V1PluginException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Vector;
-
 public interface IDataLayer {
     void refresh() throws V1PluginException;
 
@@ -17,8 +15,6 @@ public interface IDataLayer {
     int getTasksCount();
 
     String getTaskPropertyValue(int task, TasksProperties property);
-
-    Vector<String> getAvailableValues(int task, TasksProperties property);
 
     boolean isTrackEffort();
 

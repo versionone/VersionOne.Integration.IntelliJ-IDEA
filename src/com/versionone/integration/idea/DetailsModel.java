@@ -51,7 +51,7 @@ public class DetailsModel extends AbstractTableModel {
 
     public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
         if (columnIndex != 0 && isTaskSet()) {
-            return data.getAvailableValues(task, getRowData(rowIndex));
+            return getRowData(rowIndex).getListValues();
         }
         return null;
     }
@@ -117,7 +117,7 @@ public class DetailsModel extends AbstractTableModel {
     }
 
     public TableCellEditor getCellEditor(int row, int col) {
-        if (col != 1 || getRowType(row) != TasksProperties.Type.List) {
+        if (col != 1 || getRowType(row) != TasksProperties.Type.LIST) {
             return null;
         }
         final Vector<String> values = getAvailableValuesAt(row, col);

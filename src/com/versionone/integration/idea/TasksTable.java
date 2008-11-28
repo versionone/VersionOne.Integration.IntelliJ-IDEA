@@ -40,7 +40,7 @@ public class TasksTable extends Table {
 
     @Override
     public TableCellEditor getCellEditor(final int row, final int col) {
-        if (getModel().getColumnType(col) == TasksProperties.Type.StatusList) {
+        if (getModel().getColumnType(col) == TasksProperties.Type.STATUS_LIST) {
             JComboBox comboEditor = new JComboBox(data.getAllStatuses());
             //select current value
             //comboEditor.setSelectedItem(DataLayer.getInstance().getValue(col, row));

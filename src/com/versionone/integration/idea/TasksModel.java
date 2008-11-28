@@ -68,7 +68,7 @@ public class TasksModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (getColumnData(columnIndex).type == TasksProperties.Type.Number) {
+        if (getColumnData(columnIndex).type == TasksProperties.Type.NUMBER) {
             try {
                 aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
             } catch (Exception e) {
@@ -82,11 +82,6 @@ public class TasksModel extends AbstractTableModel {
 
     public boolean isRowChanged(int rowIndex) {
         return data.isTaskDataChanged(rowIndex);
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return getColumnData(columnIndex).type.columnClass;
     }
 
     private TasksProperties getColumnData(int column) {

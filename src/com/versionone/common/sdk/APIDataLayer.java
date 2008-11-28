@@ -19,8 +19,6 @@ import com.versionone.apiclient.Services;
 import com.versionone.apiclient.V1APIConnector;
 import com.versionone.apiclient.V1Configuration;
 import com.versionone.apiclient.V1Exception;
-import static com.versionone.common.sdk.TasksProperties.STATUS;
-import static com.versionone.common.sdk.TasksProperties.TYPE;
 import com.versionone.integration.idea.V1PluginException;
 import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
@@ -30,7 +28,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * This class requests, stores data from VersionOne server and send changed data back.
@@ -50,8 +47,10 @@ public final class APIDataLayer implements IDataLayer {
     private final WorkspaceSettings cfg;
 
     private String member;
-    private IStatusCodes statusList;
-    private TaskTypesCodes typesList;
+//    private ListTypeValues statusList;
+//    private ListTypeValues typesList;
+//    private ListTypeValues sourcesList;
+
     private boolean trackEffort = false;
 
     private Task[] taskList = new Task[0];
@@ -72,7 +71,7 @@ public final class APIDataLayer implements IDataLayer {
     }
 
     /**
-     * Does refresh() too.
+     *
      */
     private void connect() throws V1PluginException {
         isConnectSet = false;
@@ -88,8 +87,6 @@ public final class APIDataLayer implements IDataLayer {
             actualType = metaModel.getAssetType("Actual");
             trackEffort = v1Config.isEffortTracking();
             member = services.getLoggedIn().getToken();
-//            statusList = new TaskStatusCodes(metaModel, services);
-//            typesList = new TaskTypesCodes(metaModel, services);
         } catch (Exception e) {
             LOG.warn(ERROR_CONNECTION_TO_V1, e);
             throw new V1PluginException(ERROR_CONNECTION_TO_V1, e, true);
@@ -115,8 +112,7 @@ public final class APIDataLayer implements IDataLayer {
         }
 
         try {
-            statusList = new TaskStatusCodes(metaModel, services);
-            typesList = new TaskTypesCodes(metaModel, services);
+            TasksProperties.reloadListValues(metaModel, services);
             taskList = getTasks();
         } catch (Exception e) {
             LOG.warn(ERROR_CONNECTION_TO_V1, e);
@@ -231,10 +227,8 @@ public final class APIDataLayer implements IDataLayer {
         if (value instanceof Oid) {
             Oid oid = (Oid) value;
             if (!oid.isNull()) {
-                if (property.equals(STATUS)) {
-                    res = statusList.getDisplayFromOid(oid.toString());
-                } else if (property.equals(TYPE)) {
-                    res = typesList.getDisplayFromOid(oid);
+                if (property.type == TasksProperties.Type.LIST) {
+                    res = property.getValueName(oid);
                 }
             } else {
                 res = null;
@@ -247,15 +241,6 @@ public final class APIDataLayer implements IDataLayer {
         return res;
     }
 
-    public Vector<String> getAvailableValues(int task, TasksProperties property) {
-        if (property.equals(STATUS)) {
-            return new Vector<String>(Arrays.asList(statusList.getDisplayValues()));
-        } else if (property.equals(TYPE)) {
-            return typesList.getDisplayValues();
-        }
-        return new Vector<String>(0);
-    }
-
     public boolean isTrackEffort() {
         return trackEffort;
     }
@@ -264,20 +249,13 @@ public final class APIDataLayer implements IDataLayer {
      * @deprecated
      */
     public String[] getAllStatuses() {
-        return statusList.getDisplayValues();
+        return new String[]{"Stat1", "Stat2"};
     }
 
     public void setTaskPropertyValue(int task, TasksProperties property, String value) {
+        //TODO redesign
         synchronized (taskList) {
-            final Object x;
-            if (property.equals(STATUS)) {
-                x = statusList.getID(value);
-            } else if (property.equals(TYPE)) {
-                x = typesList.getID(value);
-            } else {
-                x = value;
-            }
-            taskList[task].setProperty(property, x);
+            taskList[task].setProperty(property, property.getValueOid(value));
         }
     }
 

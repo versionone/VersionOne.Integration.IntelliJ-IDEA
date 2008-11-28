@@ -2,37 +2,44 @@
 package com.versionone.common.sdk;
 
 import com.versionone.Oid;
+import com.versionone.apiclient.IMetaModel;
+import com.versionone.apiclient.IServices;
+import com.versionone.apiclient.V1Exception;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Vector;
 
 public enum TasksProperties {
 
-    TITLE("Title", Type.Text, true, "Name"),
-    ID("ID", Type.Text, false, "Number"),
-    PARENT("Story", Type.Text, false, "Parent.Name"),
-    DETAIL_ESTIMATE("Detailed Estimate", Type.Number, true, "DetailEstimate"),
-    DONE("Done", Type.Number, false, "Actuals.Value.@Sum"),
-    EFFORT("Effort", Type.Number, true),
-    TO_DO("Todo", Type.Number, true, "ToDo"),
+    TITLE("Title", Type.TEXT, true, "Name"),
+    ID("ID", Type.TEXT, false, "Number"),
+    PARENT("Story", Type.TEXT, false, "Parent.Name"),
+    DETAIL_ESTIMATE("Detailed Estimate", Type.NUMBER, true, "DetailEstimate"),
+    DONE("Done", Type.NUMBER, false, "Actuals.Value.@Sum"),
+    EFFORT("Effort", Type.NUMBER, true),
+    TO_DO("Todo", Type.NUMBER, true, "ToDo"),
     /**
      * @deprecated
      */
-    STATUS_NAME("Status", Type.StatusList, true, "Status"),
-    STATUS("Status", Type.List, true, "Status"),
-    DESCRIPTION("Description", Type.RichText, true, "Description"),
-    OWNER("Owner", Type.Text, false, "Owners.Nickname"),
-    PROJECT("Project", Type.Text, false, "Scope.Name"),
-    REFERENCE("Reference", Type.Text, true, "Reference"),
-    SOURCE("Source", Type.List, true, "Source"),
-    SPRINT("Sprint", Type.Text, false, "Timebox.Name"),
-    TYPE("Type", Type.List, true, "Category"),
-    BUILD("Build", Type.Text, false, "LastVersion");
+    STATUS_NAME("Status", Type.STATUS_LIST, true, "Status"),
+    STATUS("Status", Type.LIST, true, "Status"),
+    DESCRIPTION("Description", Type.RICH_TEXT, true, "Description"),
+    OWNER("Owner", Type.TEXT, false, "Owners.Nickname"),
+    PROJECT("Project", Type.TEXT, false, "Scope.Name"),
+    REFERENCE("Reference", Type.TEXT, true, "Reference"),
+    SOURCE("Source", Type.LIST, true, "Source"),
+    SPRINT("Sprint", Type.TEXT, false, "Timebox.Name"),
+    TYPE("Type", Type.LIST, true, "Category"),
+    BUILD("Build", Type.TEXT, false, "LastVersion");
 
     public final String columnName;
     public final Type type;
     public final boolean isEditable;
     public final String propertyName;
+    private String assetType;
+    private ListTypeValues listValues;
+
 
     TasksProperties(String name, Type type, boolean editable) {
         this.columnName = name;
@@ -46,6 +53,9 @@ public enum TasksProperties {
         this.type = type;
         isEditable = editable;
         this.propertyName = propertyName;
+        if (type == Type.LIST) {
+            assetType = "Task" + propertyName;
+        }
     }
 
     static Collection<String> getAllAttributes() {
@@ -72,17 +82,43 @@ public enum TasksProperties {
         return oldProp.equals(newProp);
     }
 
+    /*
+            statusList = new ListTypeValues(metaModel, services, "TaskStatus");
+            typesList = new ListTypeValues(metaModel, services, "TaskCategory");
+            sourcesList = new ListTypeValues(metaModel, services, "TaskSource");
+*/
+
+    public static void reloadListValues(IMetaModel model, IServices services) throws V1Exception {
+        for (TasksProperties property : TasksProperties.values()) {
+            property.reloadValues(model, services);
+        }
+    }
+
+    private void reloadValues(IMetaModel metaModel, IServices services) throws V1Exception {
+        if (assetType != null) {
+            listValues = new ListTypeValues(metaModel, services, assetType);
+        }
+    }
+
+    public String getValueName(Oid oid) {
+        return listValues.getName(oid);
+    }
+
+    public Vector<String> getListValues() {
+        if (listValues != null) {
+            return listValues.getAllNames();
+        }
+        return new Vector<String>(0);
+    }
+
+    public Object getValueOid(String value) {
+        if (listValues != null) {
+            return listValues.getOid(value);
+        }
+        return value;
+    }
+
     public static enum Type {
-        Number, RichText, Text, StatusList, List;
-
-        public final Class<?> columnClass;
-
-        Type() {
-            columnClass = Object.class;
-        }
-
-        Type(Class<?> aClass) {
-            columnClass = aClass;
-        }
+        NUMBER, RICH_TEXT, TEXT, STATUS_LIST, LIST;
     }
 }

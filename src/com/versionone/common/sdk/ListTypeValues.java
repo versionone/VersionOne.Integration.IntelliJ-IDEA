@@ -16,11 +16,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-public class TaskTypesCodes {
+public final class ListTypeValues {
     private final Map<Oid, String> map;
 
-    public TaskTypesCodes(IMetaModel metaModel, IServices services) throws V1Exception {
-        final IAssetType taskTypes = metaModel.getAssetType("TaskCategory");
+    public ListTypeValues(IMetaModel metaModel, IServices services, String assetType) throws V1Exception {
+        final IAssetType taskTypes = metaModel.getAssetType(assetType);
         final IAttributeDefinition name = taskTypes.getAttributeDefinition("Name");
         final IAttributeDefinition inactive = taskTypes.getAttributeDefinition("Inactive");
 
@@ -36,7 +36,7 @@ public class TaskTypesCodes {
         }
     }
 
-    public Vector<String> getDisplayValues() {
+    public Vector<String> getAllNames() {
         //Names
         final Vector<String> vector = new Vector<String>(map.size());
         vector.add(null);
@@ -49,7 +49,7 @@ public class TaskTypesCodes {
     /**
      * More slow operation then others.
      */
-    public Oid getID(String value) {
+    public Oid getOid(String value) {
         //Name -> Oid ("Admin" -> "TaskCategory:123")
         if (value == null)
             return Oid.Null;
@@ -62,7 +62,7 @@ public class TaskTypesCodes {
         return null;
     }
 
-    public String getDisplayFromOid(Oid oid) {
+    public String getName(Oid oid) {
         //oid -> Name
         if (oid.isNull())
             return null;
