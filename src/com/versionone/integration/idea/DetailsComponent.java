@@ -114,9 +114,9 @@ public class DetailsComponent implements ProjectComponent {
     }
 
     public void update() {
-        if (content != null) {
-            content.setDisplayName(cfg.projectName);
-        }
+//        if (content != null) {
+//            content.setDisplayName(cfg.projectName);
+//        }
         table.revalidate();
         table.repaint();
     }

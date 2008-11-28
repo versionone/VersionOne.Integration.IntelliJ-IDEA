@@ -71,7 +71,7 @@ public class DetailsModel extends AbstractTableModel {
     }
 
     private boolean isTaskSet() {
-        return task >= 0;
+        return task >= 0 && data.getTasksCount() > task;
     }
 
     @Override
