@@ -35,7 +35,7 @@ public class DetailsModel extends AbstractTableModel {
             OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
 
     private final IDataLayer data;
-    private int task = 0;//TODO
+    private int task = -1;//TODO
 
     public DetailsModel(IDataLayer data) {
         this.data = data;
@@ -109,7 +109,11 @@ public class DetailsModel extends AbstractTableModel {
     }
 
     public boolean isRowChanged(int row) {
-        return data.isPropertyChanged(task, getRowData(row));
+        boolean result = false;
+        if (isTaskSet()) {
+            result = data.isPropertyChanged(task, getRowData(row));
+        }
+        return result;
     }
 
     public TableCellEditor getCellEditor(int row, int col) {

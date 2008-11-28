@@ -6,8 +6,10 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -22,7 +24,13 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
+import javax.swing.event.TableModelListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class TasksComponent implements ProjectComponent {
 
@@ -36,6 +44,8 @@ public class TasksComponent implements ProjectComponent {
     private final WorkspaceSettings cfg;
     private TasksTable table;
     private final IDataLayer dataLayer;
+    private TableModelListener tableChangesListener;
+    private ListSelectionListener tableSelectionListener;
 
 
     public TasksComponent(Project project, WorkspaceSettings settings) {
@@ -54,6 +64,16 @@ public class TasksComponent implements ProjectComponent {
         ideaVersion = ApplicationInfo.getInstance().getVersionName();
         System.out.println("IDEA name = " + ideaVersion);
         initToolWindow();
+
+        TableModelListener listener = new TableModelListener() {
+
+            public void tableChanged(TableModelEvent e) {
+                update();
+            }
+        };
+        this.project.getComponent(DetailsComponent.class).registerTableListener(listener);
+
+        //table.getModel().addTableModelListener(listener);
     }
 
     public void projectClosed() {
@@ -115,6 +135,8 @@ public class TasksComponent implements ProjectComponent {
     private TasksTable createTable() {
         final TasksTable table = new TasksTable(new TasksModel(dataLayer), dataLayer);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getModel().addTableModelListener(tableChangesListener);
+        table.getSelectionModel().addListSelectionListener(tableSelectionListener);
         return table;
     }
 
@@ -142,5 +164,19 @@ public class TasksComponent implements ProjectComponent {
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
+    }
+
+    public void registerTableChangeListener(TableModelListener listener) {
+        tableChangesListener = listener;
+        if (table != null) {
+            table.getModel().addTableModelListener(tableChangesListener);
+        }
+    }
+
+    public void registerTableSelectListener(ListSelectionListener selectionListener) {
+        tableSelectionListener = selectionListener;
+        if (table != null) {
+            table.getSelectionModel().addListSelectionListener(tableSelectionListener);
+        }
     }
 }

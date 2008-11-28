@@ -18,6 +18,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.TableModelListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 
 public class DetailsComponent implements ProjectComponent {
@@ -33,6 +37,7 @@ public class DetailsComponent implements ProjectComponent {
     private WorkspaceSettings cfg;
     private Table table;
     private DetailsModel model;
+    private TableModelListener tableChangesListener;
 
 
     public DetailsComponent(Project project, WorkspaceSettings settings) {
@@ -43,6 +48,27 @@ public class DetailsComponent implements ProjectComponent {
 
     public void projectOpened() {
         initToolWindow();
+
+        TableModelListener changeListener = new TableModelListener() {
+            public void tableChanged(TableModelEvent e) {
+                update();
+            }
+        };
+
+        ListSelectionListener selectListener = new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                //((DetailsModel)e.getSource()).setTask(e.getFirstIndex());
+                //((DetailsModel)table.getModel()).setTask(e.getFirstIndex());
+                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+                int index = lsm.getMinSelectionIndex();  
+
+                ((DetailsModel)table.getModel()).setTask(index);
+                update();
+            }
+        };
+
+        this.project.getComponent(TasksComponent.class).registerTableChangeListener(changeListener);
+        this.project.getComponent(TasksComponent.class).registerTableSelectListener(selectListener);
     }
 
     public void projectClosed() {
@@ -61,6 +87,13 @@ public class DetailsComponent implements ProjectComponent {
     @NonNls
     public String getComponentName() {
         return COMPONENT_NAME;
+    }
+
+    public void registerTableListener(TableModelListener listener) {
+        tableChangesListener = listener;
+        if (table != null) {
+            table.getModel().addTableModelListener(tableChangesListener);
+        }
     }
 
     private void initToolWindow() {
@@ -95,6 +128,7 @@ public class DetailsComponent implements ProjectComponent {
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
         panel.add(new JScrollPane(table));
+        table.getModel().addTableModelListener(tableChangesListener);
         return panel;
     }
 
