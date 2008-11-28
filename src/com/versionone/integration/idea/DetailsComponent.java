@@ -11,6 +11,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.Table;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.util.concurrency.SwingWorker;
 import com.versionone.common.sdk.APIDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import org.apache.log4j.Logger;
@@ -153,5 +154,29 @@ public class DetailsComponent implements ProjectComponent {
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
+    }
+
+    public void removeEdition() {
+        if (table != null && table.isEditing()) {
+            //table.removeEditor();
+            //table.getCellEditor().stopCellEditing();
+//            SwingWorker sWorker = new SwingWorker() {
+//               public Object construct() {
+//                    table.getCellEditor().stopCellEditing();
+//                    return null;
+//               }
+//            };
+//            sWorker.start();
+            if (SwingUtilities.isEventDispatchThread()) {
+                table.getCellEditor().stopCellEditing();
+            } else {
+                SwingUtilities.invokeLater( new Runnable() {
+                    public void run() {
+                        table.getCellEditor().stopCellEditing();
+                    }
+                });
+            }
+
+        }
     }
 }

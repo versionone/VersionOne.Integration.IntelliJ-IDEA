@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -21,15 +22,19 @@ public class Refresh extends AnAction {
         System.out.println("Refresh.actionPerformed()");//TODO delete trace output
 
         final DataContext dataContext = e.getDataContext();
-        final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
+        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
+        //final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
 
         if (ideaProject == null) {
             return;
         }
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
+        final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final IDataLayer data = tc.getDataLayer();
         final ProgressManager progressManager = ProgressManager.getInstance();
         final Object[] isError = {false, "", false};
+        tc.removeEdition();
+        dc.removeEdition();
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
@@ -54,6 +59,6 @@ public class Refresh extends AnAction {
         }
 
         tc.update();
-        ideaProject.getComponent(DetailsComponent.class).update();
+        dc.update();
     }
 }

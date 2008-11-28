@@ -12,6 +12,7 @@ import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.V1PluginException;
+import com.versionone.integration.idea.DetailsComponent;
 
 import javax.swing.*;
 
@@ -31,9 +32,12 @@ public class SaveData extends AnAction {
             return;
         }
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
+        final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final IDataLayer data = tc.getDataLayer();
         final ProgressManager progressManager = ProgressManager.getInstance();
         final Object[] isError = {false, "", false};
+        tc.removeEdition();
+        dc.removeEdition();
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {

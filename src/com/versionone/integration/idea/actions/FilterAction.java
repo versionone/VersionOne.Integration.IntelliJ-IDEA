@@ -17,6 +17,7 @@ import com.versionone.integration.idea.FilterForm;
 import com.versionone.integration.idea.WorkspaceSettings;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.V1PluginException;
+import com.versionone.integration.idea.DetailsComponent;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -41,7 +42,10 @@ public class FilterAction extends AnAction {
         final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
         final Object[] isError = {false, "", false};
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
+        final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final IDataLayer data = tc.getDataLayer();
+        tc.removeEdition();
+        dc.removeEdition();
 
         boolean isCanceled = ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {

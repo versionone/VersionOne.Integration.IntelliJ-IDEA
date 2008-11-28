@@ -16,6 +16,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.util.concurrency.SwingWorker;
 import com.versionone.common.sdk.APIDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.actions.FilterAction;
@@ -122,6 +123,28 @@ public class TasksComponent implements ProjectComponent {
 //        final DetailsComponent dc = project.getComponent(DetailsComponent.class);
 //        int task = table.getSelectedRow();
 //        dc.setCurrentTask(task);
+    }
+
+    public void removeEdition() {
+        if (table != null && table.isEditing()) {
+            //table.removeEditor();
+//            SwingWorker sWorker = new SwingWorker() {
+//               public Object construct() {
+//                    table.getCellEditor().stopCellEditing();
+//                    return null;
+//               }
+//            };
+//            sWorker.start();
+            if (SwingUtilities.isEventDispatchThread()) {
+                table.getCellEditor().stopCellEditing();
+            } else {
+                SwingUtilities.invokeLater( new Runnable() {
+                    public void run() {
+                        table.getCellEditor().stopCellEditing();
+                    }
+                });
+            }
+        }
     }
 
     private JPanel createContentPanel() {
