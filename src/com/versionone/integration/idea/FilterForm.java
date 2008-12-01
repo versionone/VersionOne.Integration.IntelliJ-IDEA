@@ -47,8 +47,8 @@ public class FilterForm implements Configurable {
         if (selectedPrj == null) {
             return false;
         }
-        final String cfgPrj = settings.projectName;
-        return !cfgPrj.equals(selectedPrj.toString());//TODO change to use IDs
+        final String cfgPrj = settings.projectToken;
+        return !cfgPrj.equals(selectedPrj.getToken());
     }
 
     public void apply() throws ConfigurationException {

@@ -96,6 +96,7 @@ public final class APIDataLayer implements IDataLayer {
 
     public void refresh() throws V1PluginException {
         System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
+        taskList = new Task[0];
 
         if (!isConnectSet) {
             try {

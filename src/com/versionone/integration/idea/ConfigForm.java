@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class ConfigForm implements UnnamedConfigurable {
     private JTextField serverUrl;
@@ -20,6 +22,7 @@ public class ConfigForm implements UnnamedConfigurable {
     private JTextField password;
     private JButton validateConnectionButton;
     private JPanel generalPanel;
+    private JCheckBox windowsIntegratedAuthentication;
     private WorkspaceSettings settings;
     //private Project project;
     private final IDataLayer dataLayer;
@@ -47,6 +50,23 @@ public class ConfigForm implements UnnamedConfigurable {
             }
         };
 
+        ItemListener itemListener = new ItemListener() {
+          public void itemStateChanged(ItemEvent itemEvent) {
+            int state = itemEvent.getStateChange();
+            if (state == ItemEvent.SELECTED) {
+                userName.setText("");
+                password.setText("");
+                userName.setEditable(false);
+                password.setEditable(false);
+            } else {
+                userName.setEditable(true);
+                password.setEditable(true);
+            }
+            verifyChanges();
+          }
+        };
+
+        windowsIntegratedAuthentication.addItemListener(itemListener);
         serverUrl.addKeyListener(keyListener);
         userName.addKeyListener(keyListener);
         password.addKeyListener(keyListener);
@@ -80,7 +100,8 @@ public class ConfigForm implements UnnamedConfigurable {
     public boolean isModified() {
         boolean result;
 
-        result = !serverUrl.getText().equals(settings.v1Path);
+        result = windowsIntegratedAuthentication.isSelected() != settings.isWindowsIntegratedAuthentication; 
+        result = result || !serverUrl.getText().equals(settings.v1Path);
         result = result || !userName.getText().equals(settings.user);
         result = result || !password.getText().equals(settings.passwd);
 
@@ -105,8 +126,14 @@ public class ConfigForm implements UnnamedConfigurable {
 
         if (isModified()) {
             settings.v1Path = serverUrl.getText();
-            settings.user = userName.getText();
-            settings.passwd = password.getText();
+            settings.isWindowsIntegratedAuthentication = windowsIntegratedAuthentication.isSelected();
+            if (settings.isWindowsIntegratedAuthentication) {
+                settings.user = "";
+                settings.passwd = "";
+            } else {
+                settings.user = userName.getText();
+                settings.passwd = password.getText();
+            }
 
             settings.projectToken = "";
             settings.projectName = "";
@@ -160,6 +187,7 @@ public class ConfigForm implements UnnamedConfigurable {
         serverUrl.setText(settings.v1Path);
         userName.setText(settings.user);
         password.setText(settings.passwd);
+        windowsIntegratedAuthentication.setSelected(settings.isWindowsIntegratedAuthentication);
 
 //        final RApplicationSettings settings = RApplicationSettings.getInstance();
 //        rubyStacktraceFilterCheckBox.setSelected(settings.useConsoleOutputRubyStacktraceFilter);

@@ -13,6 +13,7 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
     public String projectName = "";//V1EclipseTestPrj
     public String projectToken = "";//Scope:2689
     public boolean isShowAllTask = true;
+    public boolean isWindowsIntegratedAuthentication = false;
 
     //private static WorkspaceSettings setting = new WorkspaceSettings();
 
