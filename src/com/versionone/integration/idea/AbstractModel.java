@@ -23,17 +23,9 @@ import java.util.Vector;
 public abstract class AbstractModel extends AbstractTableModel {
 
     protected final IDataLayer data;
-    private final TasksProperties[] properties;
-    private final TasksProperties[] propertiesWithEffort;
 
-    public AbstractModel(IDataLayer data, TasksProperties[] properties, TasksProperties[] propertiesWithEffort) {
-        this.properties = properties;
-        this.propertiesWithEffort = propertiesWithEffort;
+    public AbstractModel(IDataLayer data) {
         this.data = data;
-    }
-
-    public int getPropertiesCount() {
-        return data.isTrackEffort() ? propertiesWithEffort.length : properties.length;
     }
 
     public abstract Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex);
@@ -42,9 +34,7 @@ public abstract class AbstractModel extends AbstractTableModel {
 
     public abstract boolean isCellEditable(int rowIndex, int columnIndex);
 
-    protected TasksProperties getProperty(int index) {
-        return data.isTrackEffort() ? propertiesWithEffort[index] : properties[index];
-    }
+    protected abstract TasksProperties getProperty(int rowIndex, int columnIndex);
 
     public abstract boolean isRowChanged(int row);
 
@@ -60,7 +50,7 @@ public abstract class AbstractModel extends AbstractTableModel {
         } else {
             // create text field for ID
             final JTextField textFild = new JTextField();
-            textFild.setEditable(getProperty(col).isEditable);
+            textFild.setEditable(getProperty(row, col).isEditable);
             textFild.setEnabled(true);
             textFild.setFocusable(true);
             textFild.setBorder(new LineBorder(Color.black));
@@ -85,6 +75,17 @@ public abstract class AbstractModel extends AbstractTableModel {
             return new DefaultCellEditor(textFild);
         }
     }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if (getProperty(rowIndex, columnIndex).isEditable) {
+            data.setTaskPropertyValue(getTask(rowIndex, columnIndex), getProperty(rowIndex, columnIndex), (String) aValue);
+            fireTableCellUpdated(rowIndex, columnIndex);
+        }
+    }
+
+    protected abstract int getTask(int rowIndex, int columnIndex);
+
 
     /**
      * Listens for debug window popup dialog events.

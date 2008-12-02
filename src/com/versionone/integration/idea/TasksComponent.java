@@ -50,12 +50,14 @@ public class TasksComponent implements ProjectComponent {
         cfg = settings;
         dataLayer = new APIDataLayer(cfg);
 
-        ActionManager actions = ActionManager.getInstance();
-        ((FilterAction) actions.getAction("Filter")).setSettings(cfg);
-        //set projects to the actions
-        ((SaveData) actions.getAction("V1.SaveData")).setProject(project);
-        ((Refresh) actions.getAction("V1.toolRefresh")).setProject(project);
-        ((FilterAction) actions.getAction("Filter")).setProject(project);
+        if (project != null) {
+            ActionManager actions = ActionManager.getInstance();
+            ((FilterAction) actions.getAction("Filter")).setSettings(cfg);
+            //set projects to the actions
+            ((SaveData) actions.getAction("V1.SaveData")).setProject(project);
+            ((Refresh) actions.getAction("V1.toolRefresh")).setProject(project);
+            ((FilterAction) actions.getAction("Filter")).setProject(project);
+        }
     }
 
     public void projectOpened() {

@@ -23,20 +23,24 @@ import java.util.Vector;
 
 public class DetailsModel extends AbstractModel {
 
-    private static final TasksProperties[] tasksRowDataEffort = {BUILD, DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT,
+    private static final TasksProperties[] propertiesWithEffort = {BUILD, DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT,
             OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
-    private static final TasksProperties[] tasksRowData = {BUILD, DESCRIPTION, DETAIL_ESTIMATE,
+    private static final TasksProperties[] properties = {BUILD, DESCRIPTION, DETAIL_ESTIMATE,
             OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
     private static String[] columnsNames = {"Property", "Value"};
 
     private int task = Integer.MAX_VALUE;
 
     public DetailsModel(IDataLayer data) {
-        super(data, tasksRowData, tasksRowDataEffort);
+        super(data);
     }
 
     public void setTask(int task) {
-        this.task = task;
+        if (task >= 0) {
+            this.task = task;
+        } else {
+            this.task = Integer.MAX_VALUE;
+        }
     }
 
     public boolean isTaskSet() {
@@ -53,17 +57,17 @@ public class DetailsModel extends AbstractModel {
 
     public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
         if (columnIndex == 1 && isTaskSet()) {
-            return getProperty(rowIndex).getListValues();
+            return getProperty(rowIndex, columnIndex).getListValues();
         }
         return null;
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (columnIndex == 0) {
-            return getProperty(rowIndex).columnName;
+            return getProperty(rowIndex, columnIndex).columnName;
         }
         if (isTaskSet()) {
-            return data.getTaskPropertyValue(task, getProperty(rowIndex));
+            return data.getTaskPropertyValue(task, getProperty(rowIndex, columnIndex));
         }
         return null;
     }
@@ -73,22 +77,34 @@ public class DetailsModel extends AbstractModel {
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 1 && isTaskSet();
+        return columnIndex == 1;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (isTaskSet()) {
-            data.setTaskPropertyValue(task, getProperty(rowIndex), (String) aValue);
-            fireTableCellUpdated(rowIndex, columnIndex);
+            super.setValueAt(aValue, rowIndex, columnIndex);
         }
+    }
+
+    @Override
+    protected int getTask(int rowIndex, int columnIndex) {
+        return task;
     }
 
     public boolean isRowChanged(int rowIndex) {
         boolean result = false;
         if (isTaskSet()) {
-            result = data.isPropertyChanged(task, getProperty(rowIndex));
+            result = data.isPropertyChanged(task, getProperty(rowIndex, -1));
         }
         return result;
+    }
+
+    protected TasksProperties getProperty(int rowIndex, int columnIndex) {
+        return data.isTrackEffort() ? propertiesWithEffort[rowIndex] : properties[rowIndex];
+    }
+
+    public int getPropertiesCount() {
+        return data.isTrackEffort() ? propertiesWithEffort.length : properties.length;
     }
 }
