@@ -20,6 +20,7 @@ class Task {
     public final Asset asset;
     private BigDecimal effort = BigDecimal.ZERO.setScale(2);
     private Map<String, IAttributeDefinition> definitions = new HashMap<String, IAttributeDefinition>(TasksProperties.values().length);
+    private static final BigDecimal MAX_NUMBER_VALUE = BigDecimal.valueOf(1000000); 
 
     /**
      * Create
@@ -61,7 +62,7 @@ class Task {
                 }
                 case NUMBER: {
                     BigDecimal newValue = new BigDecimal(value).setScale(2, BigDecimal.ROUND_HALF_UP);
-                    if (newValue.signum() >= 0) {
+                    if (newValue.signum() >= 0 && newValue.compareTo(MAX_NUMBER_VALUE) <=0) {
                         if (property == TasksProperties.EFFORT) {
                             effort = newValue;
                         } else if (!TasksProperties.isEqual(getProperty(property), value)) {
