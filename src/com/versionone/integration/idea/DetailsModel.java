@@ -73,10 +73,7 @@ public class DetailsModel extends AbstractModel {
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 1 && isTaskSet()) {
-            return getProperty(rowIndex).isEditable;
-        }
-        return false;
+        return columnIndex == 1 && isTaskSet();
     }
 
     @Override
