@@ -8,91 +8,54 @@ import static com.versionone.common.sdk.TasksProperties.DONE;
 import static com.versionone.common.sdk.TasksProperties.EFFORT;
 import static com.versionone.common.sdk.TasksProperties.ID;
 import static com.versionone.common.sdk.TasksProperties.PARENT;
-import static com.versionone.common.sdk.TasksProperties.STATUS_NAME;
+import static com.versionone.common.sdk.TasksProperties.STATUS;
 import static com.versionone.common.sdk.TasksProperties.TITLE;
 import static com.versionone.common.sdk.TasksProperties.TO_DO;
 
-import javax.swing.table.AbstractTableModel;
-import java.math.BigDecimal;
+import java.util.Vector;
 
-/**
- *
- */
-public class TasksModel extends AbstractTableModel {
+public class TasksModel extends AbstractModel {
 
     private static final TasksProperties[] tasksColumnDataEffort =
-            {TITLE, ID, PARENT, DETAIL_ESTIMATE, DONE, EFFORT, TO_DO, STATUS_NAME};
+            {TITLE, ID, PARENT, DETAIL_ESTIMATE, DONE, EFFORT, TO_DO, STATUS};
     private static final TasksProperties[] tasksColumnData =
-            {TITLE, ID, PARENT, DETAIL_ESTIMATE, TO_DO, STATUS_NAME};
-
-    private final IDataLayer data;
+            {TITLE, ID, PARENT, DETAIL_ESTIMATE, TO_DO, STATUS};
 
     public TasksModel(IDataLayer data) {
-        this.data = data;
+        super(data, tasksColumnData, tasksColumnDataEffort);
+    }
+
+    public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
+        return getProperty(columnIndex).getListValues();
     }
 
     public int getRowCount() {
-        if (data != null) {
-            return data.getTasksCount();
-        } else {
-            return 0;
-        }
+        return data.getTasksCount();
     }
 
     public int getColumnCount() {
-        return data.isTrackEffort() ? tasksColumnDataEffort.length : tasksColumnData.length;
+        return getPropertiesCount();
+    }
+
+    public String getColumnName(int column) {
+        return getProperty(column).columnName;
+    }
+
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return getProperty(columnIndex).isEditable;
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return roundIfBigDecimal(data.getTaskPropertyValue(rowIndex, getColumnData(columnIndex)));
+        return data.getTaskPropertyValue(rowIndex, getProperty(columnIndex));
     }
 
-    private static Object roundIfBigDecimal(Object value) {
-        if (value instanceof BigDecimal) {
-            BigDecimal b = (BigDecimal) value;
-            return b.setScale(2, BigDecimal.ROUND_HALF_UP);
-        } else {
-            return value;
-        }
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return getColumnData(column).columnName;
-    }
-
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return getColumnData(columnIndex).isEditable;
+    public boolean isRowChanged(int row) {
+        return data.isTaskDataChanged(row);
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (getColumnData(columnIndex).type == TasksProperties.Type.NUMBER) {
-            try {
-                aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
-                if (((BigDecimal)aValue).compareTo(BigDecimal.ZERO) == -1) {
-                    //We can popup error message there.
-                    return;
-                }
-            } catch (Exception e) {
-                //We can popup error message there.
-                return;
-            }
-        }
-        data.setTaskPropertyValue(rowIndex, getColumnData(columnIndex), aValue.toString());
+        data.setTaskPropertyValue(rowIndex, getProperty(columnIndex), (String) aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
-    }
-
-    public boolean isRowChanged(int rowIndex) {
-        return data.isTaskDataChanged(rowIndex);
-    }
-
-    private TasksProperties getColumnData(int column) {
-        return data.isTrackEffort() ? tasksColumnDataEffort[column] : tasksColumnData[column];
-    }
-
-    public TasksProperties.Type getColumnType(int column) {
-        return getColumnData(column).type;
     }
 }

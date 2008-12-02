@@ -19,52 +19,20 @@ import static com.versionone.common.sdk.TasksProperties.TITLE;
 import static com.versionone.common.sdk.TasksProperties.TO_DO;
 import static com.versionone.common.sdk.TasksProperties.TYPE;
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellEditor;
 import java.util.Vector;
-import java.math.BigDecimal;
 
-/**
- *
- */
-public class DetailsModel extends AbstractTableModel {
+public class DetailsModel extends AbstractModel {
 
     private static final TasksProperties[] tasksRowDataEffort = {BUILD, DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT,
             OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
     private static final TasksProperties[] tasksRowData = {BUILD, DESCRIPTION, DETAIL_ESTIMATE,
             OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
+    private static String[] columnsNames = {"Property", "Value"};
 
-    private final IDataLayer data;
-    private int task = -1;
+    private int task = Integer.MAX_VALUE;
 
     public DetailsModel(IDataLayer data) {
-        this.data = data;
-    }
-
-    public int getRowCount() {
-        return data.isTrackEffort() ? tasksRowDataEffort.length : tasksRowData.length;
-    }
-
-    public int getColumnCount() {
-        return 2;
-    }
-
-    public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
-        if (columnIndex != 0 && isTaskSet()) {
-            return getRowData(rowIndex).getListValues();
-        }
-        return null;
-    }
-
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        Object res = null;
-        if (columnIndex == 0) {
-            res = getRowData(rowIndex).columnName;
-        } else if (isTaskSet()) {
-            res = data.getTaskPropertyValue(task, getRowData(rowIndex));
-        }
-        return res;
+        super(data, tasksRowData, tasksRowDataEffort);
     }
 
     public void setTask(int task) {
@@ -75,79 +43,53 @@ public class DetailsModel extends AbstractTableModel {
         return task >= 0 && data.getTasksCount() > task;
     }
 
-    @Override
-    public String getColumnName(int column) {
-        return column == 0 ? "Property" : "Value";
+    public int getRowCount() {
+        return getPropertiesCount();
     }
 
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 0 || !isTaskSet()) {
-            return false;
+    public int getColumnCount() {
+        return 2;
+    }
+
+    public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
+        if (columnIndex == 1 && isTaskSet()) {
+            return getProperty(rowIndex).getListValues();
         }
-        return getRowData(rowIndex).isEditable;
+        return null;
+    }
+
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        if (columnIndex == 0) {
+            return getProperty(rowIndex).columnName;
+        }
+        if (isTaskSet()) {
+            return data.getTaskPropertyValue(task, getProperty(rowIndex));
+        }
+        return null;
+    }
+
+    public String getColumnName(int column) {
+        return columnsNames[column];
+    }
+
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if (columnIndex == 1 && isTaskSet()) {
+            return getProperty(rowIndex).isEditable;
+        }
+        return false;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (getRowData(rowIndex).type == TasksProperties.Type.NUMBER) {
-            try {
-                aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
-                if (((BigDecimal)aValue).compareTo(BigDecimal.ZERO) == -1) {
-                    //We can popup error message there.
-                    return;
-                }
-            } catch (Exception e) {
-                //We can popup error message there.
-                return;
-            }
-        }
-        data.setTaskPropertyValue(task, getRowData(rowIndex), (String) aValue);
+        data.setTaskPropertyValue(task, getProperty(rowIndex), (String) aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
-    private Object roundIfBigDecimal(Object value) {
-        if (value instanceof BigDecimal) {
-            BigDecimal b = (BigDecimal) value;
-            return b.setScale(2, BigDecimal.ROUND_HALF_UP);
-        } else {
-            return value;
-        }
-    }
-
-/*
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return getColumnData(columnIndex).type.columnClass;
-    }
-*/
-
-    private TasksProperties getRowData(int row) {
-        return data.isTrackEffort() ? tasksRowDataEffort[row] : tasksRowData[row];
-    }
-
-    public TasksProperties.Type getRowType(int row) {
-        return getRowData(row).type;
-    }
-
-    public boolean isRowChanged(int row) {
+    public boolean isRowChanged(int rowIndex) {
         boolean result = false;
         if (isTaskSet()) {
-            result = data.isPropertyChanged(task, getRowData(row));
+            result = data.isPropertyChanged(task, getProperty(rowIndex));
         }
         return result;
-    }
-
-    public TableCellEditor getCellEditor(int row, int col) {
-        if (col != 1 || getRowType(row) != TasksProperties.Type.LIST) {
-            return null;
-        }
-        final Vector<String> values = getAvailableValuesAt(row, col);
-        final JComboBox comboEditor = new JComboBox(values);
-
-        //select current value
-        comboEditor.setSelectedItem(getValueAt(row, col));
-        comboEditor.setBorder(null);
-        return new DefaultCellEditor(comboEditor);
     }
 }

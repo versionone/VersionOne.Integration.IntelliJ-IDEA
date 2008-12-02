@@ -194,7 +194,7 @@ public final class APIDataLayer implements IDataLayer {
         Asset[] assets = new Asset[tasks.length];
         int i = 0;
         for (Task oneTask : tasks) {
-            final BigDecimal effortValue = (BigDecimal)oneTask.getProperty(TasksProperties.EFFORT);
+            final BigDecimal effortValue = (BigDecimal) oneTask.getProperty(TasksProperties.EFFORT);
             if (effortValue.compareTo(BigDecimal.ZERO) == 1) {
                 Asset effort = services.createNew(actualType, oneTask.asset.getOid());
                 effort.setAttributeValue(actualType.getAttributeDefinition("Value"), effortValue);
@@ -254,9 +254,8 @@ public final class APIDataLayer implements IDataLayer {
     }
 
     public void setTaskPropertyValue(int task, TasksProperties property, String value) {
-        //TODO redesign
         synchronized (taskList) {
-            taskList[task].setProperty(property, property.getValueOid(value));
+            taskList[task].setProperty(property, value);
         }
     }
 

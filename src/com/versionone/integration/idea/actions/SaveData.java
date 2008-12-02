@@ -10,9 +10,10 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
+import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.V1PluginException;
-import com.versionone.integration.idea.DetailsComponent;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 
@@ -20,6 +21,9 @@ import javax.swing.*;
  *
  */
 public class SaveData extends AnAction {
+
+    private static final Logger LOG = Logger.getLogger(SaveData.class);
+
     private Project project;
 
     public void actionPerformed(AnActionEvent e) {
@@ -49,10 +53,12 @@ public class SaveData extends AnAction {
                 try {
                     data.commitChangedTaskData();
                 } catch (V1PluginException e1) {
+                    LOG.warn(e1);
                     isError[0] = true;
                     isError[1] = e1.getMessage();
                     isError[2] = e1.isError();
                 } catch (Exception e1) {
+                    LOG.warn(e1);
                     isError[0] = true;
                     isError[1] = "Error connection to the VesionOne";
                     isError[2] = true;
@@ -64,8 +70,8 @@ public class SaveData extends AnAction {
                 ideaProject
         );
 
-        if ((Boolean)isError[0]) {
-            Icon icon = (Boolean)isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
+        if ((Boolean) isError[0]) {
+            Icon icon = (Boolean) isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
             Messages.showMessageDialog(isError[1].toString(), "Error", icon);
             return;
         }

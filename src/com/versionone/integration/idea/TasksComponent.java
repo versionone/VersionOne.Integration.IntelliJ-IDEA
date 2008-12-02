@@ -17,16 +17,16 @@ import com.intellij.util.ui.UIUtil;
 import com.versionone.common.sdk.APIDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.actions.FilterAction;
-import com.versionone.integration.idea.actions.SaveData;
 import com.versionone.integration.idea.actions.Refresh;
+import com.versionone.integration.idea.actions.SaveData;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.TableModelListener;
-import javax.swing.event.TableModelEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.*;
 
 public class TasksComponent implements ProjectComponent {
@@ -126,7 +126,7 @@ public class TasksComponent implements ProjectComponent {
             if (SwingUtilities.isEventDispatchThread()) {
                 table.getCellEditor().stopCellEditing();
             } else {
-                SwingUtilities.invokeLater( new Runnable() {
+                SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         table.getCellEditor().stopCellEditing();
                     }
@@ -144,7 +144,7 @@ public class TasksComponent implements ProjectComponent {
     }
 
     private TasksTable createTable() {
-        final TasksTable table = new TasksTable(new TasksModel(dataLayer), dataLayer);
+        final TasksTable table = new TasksTable(new TasksModel(dataLayer));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getModel().addTableModelListener(tableChangesListener);
         table.getSelectionModel().addListSelectionListener(tableSelectionListener);

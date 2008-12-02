@@ -1,5 +1,6 @@
 package com.versionone.common.sdk;
 
+import com.versionone.Oid;
 import com.versionone.apiclient.APIException;
 import com.versionone.apiclient.Asset;
 import com.versionone.apiclient.IAttributeDefinition;
@@ -48,19 +49,39 @@ class Task {
         return value;
     }
 
-    public void setProperty(TasksProperties property, Object value) {
-        if (property.equals(TasksProperties.EFFORT)) {
-            effort = new BigDecimal((String) value).setScale(2, BigDecimal.ROUND_HALF_UP);
-        } else {
-            if (!TasksProperties.isEqual(getProperty(property), value)) {
-                try {
-                    asset.setAttributeValue(getDefinition(property.propertyName), value);
-                } catch (APIException e) {
-                    e.printStackTrace(); //do nothing
-                } catch (MetaException e) {
-                    e.printStackTrace(); //do nothing
+    public void setProperty(TasksProperties property, String value) {
+        try {
+            switch (property.type) {
+                case LIST: {
+                    final Oid oid = property.getValueOid(value);
+                    if (oid != null && !TasksProperties.isEqual(getProperty(property), oid)) {
+                        asset.setAttributeValue(getDefinition(property.propertyName), oid);
+                    }
+                    break;
+                }
+                case NUMBER: {
+                    BigDecimal newValue = new BigDecimal(value).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    if (newValue.signum() >= 0) {
+                        if (property == TasksProperties.EFFORT) {
+                            effort = newValue;
+                        } else if (!TasksProperties.isEqual(getProperty(property), value)) {
+                            asset.setAttributeValue(getDefinition(property.propertyName), value);
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    if (!TasksProperties.isEqual(getProperty(property), value)) {
+                        asset.setAttributeValue(getDefinition(property.propertyName), value);
+                    }
                 }
             }
+        } catch (APIException e) {
+            e.printStackTrace(); //do nothing
+        } catch (MetaException e) {
+            e.printStackTrace(); //do nothing
+        } catch (NumberFormatException e) {
+            e.printStackTrace(); //do nothing
         }
     }
 

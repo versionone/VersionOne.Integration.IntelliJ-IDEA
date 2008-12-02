@@ -70,6 +70,10 @@ public enum TasksProperties {
         return res;
     }
 
+    /**
+     * Checks equality of old Task property and new one. If properties equal then new value will not set to Task. Accept
+     * values of Oid, Double and all values comparable by the equals() method.
+     */
     static boolean isEqual(Object oldProp, Object newProp) {
         if (oldProp == null || newProp == null) {
             return oldProp == newProp;
@@ -82,12 +86,6 @@ public enum TasksProperties {
         }
         return oldProp.equals(newProp);
     }
-
-    /*
-            statusList = new ListTypeValues(metaModel, services, "TaskStatus");
-            typesList = new ListTypeValues(metaModel, services, "TaskCategory");
-            sourcesList = new ListTypeValues(metaModel, services, "TaskSource");
-*/
 
     public static void reloadListValues(IMetaModel model, IServices services) throws V1Exception {
         for (TasksProperties property : TasksProperties.values()) {
@@ -109,17 +107,20 @@ public enum TasksProperties {
         if (listValues != null) {
             return listValues.getAllNames();
         }
-        return new Vector<String>(0);
+        return null;
     }
 
-    public Object getValueOid(String value) {
+    /**
+     * Returns Oid of specifies Task property value.
+     */
+    public Oid getValueOid(String value) {
         if (listValues != null) {
             return listValues.getOid(value);
         }
-        return value;
+        return null;
     }
 
     public static enum Type {
-        NUMBER, RICH_TEXT, TEXT, STATUS_LIST, LIST;
+        NUMBER, RICH_TEXT, TEXT, STATUS_LIST, LIST
     }
 }

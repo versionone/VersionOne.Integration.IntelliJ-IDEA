@@ -58,7 +58,7 @@ public class DetailsComponent implements ProjectComponent {
                 ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                 int index = lsm.getMinSelectionIndex();
 
-                ((DetailsModel) table.getModel()).setTask(index);
+                model.setTask(index);
                 update();
             }
         };
@@ -119,7 +119,7 @@ public class DetailsComponent implements ProjectComponent {
 
     private JPanel createContentPanel(IDataLayer dataLayer) {
         model = new DetailsModel(dataLayer);
-        table = new DetailsTable(model);
+        table = new TasksTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
