@@ -39,8 +39,8 @@ public class DetailsModel extends AbstractModel {
         this.task = task;
     }
 
-    private boolean isTaskSet() {
-        return task >= 0 && data.getTasksCount() > task;
+    public boolean isTaskSet() {
+        return task < data.getTasksCount();
     }
 
     public int getRowCount() {
@@ -81,8 +81,10 @@ public class DetailsModel extends AbstractModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        data.setTaskPropertyValue(task, getProperty(rowIndex), (String) aValue);
-        fireTableCellUpdated(rowIndex, columnIndex);
+        if (isTaskSet()) {
+            data.setTaskPropertyValue(task, getProperty(rowIndex), (String) aValue);
+            fireTableCellUpdated(rowIndex, columnIndex);
+        }
     }
 
     public boolean isRowChanged(int rowIndex) {

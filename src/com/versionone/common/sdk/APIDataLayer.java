@@ -246,13 +246,6 @@ public final class APIDataLayer implements IDataLayer {
         return trackEffort;
     }
 
-    /**
-     * @deprecated
-     */
-    public String[] getAllStatuses() {
-        return new String[]{"Stat1", "Stat2"};
-    }
-
     public void setTaskPropertyValue(int task, TasksProperties property, String value) {
         synchronized (taskList) {
             taskList[task].setProperty(property, value);

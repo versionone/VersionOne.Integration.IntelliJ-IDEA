@@ -18,8 +18,6 @@ public interface IDataLayer {
 
     boolean isTrackEffort();
 
-    String[] getAllStatuses();
-
     void setTaskPropertyValue(int task, TasksProperties property, String value);
 
     @NotNull

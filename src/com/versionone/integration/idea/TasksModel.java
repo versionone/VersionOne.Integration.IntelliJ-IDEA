@@ -42,7 +42,8 @@ public class TasksModel extends AbstractModel {
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return getProperty(columnIndex).isEditable;
+//        return getProperty(columnIndex).isEditable;
+        return true;
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {

@@ -19,10 +19,6 @@ public enum TasksProperties {
     DONE("Done", Type.NUMBER, false, "Actuals.Value.@Sum"),
     EFFORT("Effort", Type.NUMBER, true),
     TO_DO("Todo", Type.NUMBER, true, "ToDo"),
-    /**
-     * @deprecated
-     */
-    STATUS_NAME("Status", Type.STATUS_LIST, true, "Status"),
     STATUS("Status", Type.LIST, true, "Status"),
     DESCRIPTION("Description", Type.RICH_TEXT, true, "Description"),
     OWNER("Owner", Type.TEXT, false, "Owners.Nickname"),
