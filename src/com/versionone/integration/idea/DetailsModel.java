@@ -19,20 +19,51 @@ import static com.versionone.common.sdk.TasksProperties.TITLE;
 import static com.versionone.common.sdk.TasksProperties.TO_DO;
 import static com.versionone.common.sdk.TasksProperties.TYPE;
 
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
 import java.util.Vector;
 
-public class DetailsModel extends AbstractModel {
+/**
+ *
+ */
+public class DetailsModel extends AbstractTableModel {
 
     private static final TasksProperties[] tasksRowDataEffort = {BUILD, DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT,
             OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
     private static final TasksProperties[] tasksRowData = {BUILD, DESCRIPTION, DETAIL_ESTIMATE,
             OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
-    private static String[] columnsNames = {"Property", "Value"};
 
-    private int task = Integer.MAX_VALUE;
+    private final IDataLayer data;
+    private int task = -1;
 
     public DetailsModel(IDataLayer data) {
-        super(data, tasksRowData, tasksRowDataEffort);
+        this.data = data;
+    }
+
+    public int getRowCount() {
+        return data.isTrackEffort() ? tasksRowDataEffort.length : tasksRowData.length;
+    }
+
+    public int getColumnCount() {
+        return 2;
+    }
+
+    public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
+        if (columnIndex != 0 && isTaskSet()) {
+            return getRowData(rowIndex).getListValues();
+        }
+        return null;
+    }
+
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        Object res = null;
+        if (columnIndex == 0) {
+            res = getRowData(rowIndex).columnName;
+        } else if (isTaskSet()) {
+            res = data.getTaskPropertyValue(task, getRowData(rowIndex));
+        }
+        return res;
     }
 
     public void setTask(int task) {
@@ -43,53 +74,58 @@ public class DetailsModel extends AbstractModel {
         return task >= 0 && data.getTasksCount() > task;
     }
 
-    public int getRowCount() {
-        return getPropertiesCount();
-    }
-
-    public int getColumnCount() {
-        return 2;
-    }
-
-    public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
-        if (columnIndex == 1 && isTaskSet()) {
-            return getProperty(rowIndex).getListValues();
-        }
-        return null;
-    }
-
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        if (columnIndex == 0) {
-            return getProperty(rowIndex).columnName;
-        }
-        if (isTaskSet()) {
-            return data.getTaskPropertyValue(task, getProperty(rowIndex));
-        }
-        return null;
-    }
-
+    @Override
     public String getColumnName(int column) {
-        return columnsNames[column];
+        return column == 0 ? "Property" : "Value";
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 1 && isTaskSet()) {
-            return getProperty(rowIndex).isEditable;
+        if (columnIndex == 0 || !isTaskSet()) {
+            return false;
         }
-        return false;
+        return getRowData(rowIndex).isEditable;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        data.setTaskPropertyValue(task, getProperty(rowIndex), (String) aValue);
+        data.setTaskPropertyValue(task, getRowData(rowIndex), (String) aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
-    public boolean isRowChanged(int rowIndex) {
+/*
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        return getColumnData(columnIndex).type.columnClass;
+    }
+*/
+
+    private TasksProperties getRowData(int row) {
+        return data.isTrackEffort() ? tasksRowDataEffort[row] : tasksRowData[row];
+    }
+
+    public TasksProperties.Type getRowType(int row) {
+        return getRowData(row).type;
+    }
+
+    public boolean isRowChanged(int row) {
         boolean result = false;
         if (isTaskSet()) {
-            result = data.isPropertyChanged(task, getProperty(rowIndex));
+            result = data.isPropertyChanged(task, getRowData(row));
         }
         return result;
+    }
+
+    public TableCellEditor getCellEditor(int row, int col) {
+        if (col != 1 || getRowType(row) != TasksProperties.Type.LIST) {
+            return null;
+        }
+        final Vector<String> values = getAvailableValuesAt(row, col);
+        final JComboBox comboEditor = new JComboBox(values);
+
+        //select current value
+        comboEditor.setSelectedItem(getValueAt(row, col));
+        comboEditor.setBorder(null);
+        return new DefaultCellEditor(comboEditor);
     }
 }

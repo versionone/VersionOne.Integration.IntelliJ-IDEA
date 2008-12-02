@@ -62,7 +62,7 @@ public class DetailsComponent implements ProjectComponent {
                 ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                 int index = lsm.getMinSelectionIndex();
 
-                model.setTask(index);
+                ((DetailsModel) table.getModel()).setTask(index);
                 update();
             }
         };

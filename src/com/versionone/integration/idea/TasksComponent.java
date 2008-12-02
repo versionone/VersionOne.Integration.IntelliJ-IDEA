@@ -37,7 +37,7 @@ public class TasksComponent implements ProjectComponent {
 
     private Content content;
     private final WorkspaceSettings cfg;
-    private DetailsTable table;
+    private TasksTable table;
     private final IDataLayer dataLayer;
     private TableModelListener tableChangesListener;
     private ListSelectionListener tableSelectionListener;
@@ -149,8 +149,8 @@ public class TasksComponent implements ProjectComponent {
         return panel;
     }
 
-    private DetailsTable createTable() {
-        final DetailsTable table = new DetailsTable(new NewTaskModel(dataLayer));
+    private TasksTable createTable() {
+        final TasksTable table = new TasksTable(new TasksModel(dataLayer), dataLayer);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getModel().addTableModelListener(tableChangesListener);
         table.getSelectionModel().addListSelectionListener(tableSelectionListener);
