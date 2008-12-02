@@ -63,15 +63,16 @@ public enum TasksProperties {
         final LinkedList<String> res = new LinkedList<String>();
         for (TasksProperties property : v) {
             final String pName = property.propertyName;
-            if (pName != null)
+            if (pName != null) {
                 res.add(pName);
+            }
         }
         return res;
     }
 
     static boolean isEqual(Object oldProp, Object newProp) {
         if (oldProp == null || newProp == null) {
-            return oldProp != newProp;
+            return oldProp == newProp;
         }
         if (oldProp instanceof Double) {
             return Math.abs((Double) oldProp - Double.parseDouble(newProp.toString())) < 0.005;

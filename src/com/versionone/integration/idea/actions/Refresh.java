@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -17,17 +16,20 @@ import com.versionone.integration.idea.V1PluginException;
 import javax.swing.*;
 
 public class Refresh extends AnAction {
+    private Project project;
 
     public void actionPerformed(AnActionEvent e) {
         System.out.println("Refresh.actionPerformed()");//TODO delete trace output
 
         final DataContext dataContext = e.getDataContext();
-        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
-        //final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
+        Project ideaProject = DataKeys.PROJECT.getData(dataContext);
 
-        if (ideaProject == null) {
+        if (ideaProject == null && project == null) {
             return;
+        } else {
+            ideaProject = project;
         }
+
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final IDataLayer data = tc.getDataLayer();
@@ -60,5 +62,9 @@ public class Refresh extends AnAction {
 
         tc.update();
         dc.update();
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

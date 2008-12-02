@@ -24,7 +24,6 @@ public class ConfigForm implements UnnamedConfigurable {
     private JPanel generalPanel;
     private JCheckBox windowsIntegratedAuthentication;
     private WorkspaceSettings settings;
-    //private Project project;
     private final IDataLayer dataLayer;
     private final TasksComponent tc;
     private boolean isConnectionCorrect = true;
@@ -34,7 +33,6 @@ public class ConfigForm implements UnnamedConfigurable {
         validateConnectionButton.setEnabled(false);
 
         this.settings = settings;
-        //this.project = project;
         tc = project.getComponent(TasksComponent.class);
         dataLayer = tc.getDataLayer();
 
@@ -147,31 +145,6 @@ public class ConfigForm implements UnnamedConfigurable {
 
             tc.update();
         }
-
-//        final RApplicationSettings settings = RApplicationSettings.getInstance();
-//        settings.useConsoleOutputOtherFilters = otherFiltersCheckBox.isSelected();
-//        settings.useConsoleOutputRubyStacktraceFilter = rubyStacktraceFilterCheckBox.isSelected();
-//        settings.useConsoleColorMode = colorModeCheckBox.isSelected();
-//        settings.additionalEnvPATH = myTFAdditioanlPath.getText().trim();
-//
-//        final boolean isProjectViewStyleChanged = isProjectViewStyleChanged();
-//        settings.useRubySpecificProjectView = useRubyProjectViewBox.isSelected();
-//        if (isProjectViewStyleChanged){
-//            final int result = Messages.showYesNoDialog(myContentPane.getParent(),
-//                    RBundle.message("settings.plugin.general.tab.use.ruby.dataLayer.view.changed.message"),
-//                    RBundle.message("settings.plugin.general.tab.use.ruby.dataLayer.view.changed.title"),
-//                    Messages.getQuestionIcon());
-//            if (result == DialogWrapper.OK_EXIT_CODE){
-//                ApplicationManager.getApplication().invokeLater(new Runnable() {
-//                    public void run() {
-//                        // reload all projects
-//                        for (Project dataLayer : ProjectManager.getInstance().getOpenProjects()) {
-//                            ProjectManager.getInstance().reloadProject(dataLayer);
-//                        }
-//                    }
-//                }, ModalityState.NON_MODAL);
-//            }
-//        }
     }
 
     public boolean isConnectValid() {
@@ -188,15 +161,6 @@ public class ConfigForm implements UnnamedConfigurable {
         userName.setText(settings.user);
         password.setText(settings.passwd);
         windowsIntegratedAuthentication.setSelected(settings.isWindowsIntegratedAuthentication);
-
-//        final RApplicationSettings settings = RApplicationSettings.getInstance();
-//        rubyStacktraceFilterCheckBox.setSelected(settings.useConsoleOutputRubyStacktraceFilter);
-//        otherFiltersCheckBox.setSelected(settings.useConsoleOutputOtherFilters);
-//        colorModeCheckBox.setSelected(settings.useConsoleColorMode);
-//        useRubyProjectViewBox.setSelected(settings.useRubySpecificProjectView);
-//        myTFAdditioanlPath.setText(settings.additionalEnvPATH);
-//
-//        myTPIdeaPath.setText(System.getenv(OSUtil.getPATHenvVariableName()));
     }
 
     public void disposeUIResources() {

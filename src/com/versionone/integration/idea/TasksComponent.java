@@ -17,14 +17,16 @@ import com.intellij.util.ui.UIUtil;
 import com.versionone.common.sdk.APIDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.actions.FilterAction;
+import com.versionone.integration.idea.actions.SaveData;
+import com.versionone.integration.idea.actions.Refresh;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 
 public class TasksComponent implements ProjectComponent {
@@ -50,13 +52,19 @@ public class TasksComponent implements ProjectComponent {
 
         ActionManager actions = ActionManager.getInstance();
         ((FilterAction) actions.getAction("Filter")).setSettings(cfg);
+        //set projects to the actions
+        ((SaveData) actions.getAction("V1.SaveData")).setProject(project);
+        ((Refresh) actions.getAction("V1.toolRefresh")).setProject(project);
+        ((FilterAction) actions.getAction("Filter")).setProject(project);
     }
 
     public void projectOpened() {
         String ideaVersion = ApplicationInfo.getInstance().getMajorVersion();
         String minorVersion = ApplicationInfo.getInstance().getMinorVersion();
+        //TODO remove trace out
         System.out.println("IDEA version = " + ideaVersion + '.' + minorVersion);
         ideaVersion = ApplicationInfo.getInstance().getVersionName();
+        //TODO remove trace out
         System.out.println("IDEA name = " + ideaVersion);
         initToolWindow();
 
@@ -67,8 +75,6 @@ public class TasksComponent implements ProjectComponent {
             }
         };
         this.project.getComponent(DetailsComponent.class).registerTableListener(listener);
-
-        //table.getModel().addTableModelListener(listener);
     }
 
     public void projectClosed() {
@@ -112,27 +118,15 @@ public class TasksComponent implements ProjectComponent {
         }
         table.revalidate();
         table.repaint();
-
-        //update Details
-//        final DetailsComponent dc = project.getComponent(DetailsComponent.class);
-//        int task = table.getSelectedRow();
-//        dc.setCurrentTask(task);
     }
 
     public void removeEdition() {
         if (table != null && table.isEditing()) {
-            //table.removeEditor();
-//            SwingWorker sWorker = new SwingWorker() {
-//               public Object construct() {
-//                    table.getCellEditor().stopCellEditing();
-//                    return null;
-//               }
-//            };
-//            sWorker.start();
+            //table.removeEditor(); cancel editing (without data saving)
             if (SwingUtilities.isEventDispatchThread()) {
                 table.getCellEditor().stopCellEditing();
             } else {
-                SwingUtilities.invokeLater(new Runnable() {
+                SwingUtilities.invokeLater( new Runnable() {
                     public void run() {
                         table.getCellEditor().stopCellEditing();
                     }

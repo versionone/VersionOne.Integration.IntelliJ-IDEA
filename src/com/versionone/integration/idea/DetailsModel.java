@@ -23,6 +23,7 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import java.util.Vector;
+import java.math.BigDecimal;
 
 /**
  *
@@ -89,8 +90,29 @@ public class DetailsModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if (getRowData(rowIndex).type == TasksProperties.Type.NUMBER) {
+            try {
+                aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
+                if (((BigDecimal)aValue).compareTo(BigDecimal.ZERO) == -1) {
+                    //We can popup error message there.
+                    return;
+                }
+            } catch (Exception e) {
+                //We can popup error message there.
+                return;
+            }
+        }
         data.setTaskPropertyValue(task, getRowData(rowIndex), (String) aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
+    }
+
+    private Object roundIfBigDecimal(Object value) {
+        if (value instanceof BigDecimal) {
+            BigDecimal b = (BigDecimal) value;
+            return b.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return value;
+        }
     }
 
 /*

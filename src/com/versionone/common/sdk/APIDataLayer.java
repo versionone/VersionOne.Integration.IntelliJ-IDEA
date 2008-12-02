@@ -194,8 +194,8 @@ public final class APIDataLayer implements IDataLayer {
         Asset[] assets = new Asset[tasks.length];
         int i = 0;
         for (Task oneTask : tasks) {
-            final Object effortValue = oneTask.getProperty(TasksProperties.EFFORT);
-            if (!effortValue.equals(BigDecimal.ZERO)) {
+            final BigDecimal effortValue = (BigDecimal)oneTask.getProperty(TasksProperties.EFFORT);
+            if (effortValue.compareTo(BigDecimal.ZERO) == 1) {
                 Asset effort = services.createNew(actualType, oneTask.asset.getOid());
                 effort.setAttributeValue(actualType.getAttributeDefinition("Value"), effortValue);
                 effort.setAttributeValue(actualType.getAttributeDefinition("Date"), new Date());

@@ -15,12 +15,6 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
     public boolean isShowAllTask = true;
     public boolean isWindowsIntegratedAuthentication = false;
 
-    //private static WorkspaceSettings setting = new WorkspaceSettings();
-
-    // singelton
-//    private WorkspaceSettings() {
-//    }
-
     public WorkspaceSettings getState() {
         return this;
     }
@@ -33,12 +27,4 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
         isShowAllTask = state.isShowAllTask;
         projectToken = state.projectToken;
     }
-
-//    public static void setCfg(WorkspaceSettings newSettings) {
-//        setting = newSettings;
-//    }
-//
-//    public static WorkspaceSettings getInstance() {
-//        return setting;
-//    }
 }

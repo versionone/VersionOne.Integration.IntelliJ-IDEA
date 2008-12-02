@@ -20,17 +20,21 @@ import javax.swing.*;
  *
  */
 public class SaveData extends AnAction {
+    private Project project;
 
     public void actionPerformed(AnActionEvent e) {
         System.out.println("Save.actionPerformed()");
 
         final DataContext dataContext = e.getDataContext();
 //        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
-        final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
+        Project ideaProject = DataKeys.PROJECT.getData(dataContext);
 
-        if (ideaProject == null) {
+        if (ideaProject == null && project == null) {
             return;
+        } else {
+            ideaProject = project;
         }
+
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final IDataLayer data = tc.getDataLayer();
@@ -67,5 +71,9 @@ public class SaveData extends AnAction {
         }
 
         ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

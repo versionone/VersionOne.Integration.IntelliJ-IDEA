@@ -71,6 +71,10 @@ public class TasksModel extends AbstractTableModel {
         if (getColumnData(columnIndex).type == TasksProperties.Type.NUMBER) {
             try {
                 aValue = roundIfBigDecimal(new BigDecimal((String) aValue));
+                if (((BigDecimal)aValue).compareTo(BigDecimal.ZERO) == -1) {
+                    //We can popup error message there.
+                    return;
+                }
             } catch (Exception e) {
                 //We can popup error message there.
                 return;

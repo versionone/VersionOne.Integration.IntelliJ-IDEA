@@ -33,17 +33,15 @@ public class DetailsComponent implements ProjectComponent {
 
     private final Project project;
 
-    private Content content;
-    private WorkspaceSettings cfg;
     private Table table;
     private DetailsModel model;
     private TableModelListener tableChangesListener;
 
 
     public DetailsComponent(Project project, WorkspaceSettings settings) {
+        //TODO remove trace out
         System.out.println("DetailsComponent.DetailsComponent() prj=" + project + " settings=" + settings);
         this.project = project;
-        cfg = settings;
     }
 
     public void projectOpened() {
@@ -57,8 +55,6 @@ public class DetailsComponent implements ProjectComponent {
 
         ListSelectionListener selectListener = new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                //((DetailsModel)e.getSource()).setTask(e.getFirstIndex());
-                //((DetailsModel)table.getModel()).setTask(e.getFirstIndex());
                 ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                 int index = lsm.getMinSelectionIndex();
 
@@ -109,7 +105,7 @@ public class DetailsComponent implements ProjectComponent {
         ContentFactory contentFactory;
         contentFactory = ContentFactory.SERVICE.getInstance();
 //        contentFactory = PeerFactory.getInstance().getContentFactory();
-        content = contentFactory.createContent(contentPanel, null, false);
+        Content content = contentFactory.createContent(contentPanel, null, false);
         toolWindow.getContentManager().addContent(content);
     }
 
@@ -141,6 +137,21 @@ public class DetailsComponent implements ProjectComponent {
         table.repaint();
     }
 
+    public void removeEdition() {
+        if (table != null && table.isEditing()) {
+            //table.removeEditor(); cancel editing (without data saving)
+            if (SwingUtilities.isEventDispatchThread()) {
+                table.getCellEditor().stopCellEditing();
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        table.getCellEditor().stopCellEditing();
+                    }
+                });
+            }
+        }
+    }
+
     /**
      * Temporary method for testing purposes. TODO delete
      */
@@ -153,28 +164,5 @@ public class DetailsComponent implements ProjectComponent {
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
-    }
-
-    public void removeEdition() {
-        if (table != null && table.isEditing()) {
-            //table.removeEditor();
-            //table.getCellEditor().stopCellEditing();
-//            SwingWorker sWorker = new SwingWorker() {
-//               public Object construct() {
-//                    table.getCellEditor().stopCellEditing();
-//                    return null;
-//               }
-//            };
-//            sWorker.start();
-            if (SwingUtilities.isEventDispatchThread()) {
-                table.getCellEditor().stopCellEditing();
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        table.getCellEditor().stopCellEditing();
-                    }
-                });
-            }
-        }
     }
 }

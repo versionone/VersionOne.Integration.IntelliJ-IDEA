@@ -26,11 +26,16 @@ public class FilterAction extends AnAction {
 
     private static final Logger LOG = Logger.getLogger(FilterAction.class);
     private WorkspaceSettings settings;
+    private Project project;
 
     public void actionPerformed(AnActionEvent e) {
         final DataContext dataContext = e.getDataContext();
 //        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
-        final Project ideaProject = DataKeys.PROJECT.getData(dataContext);
+        Project ideaProject = DataKeys.PROJECT.getData(dataContext);
+        if (ideaProject == null && project != null) {
+            ideaProject = project;
+        }
+
         if (ideaProject != null && filterDialog(ideaProject)) {
             ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
         }
@@ -83,5 +88,9 @@ public class FilterAction extends AnAction {
 
     public void setSettings(WorkspaceSettings settings) {
         this.settings = settings;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }
