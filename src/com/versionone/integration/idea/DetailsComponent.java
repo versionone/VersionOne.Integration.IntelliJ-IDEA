@@ -11,7 +11,6 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.Table;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.util.concurrency.SwingWorker;
 import com.versionone.common.sdk.APIDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import org.apache.log4j.Logger;
@@ -19,10 +18,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.TableModelListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.*;
 
 public class DetailsComponent implements ProjectComponent {
@@ -61,9 +60,9 @@ public class DetailsComponent implements ProjectComponent {
                 //((DetailsModel)e.getSource()).setTask(e.getFirstIndex());
                 //((DetailsModel)table.getModel()).setTask(e.getFirstIndex());
                 ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-                int index = lsm.getMinSelectionIndex();  
+                int index = lsm.getMinSelectionIndex();
 
-                ((DetailsModel)table.getModel()).setTask(index);
+                model.setTask(index);
                 update();
             }
         };
@@ -170,13 +169,12 @@ public class DetailsComponent implements ProjectComponent {
             if (SwingUtilities.isEventDispatchThread()) {
                 table.getCellEditor().stopCellEditing();
             } else {
-                SwingUtilities.invokeLater( new Runnable() {
+                SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         table.getCellEditor().stopCellEditing();
                     }
                 });
             }
-
         }
     }
 }

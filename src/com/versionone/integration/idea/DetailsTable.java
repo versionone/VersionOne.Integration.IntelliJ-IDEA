@@ -14,13 +14,13 @@ public class DetailsTable extends Table {
 
     private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
 
-    public DetailsTable(DetailsModel v1TableModel) {
+    public DetailsTable(AbstractModel v1TableModel) {
         super(v1TableModel);
     }
 
     @Override
-    public DetailsModel getModel() {
-        return (DetailsModel) super.getModel();
+    public AbstractModel getModel() {
+        return (AbstractModel) super.getModel();
     }
 
     public TableCellEditor getCellEditor(final int row, final int col) {

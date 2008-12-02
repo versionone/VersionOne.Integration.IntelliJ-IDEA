@@ -82,12 +82,6 @@ public enum TasksProperties {
         return oldProp.equals(newProp);
     }
 
-    /*
-            statusList = new ListTypeValues(metaModel, services, "TaskStatus");
-            typesList = new ListTypeValues(metaModel, services, "TaskCategory");
-            sourcesList = new ListTypeValues(metaModel, services, "TaskSource");
-*/
-
     public static void reloadListValues(IMetaModel model, IServices services) throws V1Exception {
         for (TasksProperties property : TasksProperties.values()) {
             property.reloadValues(model, services);
@@ -108,7 +102,7 @@ public enum TasksProperties {
         if (listValues != null) {
             return listValues.getAllNames();
         }
-        return new Vector<String>(0);
+        return null;
     }
 
     public Object getValueOid(String value) {
@@ -119,6 +113,6 @@ public enum TasksProperties {
     }
 
     public static enum Type {
-        NUMBER, RICH_TEXT, TEXT, STATUS_LIST, LIST;
+        NUMBER, RICH_TEXT, TEXT, STATUS_LIST, LIST
     }
 }

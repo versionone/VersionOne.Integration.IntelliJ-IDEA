@@ -6,17 +6,14 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.util.concurrency.SwingWorker;
 import com.versionone.common.sdk.APIDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.actions.FilterAction;
@@ -25,13 +22,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
-import javax.swing.event.TableModelListener;
-import javax.swing.event.TableModelEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
 
 public class TasksComponent implements ProjectComponent {
 
@@ -43,7 +37,7 @@ public class TasksComponent implements ProjectComponent {
 
     private Content content;
     private final WorkspaceSettings cfg;
-    private TasksTable table;
+    private DetailsTable table;
     private final IDataLayer dataLayer;
     private TableModelListener tableChangesListener;
     private ListSelectionListener tableSelectionListener;
@@ -138,7 +132,7 @@ public class TasksComponent implements ProjectComponent {
             if (SwingUtilities.isEventDispatchThread()) {
                 table.getCellEditor().stopCellEditing();
             } else {
-                SwingUtilities.invokeLater( new Runnable() {
+                SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         table.getCellEditor().stopCellEditing();
                     }
@@ -155,8 +149,8 @@ public class TasksComponent implements ProjectComponent {
         return panel;
     }
 
-    private TasksTable createTable() {
-        final TasksTable table = new TasksTable(new TasksModel(dataLayer), dataLayer);
+    private DetailsTable createTable() {
+        final DetailsTable table = new DetailsTable(new NewTaskModel(dataLayer));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getModel().addTableModelListener(tableChangesListener);
         table.getSelectionModel().addListSelectionListener(tableSelectionListener);
