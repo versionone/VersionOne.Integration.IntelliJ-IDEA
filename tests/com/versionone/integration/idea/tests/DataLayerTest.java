@@ -18,14 +18,12 @@ import com.versionone.om.V1Instance;
 import com.versionone.om.filters.TaskFilter;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.math.BigDecimal;
 
 public class DataLayerTest {
     private IDataLayer data;

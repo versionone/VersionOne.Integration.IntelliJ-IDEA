@@ -118,6 +118,7 @@ public class TasksComponent implements ProjectComponent {
         if (content != null) {
             content.setDisplayName(cfg.projectName);
         }
+        table.createDefaultColumnsFromModel();
         table.revalidate();
         table.repaint();
     }
