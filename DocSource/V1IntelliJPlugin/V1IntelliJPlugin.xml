@@ -35,8 +35,25 @@
     <section id="installation">
         <title>Installation</title>
         <para>
-            Need to write install instructions for &name; 
+            &name; can be installed manually or from the IntelliJ Plugin Repository.
         </para>
+        <section id="manual.install">
+            <title>1a. Manual Install</title>
+            <para>
+                To manually install &name;
+                <orderedlist>
+                    <listitem><para>Unzip the &name;.zip file into a temporary location.  We will refer to this location as INSTALL_TEMP</para></listitem>
+                    <listitem><para>Locate the IntelliJ installation directory.  We will refer to this location as INTELLIJ_DIR</para></listitem>
+                    <listitem><para>Copy the VersionOne subdirectory from INSTALL_TEMP to the plugin directory located under INTELLIJ_DIR</para></listitem>
+                </orderedlist>
+            </para>
+        </section>
+        <section id="automatic.install">
+            <title>1b. Install from IntelliJ Plugin Repository</title>
+            <para>
+                *********************               Need to write this section               *********************
+            </para>
+        </section>
         <section id="install.configure">
             <title>2.  Configure the Plugin</title>
             <para>
@@ -88,38 +105,35 @@
     <section id="usage">
         <title>Usage</title>
         <para>
-            &name; contributes two new Views to the IntelliJ IDEA environment.  
-            Task View
+            &name; contributes two new components to the IntelliJ IDEA environment; a Task Window and a Detail Window.  The Task Window is available in the tool button bar located at the bottom of the UI. 
             <figure
                 id="usage.newtask.figure">
                 <title>Tasks Window</title>
                 <graphic fileref="NewTaskWindow.JPG"/>
             </figure>
-            Details View
-            <figure
-                id="usage.newdetails.figure">
+            The Details Window is available in the tool button bar located on the right hand side of the UI 
+            <figure id="usage.newdetails.figure">
                 <title>Details Window</title>
                 <graphic fileref="NewDetailsView.JPG"/>
             </figure>
         </para>
-      
         <section id="usage.project">
             <title>Selecting Projects</title>
-            <para>In order to view VersionOne Task you must first select a Project.  To select a Project clicking the <emphasis>Filter</emphasis> icon located on the left side of the Task View tool bar. 
+            <para>In order to view VersionOne Task you must first select a Project.  To select a Project click the <emphasis>Filter</emphasis> icon located on the left side of the Task Window. 
                 <figure
                     id="usage.project.figure">
                     <title>Projects Window</title>
                     <graphic fileref="Projects.JPG"/>
                 </figure>
                 To choose a specific project to work on, simply navigate the tree and select it.  Once selected, click <emphasis>OK</emphasis> to exit.
-                Note that this filter dialog also supports an "Show All Tasks" checkbox.  When you select this option you will see all task in the active iteration not just the task where you are the owner.
+                <note><para>The Filter dialog also supports a "Show All Tasks" checkbox.  Use this option to view all task in the active iteration.  When this checkbox is clear you only see task assigned to the configured user in the active iteration</para></note>
             </para>
         </section>
         <section id="usage.tasks">
             <title>Updating Tasks</title>
             <para>
-                Once you’ve selected a project your Task view will refresh and list all VersionOne task to which you are assigned.  
-                To update a task, modify the attribute directly in the grid. Once you’re finished updating a Task, click the Save icon to update the task in VersionOne.				
+                Once the filter is closed the Task Window will refresh and list all VersionOne Task based on the filter.  
+                To update a task, modify the attribute directly in the grid. Once you’re finished updating a Task, click the Save icon to commit your changes to VersionOne.				
                 <figure
                     id="usage.tasks.figure">
                     <title>Tasks Window</title>
