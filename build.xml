@@ -148,7 +148,7 @@
         <copy file="${lib.dir}/VersionOne.ObjectModel.jar"
             tofile="${publish.lib.dir}/VersionOne.ObjectModel.jar"/>
 			
-		<move todir="${publish.dir}/tmpl">
+		<move todir="${publish.dir}/tmpl/doc">
 			<fileset dir="${doc.dir}"/>
 		</move>
 
