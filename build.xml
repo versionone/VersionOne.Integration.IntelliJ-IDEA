@@ -28,6 +28,7 @@
     <property name="tests.dir" value="${basedir}/tests"/>
     <property name="distr.dir" value="${basedir}/distr"/>
 
+
     <!-- Build Directories -->
     <property name="build.dir" value="${basedir}/Common"/>
     <property name="bin.product.dir" value="${build.dir}/bin_production"/>
@@ -36,7 +37,7 @@
     <property name="coverage.classes" value="${coverage.dir}/classes"/>
     <property name="coverage.junit" value="${coverage.dir}/junit"/>
     <property name="publish.lib.dir" value="${publish.dir}/tmpl/VersionOne/lib"/>
-
+    <property name="doc.dir" value="${publish.dir}/doc"/>
 
     <path id="classpath">
         <fileset dir="${lib.dir}">
@@ -78,17 +79,18 @@
                 <include name="**/*.jar"/>
             </fileset>
         </classpath>
-    </taskdef> 
+    </taskdef>
 
     <target name="compile.clean">
         <delete dir="${bin.product.dir}"/>
-        <delete dir="${build.dir}"/>        
+        <delete dir="${build.dir}"/>
     </target>
 
     <target name="plugin.compile.idea" description="Compile VersionOne plugin for IDEA">
         <mkdir dir="${bin.product.dir}"/>
-        <javac2 destdir="${bin.product.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
-                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${java.dir}/javac">
+        <javac2 destdir="${bin.product.dir}" debug="${compiler.debug}"
+            nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}"
+            fork="true" executable="${java.dir}/javac">
             <compilerarg line="${compiler.args}"/>
             <!--<bootclasspath refid="idea.module.bootclasspath"/>-->
             <classpath refid="classpath"/>
@@ -129,9 +131,9 @@
     <target name="package.clean">
         <delete dir="${distr.dir}"/>
         <delete file="${zip.filename}"/>
-	<!--<delete dir="${publish.dir}"/>-->
-	    <delete dir="${junit.output.dir}"/>
-	    <delete dir="." includes="cobertura.ser"/>
+        <!--<delete dir="${publish.dir}"/>-->
+        <delete dir="${junit.output.dir}"/>
+        <delete dir="." includes="cobertura.ser"/>
     </target>
 
 
@@ -142,9 +144,11 @@
         <!--<mkdir dir="${publish.dir}/VersionOne/lib"/>-->
 
         <copy file="${distr.dir}/${jar.filename}" todir="${publish.lib.dir}"/>
-        <copy file="${lib.dir}/VersionOne.APIClient.jar" tofile="${publish.lib.dir}/VersionOne.APIClient.jar"/>
-        <copy file="${lib.dir}/VersionOne.ObjectModel.jar" tofile="${publish.lib.dir}/VersionOne.ObjectModel.jar"/>
-        
+        <copy file="${lib.dir}/VersionOne.APIClient.jar"
+            tofile="${publish.lib.dir}/VersionOne.APIClient.jar"/>
+        <copy file="${lib.dir}/VersionOne.ObjectModel.jar"
+            tofile="${publish.lib.dir}/VersionOne.ObjectModel.jar"/>
+
         <zip destfile="${publish.dir}/${zip.filename}">
             <fileset dir="${publish.dir}/tmpl/"/>
         </zip>
@@ -154,7 +158,6 @@
     <target name="init" description="Build initialization">
         <!-- Perform any build initialization in this target -->
     </target>
-
 
     <target name="coverage.init">
         <mkdir dir="${coverage.classes}"/>
@@ -167,7 +170,7 @@
     </target>
 
     <target name="coverage" depends="plugin.compile.idea, coverage.clean, coverage.init">
-	    <mkdir dir="${junit.output.dir}"/>
+        <mkdir dir="${junit.output.dir}"/>
         <cobertura-instrument todir="${coverage.classes}" datafile="${coverage.file}">
             <fileset dir="${bin.product.dir}">
                 <include name="**/*.class"/>
@@ -190,8 +193,8 @@
 
             <batchtest fork="yes" todir="${junit.output.dir}">
                 <fileset dir="${bin.product.dir}">
-	            <include name="**/*Test.class"/>
-                <include name="**/*Tester.class"/>
+                    <include name="**/*Test.class"/>
+                    <include name="**/*Tester.class"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -203,16 +206,67 @@
             <fileset dir="${src.dir}" includes="**/*"/>
         </cobertura-report>
         <move file="${coverage.dir}/coverage.xml" tofile="${coverage.dir}/coverage.raw"/>
-        <xslt destdir="${coverage.dir}" style="${base.dir}/stripDTD.xsl" in="${coverage.dir}/coverage.raw"
-            out="${coverage.dir}/coverage.xml"/>
-    </target> 
+        <xslt destdir="${coverage.dir}" style="${base.dir}/stripDTD.xsl"
+            in="${coverage.dir}/coverage.raw" out="${coverage.dir}/coverage.xml"/>
+    </target>
+
+
+    <!-- Create Documentation-->
+    <macrodef name="gendoc.content.base">
+        <attribute name="filename"/>
+        <attribute name="collect.xref.targets"/>
+        <attribute name="content.doc.output.dir" default="${doc.dir}/@{filename}"/>
+        <sequential>
+            <mkdir dir="@{content.doc.output.dir}"/>
+            <echo>${doc.source.dir} [/] ${common.dir}/docbook/xsltproc/xsltproc.exe -o ../@{content.doc.output.dir}/@{filename}.html --stringparam current.docid @{filename} --stringparam target.database.document olinkdb.xml --stringparam collect.xref.targets ${collect.xref.targets} --stringparam targets.filename @{filename}.db Common/v1integration.xsl @{filename}/@{filename}.xml</echo>
+            <exec dir="${doc.source.dir}" executable="${common.dir}/docbook/xsltproc/xsltproc.exe"
+                failonerror="true">
+                <arg
+                    line="-o ../@{content.doc.output.dir}/@{filename}.html --stringparam current.docid @{filename} --stringparam target.database.document olinkdb.xml --stringparam collect.xref.targets ${collect.xref.targets} --stringparam targets.filename @{filename}.db Common/v1integration.xsl @{filename}/@{filename}.xml"
+                />
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <target name="gendoc.clean">
+        <delete dir="${doc.dir}"/>
+    </target>
+
+    <target name="gendoc" depends="gendoc.clean">
+        <property name="doc.source.dir" value="${basedir}/DocSource"/>
+        <property name="common.dir" value="${doc.source.dir}/Common"/>
+
+        <mkdir dir="${doc.dir}"/>
+        <mkdir dir="${doc.dir}/Common"/>
+
+        <copy file="${doc.source.dir}/Common/v1integration.css" todir="${doc.dir}/Common"/>
+
+        <!-- this is the index file -->
+        <echo>${doc.source.dir} [/] ${common.dir}/docbook/xsltproc/xsltproc.exe -o ../${doc.dir}/index.html Common/index.xsl index.xml</echo>
+        <exec dir="${doc.source.dir}" executable="${common.dir}/docbook/xsltproc/xsltproc.exe"
+            failonerror="true">
+            <arg line="-o ../${doc.dir}/index.html Common/index.xsl index.xml"/>
+        </exec>
+
+        <gendoc.content.base filename="V1IntelliJPlugIn" collect.xref.targets="only"/>
+        <gendoc.content.base filename="V1IntelliJPlugIn" collect.xref.targets="no"/>
+
+        <copy todir="${doc.dir}/V1IntelliJPlugIn" flatten="false">
+            <fileset dir="${doc.source.dir}/V1IntelliJPlugIn">
+                <include name="*.jpg"/>
+            </fileset>
+        </copy>
+    </target>
 
 
     <target name="test">
         <exec command="java -version"/>
     </target>
 
-    <target name="clean" depends="compile.clean,package.clean,build.clean,coverage.clean" description="cleanup all"/>
+    <target name="clean"
+        depends="compile.clean,package.clean,build.clean,coverage.clean,gendoc.clean"
+        description="cleanup all"/>
 
-    <target name="ccnet.build" depends="init, clean, coverage, plugin.package.idea" description="build all"/>
+    <target name="ccnet.build" depends="init, clean, coverage, plugin.package.idea"
+        description="build all"/>
 </project>

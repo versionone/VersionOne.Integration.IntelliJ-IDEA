@@ -35,118 +35,13 @@
     <section id="installation">
         <title>Installation</title>
         <para>
-            
-----------------------------------------            
-            
-            &name; can be installed locally or from the Update Site</para>
-        <section id="install.updatesite">
-            <title>1a. Install from the Update Site</title>
-            <para>Use these instructions if you can install from our internet update site.
-            <orderedlist
-                    spacing="compact">
-                    <listitem>
-                        <para>From inside the Eclipse IDE, open the Install Wizard by clicking <emphasis>Help | Software Updates... | Find and Install</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Select  <emphasis>"Search for new features to install"</emphasis> and click <emphasis>Next</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Click <emphasis>"New Remote Site"</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Enter the following parameters</para>
-                        <table>
-                            <title/>
-                            <tgroup cols="2">
-                                <thead>
-                                    <row>
-                                        <entry>Parameter</entry>
-                                        <entry>Value</entry>
-                                    </row>
-                                </thead>
-                                <tbody>
-                                    <row>
-                                        <entry>Name</entry>
-                                        <entry>VersionOne Plugin Updates</entry>
-                                    </row>
-                                    <row>
-                                        <entry>URL</entry>
-                                        <entry>http://updates.versionone.com/eclipse/v1plugin</entry>
-                                    </row>
-                                </tbody>
-                            </tgroup>
-                        </table>
-                    </listitem>
-                    <listitem>
-                        <para>Ensure that <emphasis>"VersionOne Plugin Updates"</emphasis> is selected and press <emphasis>Finsih</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Under <emphasis>Select the Features to Install</emphasis> check the <emphasis>"VersionOne Plugin Updates"</emphasis> check box  and press <emphasis>Next</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Accept the license agreement and press <emphasis>Next</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Review the information and if correct click <emphasis>Finish</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>If you get a warning that the plugin is unsigned click <emphasis>Install</emphasis> or <emphasis>Install All</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>After the install is complete, restart Eclipse for the changes to take affect</para>
-                    </listitem>
-                </orderedlist>
-            </para>
-        </section>
-        <section id="install.local.setup">
-            <title>1b. Install the Plugin Locally</title>
-            <para>Use these instructions if you cannot install from our internet update site or prefer to install locally
-                <orderedlist
-                    spacing="compact">
-                    <listitem>
-                        <para>Unzip the file &name;.zip into a temporary location.  We will refer to this location as INSTALL_TEMP</para>
-                    </listitem>
-                    <listitem>
-                        <para>From inside the Eclipse IDE, open the Install Wizard by clicking <emphasis>Help | Software Updates... | Find and Install</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Select  <emphasis>"Search for new features to install"</emphasis> and click <emphasis>Next</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Click <emphasis>"New Local Site"</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Select INSTALL_TEMP/updatesite</para>
-                    </listitem>
-                    <listitem>
-                        <para>Change the name to "VersionOne Eclipse Plugin Updates" (without the quotes) and click <emphasis>Ok</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Ensure that only the "VersionOne Eclipse Plugin Updates" is selected and click <emphasis>Finish</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Select "VersionOne Eclipse Plugin Updates" and click <emphasis>Next</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Accept the license agreement and click <emphasis>Next</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>Review the information and if correct click <emphasis>Finish</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>When prompted select <emphasis>Install</emphasis></para>
-                    </listitem>
-                    <listitem>
-                        <para>When prompted restart Eclipse</para>
-                    </listitem>
-                </orderedlist>
-            </para>
-        </section>
+            Need to write install instructions for &name; 
+        </para>
         <section id="install.configure">
             <title>2.  Configure the Plugin</title>
             <para>
-                Select <emphasis>Preferences...</emphasis> from the <emphasis>Window</emphasis> 
-                menu, and navigate to the VersionOne settings as show in <xref
+                Select <emphasis>Settings</emphasis> from the <emphasis>File</emphasis> 
+                menu (File | Settings), and navigate to the VersionOne settings as show in <xref
                     linkend="install.configure.options"/>.
                 <figure
                     id="install.configure.options">
@@ -169,10 +64,6 @@
                         </thead>
                         <tbody>
                             <row>
-                                <entry>Enable</entry>
-                                <entry>Allows you to enable/disable the Plugin</entry>
-                            </row>
-                            <row>
                                 <entry>Windows Integrated Authentication</entry>
                                 <entry>Check this box if your VersionOne instance uses Windows Integraten Authentication.</entry>
                             </row>
@@ -188,11 +79,6 @@
                                 <entry>Password</entry>
                                 <entry>Password for the username above.</entry>
                             </row>
-                            <row>
-                                <entry>Effort Tracking</entry>
-                                <entry>Flag for Effort Tracking.  If VersionOne has effort tracking enabled, check this box to add the
-                                    <emphasis>Effort</emphasis> and <emphasis>Done</emphasis> columns</entry>
-                            </row>
                         </tbody>
                     </tgroup>
                 </table>
@@ -202,23 +88,31 @@
     <section id="usage">
         <title>Usage</title>
         <para>
-            &name; contributes a new View to the Eclipse environment.  This view can be added to any perspective by selecting <emphasis>Window | Show View | Other ...</emphasis> .
-            From the Show View dialog , expand the <emphasis>VersionOne</emphasis> node and select <emphasis>Task View</emphasis>.
+            &name; contributes two new Views to the IntelliJ IDEA environment.  
+            Task View
             <figure
                 id="usage.newtask.figure">
                 <title>Tasks Window</title>
                 <graphic fileref="NewTaskWindow.JPG"/>
             </figure>
+            Details View
+            <figure
+                id="usage.newdetails.figure">
+                <title>Details Window</title>
+                <graphic fileref="NewDetailsView.JPG"/>
+            </figure>
         </para>
+      
         <section id="usage.project">
             <title>Selecting Projects</title>
-            <para>In order to view VersionOne Task you must first select a Project.  To select a Project clicking the <emphasis>Filter</emphasis> icon located on the right side of the Task View tool bar. 
+            <para>In order to view VersionOne Task you must first select a Project.  To select a Project clicking the <emphasis>Filter</emphasis> icon located on the left side of the Task View tool bar. 
                 <figure
                     id="usage.project.figure">
                     <title>Projects Window</title>
                     <graphic fileref="Projects.JPG"/>
                 </figure>
                 To choose a specific project to work on, simply navigate the tree and select it.  Once selected, click <emphasis>OK</emphasis> to exit.
+                Note that this filter dialog also supports an "Show All Tasks" checkbox.  When you select this option you will see all task in the active iteration not just the task where you are the owner.
             </para>
         </section>
         <section id="usage.tasks">
@@ -233,7 +127,6 @@
                 </figure>
             </para>
         </section>
-
     </section>
     <section id="section.footer">
         <title/>
