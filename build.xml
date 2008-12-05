@@ -147,6 +147,10 @@
             tofile="${publish.lib.dir}/VersionOne.APIClient.jar"/>
         <copy file="${lib.dir}/VersionOne.ObjectModel.jar"
             tofile="${publish.lib.dir}/VersionOne.ObjectModel.jar"/>
+			
+		<move todir="${publish.dir}/tmpl">
+			<fileset dir="{doc.dir}"/>
+		</move>
 
         <zip destfile="${publish.dir}/${zip.filename}">
             <fileset dir="${publish.dir}/tmpl/"/>
