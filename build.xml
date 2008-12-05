@@ -149,7 +149,7 @@
             tofile="${publish.lib.dir}/VersionOne.ObjectModel.jar"/>
 			
 		<move todir="${publish.dir}/tmpl">
-			<fileset dir="{doc.dir}"/>
+			<fileset dir="${doc.dir}"/>
 		</move>
 
         <zip destfile="${publish.dir}/${zip.filename}">
