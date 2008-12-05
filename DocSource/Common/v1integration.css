@@ -1,0 +1,130 @@
+/*(c) Copyright 2007, VersionOne, LLC. All rights reserved. (c)*/
+body {
+	font-family:arial, helvetica, sans-serif;
+	font-size: 10pt;
+}
+
+table {
+	border: solid 1px #000;
+	padding: 0px;
+	border-collapse:collapse;
+}
+
+table.simplelist {
+	border: none;
+}
+
+table.simplelist td {
+	border: none;
+	padding: 0px;
+}
+
+th {
+	border: solid 1px #000;
+	padding: 2px;
+	font-size: 10pt;	
+}
+
+td {
+	border: solid 1px #000;
+	padding: 4px;
+	font-size: 10pt;
+}
+
+.borderRight {
+	border-right: solid 1px #000;
+}
+
+.borderBottom {
+	border-bottom: solid 1px #000;
+}
+
+code.filename {
+	border: dashed 1px #000;
+	padding: 2px;
+	background-color: #ddd;
+	white-space: nowrap;	
+}
+
+code.uri {
+	background-color: #ddd;
+	white-space: nowrap;
+}
+
+.programlisting {
+	border: dashed 1px #000;
+	padding: 2px;
+	background-color: #ddd;
+}
+
+p.howdoi {
+	font-weight: bold;
+}
+
+.fixme {
+	font-weight: bold;
+	color: #fff;
+	background-color: #ff0000;
+}
+
+span.syntax-lit {
+	font-weight: bold;
+}
+
+span.syntax-term {
+	font-style: italic;
+}
+
+.section {
+	margin-top: 2px;
+	margin-bottom: 2px;
+	margin-left: 12px;
+	margin-right: 2px;
+	padding: 4px;
+}
+
+h1 {
+	border-bottom: solid 2px #000;
+	border-top: solid 2px #000;
+	text-align: center;
+}
+
+h2 {
+	border-bottom: solid 2px #000;
+	border-top: solid 2px #000;	
+}
+
+h3 {
+	border-top: solid 1px #000;
+	border-bottom: solid 1px #000;
+}
+
+h4 {
+	border-top: solid 1px #ccc;
+	border-bottom: solid 1px #ccc;
+}
+
+h5 {
+	border-top: solid 1px #ccc;
+	border-bottom: solid 1px #ccc;
+}
+
+hr { 
+	display: none;
+	height: 0px;
+}
+
+.sidebar {
+	font-size: 90%;
+	float: right;
+	width: 33%;
+	background-color: #ffd;
+	padding: 0 1em;
+	margin-left: 1em;
+	margin-bottom: 1em;
+}
+
+.sidebar .title {
+	text-align: center;
+}
+

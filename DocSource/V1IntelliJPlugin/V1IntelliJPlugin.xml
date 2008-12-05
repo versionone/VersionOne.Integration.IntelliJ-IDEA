@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplied DocBook XML V1.1//EN" "http://www.oasis-open.org/docbook/xml/simple/1.1/sdocbook.dtd"-->
+<!--<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"-->
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" "../Common/docbook/xml/4.3/docbookx.dtd"
+[
+<!ENTITY addkey1 SYSTEM "addkey1.cdata">
+<!ENTITY addkey2 SYSTEM "addkey2.cdata">
+<!ENTITY downloads SYSTEM "../Common/download.xml">
+<!ENTITY name "V1IntelliJPlugin">
+]>
+<article id="V1IntelliJPlugIn.user">
+    <title>VersionOne IntelliJ IDEA Plugin User Guide</title>
+    <section id="description">
+        <title>Description</title>
+        <para>
+            The VersionOne IjtelliJ Idea Plugin (V1IntelliJPlugIn) provides direct interaction with development task in VersionOne from within the IntelliJ IDEA IDE.  
+            This enables Java developers to update VersionOne task status, estimates, remaining effort, etc., without leaving the confines of the Eclipse environment.
+        </para>
+    </section>
+    <section id="systemreqs">
+        <title>System Requirements</title>
+        <para>
+            VersionOne: 7.3 or above
+        </para>
+        <para>
+            Client Workstation:
+            <itemizedlist>
+                <listitem>
+                    <para>IDE&mdash;Tested with IntelliJ IDEA 8.0</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    &downloads;
+    <section id="installation">
+        <title>Installation</title>
+        <para>
+            
+----------------------------------------            
+            
+            &name; can be installed locally or from the Update Site</para>
+        <section id="install.updatesite">
+            <title>1a. Install from the Update Site</title>
+            <para>Use these instructions if you can install from our internet update site.
+            <orderedlist
+                    spacing="compact">
+                    <listitem>
+                        <para>From inside the Eclipse IDE, open the Install Wizard by clicking <emphasis>Help | Software Updates... | Find and Install</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Select  <emphasis>"Search for new features to install"</emphasis> and click <emphasis>Next</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Click <emphasis>"New Remote Site"</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Enter the following parameters</para>
+                        <table>
+                            <title/>
+                            <tgroup cols="2">
+                                <thead>
+                                    <row>
+                                        <entry>Parameter</entry>
+                                        <entry>Value</entry>
+                                    </row>
+                                </thead>
+                                <tbody>
+                                    <row>
+                                        <entry>Name</entry>
+                                        <entry>VersionOne Plugin Updates</entry>
+                                    </row>
+                                    <row>
+                                        <entry>URL</entry>
+                                        <entry>http://updates.versionone.com/eclipse/v1plugin</entry>
+                                    </row>
+                                </tbody>
+                            </tgroup>
+                        </table>
+                    </listitem>
+                    <listitem>
+                        <para>Ensure that <emphasis>"VersionOne Plugin Updates"</emphasis> is selected and press <emphasis>Finsih</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Under <emphasis>Select the Features to Install</emphasis> check the <emphasis>"VersionOne Plugin Updates"</emphasis> check box  and press <emphasis>Next</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Accept the license agreement and press <emphasis>Next</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Review the information and if correct click <emphasis>Finish</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>If you get a warning that the plugin is unsigned click <emphasis>Install</emphasis> or <emphasis>Install All</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>After the install is complete, restart Eclipse for the changes to take affect</para>
+                    </listitem>
+                </orderedlist>
+            </para>
+        </section>
+        <section id="install.local.setup">
+            <title>1b. Install the Plugin Locally</title>
+            <para>Use these instructions if you cannot install from our internet update site or prefer to install locally
+                <orderedlist
+                    spacing="compact">
+                    <listitem>
+                        <para>Unzip the file &name;.zip into a temporary location.  We will refer to this location as INSTALL_TEMP</para>
+                    </listitem>
+                    <listitem>
+                        <para>From inside the Eclipse IDE, open the Install Wizard by clicking <emphasis>Help | Software Updates... | Find and Install</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Select  <emphasis>"Search for new features to install"</emphasis> and click <emphasis>Next</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Click <emphasis>"New Local Site"</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Select INSTALL_TEMP/updatesite</para>
+                    </listitem>
+                    <listitem>
+                        <para>Change the name to "VersionOne Eclipse Plugin Updates" (without the quotes) and click <emphasis>Ok</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Ensure that only the "VersionOne Eclipse Plugin Updates" is selected and click <emphasis>Finish</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Select "VersionOne Eclipse Plugin Updates" and click <emphasis>Next</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Accept the license agreement and click <emphasis>Next</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>Review the information and if correct click <emphasis>Finish</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>When prompted select <emphasis>Install</emphasis></para>
+                    </listitem>
+                    <listitem>
+                        <para>When prompted restart Eclipse</para>
+                    </listitem>
+                </orderedlist>
+            </para>
+        </section>
+        <section id="install.configure">
+            <title>2.  Configure the Plugin</title>
+            <para>
+                Select <emphasis>Preferences...</emphasis> from the <emphasis>Window</emphasis> 
+                menu, and navigate to the VersionOne settings as show in <xref
+                    linkend="install.configure.options"/>.
+                <figure
+                    id="install.configure.options">
+                    <title>Configuration Options Screen</title>
+                    <graphic fileref="Options.JPG"/>
+                </figure>
+                
+                Enter the configuration parameters as specified in the table below and click <emphasis>Validate Connection</emphasis> to ensure that
+                the add-in can both access VersionOne’s API and authenticate using the supplied username and password.				
+                
+                <table
+                    frame="none" id="install.configure.table">
+                    <title>VSAddin Configuration Parameters</title>
+                    <tgroup cols="2">
+                        <thead>
+                            <row>
+                                <entry>Parameter</entry>
+                                <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>Enable</entry>
+                                <entry>Allows you to enable/disable the Plugin</entry>
+                            </row>
+                            <row>
+                                <entry>Windows Integrated Authentication</entry>
+                                <entry>Check this box if your VersionOne instance uses Windows Integraten Authentication.</entry>
+                            </row>
+                            <row>
+                                <entry>Application URL</entry>
+                                <entry>VersionOne installation URL</entry>
+                            </row>
+                            <row>
+                                <entry>Username</entry>
+                                <entry>User that will access VersionOne.</entry>
+                            </row>
+                            <row>
+                                <entry>Password</entry>
+                                <entry>Password for the username above.</entry>
+                            </row>
+                            <row>
+                                <entry>Effort Tracking</entry>
+                                <entry>Flag for Effort Tracking.  If VersionOne has effort tracking enabled, check this box to add the
+                                    <emphasis>Effort</emphasis> and <emphasis>Done</emphasis> columns</entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+            </para>
+        </section>
+    </section>
+    <section id="usage">
+        <title>Usage</title>
+        <para>
+            &name; contributes a new View to the Eclipse environment.  This view can be added to any perspective by selecting <emphasis>Window | Show View | Other ...</emphasis> .
+            From the Show View dialog , expand the <emphasis>VersionOne</emphasis> node and select <emphasis>Task View</emphasis>.
+            <figure
+                id="usage.newtask.figure">
+                <title>Tasks Window</title>
+                <graphic fileref="NewTaskWindow.JPG"/>
+            </figure>
+        </para>
+        <section id="usage.project">
+            <title>Selecting Projects</title>
+            <para>In order to view VersionOne Task you must first select a Project.  To select a Project clicking the <emphasis>Filter</emphasis> icon located on the right side of the Task View tool bar. 
+                <figure
+                    id="usage.project.figure">
+                    <title>Projects Window</title>
+                    <graphic fileref="Projects.JPG"/>
+                </figure>
+                To choose a specific project to work on, simply navigate the tree and select it.  Once selected, click <emphasis>OK</emphasis> to exit.
+            </para>
+        </section>
+        <section id="usage.tasks">
+            <title>Updating Tasks</title>
+            <para>
+                Once you’ve selected a project your Task view will refresh and list all VersionOne task to which you are assigned.  
+                To update a task, modify the attribute directly in the grid. Once you’re finished updating a Task, click the Save icon to update the task in VersionOne.				
+                <figure
+                    id="usage.tasks.figure">
+                    <title>Tasks Window</title>
+                    <graphic fileref="Tasks.JPG"/>
+                </figure>
+            </para>
+        </section>
+
+    </section>
+    <section id="section.footer">
+        <title/>
+        <para>Copyright &copy; <?dbtimestamp format="Y"?>, VersionOne, Inc. All rights reserved. This document was generated <?dbtimestamp format="Y-m-d H:M:S"?>.</para>
+    </section>
+</article>

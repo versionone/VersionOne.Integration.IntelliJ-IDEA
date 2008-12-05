@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" "Common/docbook/xml/4.3/docbookx.dtd">
+<article>
+    <title>VersionOne Intelli-J IDEA Plugin Documentation Index</title>
+    <para>
+        <ulink url="V1IntelliJPlugin\V1IntelliJPlugin.html">User Guide</ulink>
+    </para>
+    <section id="section.footer">
+        <title/>
+        <para>Copyright &copy; <?dbtimestamp format="Y"?>, VersionOne, Inc. All rights reserved. This document was generated <?dbtimestamp format="Y-m-d H:M:S"?>.</para>
+    </section>
+</article>
