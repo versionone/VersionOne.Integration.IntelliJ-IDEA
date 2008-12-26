@@ -50,7 +50,7 @@ public class TasksComponent implements ProjectComponent {
         cfg = settings;
         dataLayer = new APIDataLayer(cfg);
 
-        if (project != null) {
+        if (!project.isDefault()) {
             ActionManager actions = ActionManager.getInstance();
             ((FilterAction) actions.getAction("Filter")).setSettings(cfg);
             //set projects to the actions

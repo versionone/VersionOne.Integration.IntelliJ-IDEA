@@ -15,7 +15,12 @@ import com.versionone.integration.idea.V1PluginException;
 
 import javax.swing.*;
 
+import org.apache.log4j.Logger;
+
 public class Refresh extends AnAction {
+
+    private static final Logger LOG = Logger.getLogger(Refresh.class);
+
     private Project project;
 
     public void actionPerformed(AnActionEvent e) {
@@ -44,6 +49,7 @@ public class Refresh extends AnAction {
                 try {
                     data.refresh();
                 } catch (V1PluginException e1) {
+                    LOG.warn(e1.getMessage(),e1);
                     isError[0] = true;
                     isError[1] = e1.getMessage();
                     isError[2] = e1.isError();

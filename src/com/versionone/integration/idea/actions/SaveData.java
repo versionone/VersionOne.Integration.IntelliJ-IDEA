@@ -53,15 +53,15 @@ public class SaveData extends AnAction {
                 try {
                     data.commitChangedTaskData();
                 } catch (V1PluginException e1) {
-                    LOG.warn(e1);
                     isError[0] = true;
                     isError[1] = e1.getMessage();
                     isError[2] = e1.isError();
+                    LOG.warn(isError[1],e1);
                 } catch (Exception e1) {
-                    LOG.warn(e1);
                     isError[0] = true;
                     isError[1] = "Error connection to the VesionOne";
                     isError[2] = true;
+                    LOG.warn(isError[1],e1);
                 }
             }
         },
