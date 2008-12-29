@@ -74,6 +74,11 @@ public class ConfigForm implements UnnamedConfigurable {
     }
 
     private void verifyConnection() {
+        String pathVersionOne = serverUrl.getText();
+        if (!pathVersionOne.endsWith("/")) {
+            serverUrl.setText(pathVersionOne + "/");
+        }
+        
         isConnectionCorrect = dataLayer.isConnectionValid(serverUrl.getText(), userName.getText(), password.getText());
         if (isConnectionCorrect) {
             Messages.showInfoMessage("Connection is correct", "Connection status");
