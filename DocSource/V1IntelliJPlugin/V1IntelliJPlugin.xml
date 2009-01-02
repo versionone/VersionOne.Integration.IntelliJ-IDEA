@@ -13,8 +13,8 @@
     <section id="description">
         <title>Description</title>
         <para>
-            The VersionOne IjtelliJ Idea Plugin (V1IntelliJPlugIn) provides direct interaction with development task in VersionOne from within the IntelliJ IDEA IDE.  
-            This enables Java developers to update VersionOne task status, estimates, remaining effort, etc., without leaving the confines of the Eclipse environment.
+            The VersionOne IntelliJ Idea Plugin (V1IntelliJPlugIn) provides interaction with development task in defined in VersionOne from within the IntelliJ IDEA IDE.  
+            This enables Java developers to update VersionOne task status, estimates, remaining effort, etc., without leaving the confines of the IntelliJ IDEA environment.
         </para>
     </section>
     <section id="systemreqs">
@@ -35,29 +35,31 @@
     <section id="installation">
         <title>Installation</title>
         <para>
-            &name; can be installed manually or from the IntelliJ Plugin Repository.
-        </para>
-        <section id="manual.install">
-            <title>1a. Manual Install</title>
-            <para>
-                To manually install &name;
+                To install the VersionOne plugin
                 <orderedlist>
-                    <listitem><para>Unzip the &name;.zip file into a temporary location.  We will refer to this location as INSTALL_TEMP</para></listitem>
-                    <listitem><para>Locate the IntelliJ installation directory.  We will refer to this location as INTELLIJ_DIR</para></listitem>
-                    <listitem><para>Copy the VersionOne subdirectory from INSTALL_TEMP to the plugin directory located under INTELLIJ_DIR</para></listitem>
+                    <listitem>
+                        <para>Close any open instance of the IntelliJ IDEA IDE</para>
+                    </listitem>
+                    <listitem>
+                        <para>Unzip the &name;.zip file into a temporary location. </para>
+                    </listitem>
+                    <listitem>
+                        <para>Locate the IntelliJ installation directory. </para>
+                    </listitem>
+                    <listitem>
+                        <para>Copy the VersionOne subdirectory from the temporary location to the <emphasis>plugin </emphasis> subdirectory located under the IntelliJ installation directory</para>
+                    </listitem>
+                    <listitem>
+                        <para>Run the IntelliJ IDEA IDE</para>
+                    </listitem>
                 </orderedlist>
             </para>
-        </section>
-        <section id="automatic.install">
-            <title>1b. Install from IntelliJ Plugin Repository</title>
-            <para>
-                *********************               Need to write this section               *********************
-            </para>
-        </section>
-        <section id="install.configure">
-            <title>2.  Configure the Plugin</title>
-            <para>
-                Select <emphasis>Settings</emphasis> from the <emphasis>File</emphasis> 
+    </section>
+    <section>
+        <title>Configuration</title>
+        <para>To configure the VersionOne plugin:</para>
+        <orderedlist>
+            <listitem><para>Select <emphasis>Settings</emphasis> from the <emphasis>File</emphasis> 
                 menu (File | Settings), and navigate to the VersionOne settings as show in <xref
                     linkend="install.configure.options"/>.
                 <figure
@@ -65,10 +67,8 @@
                     <title>Configuration Options Screen</title>
                     <graphic fileref="Options.JPG"/>
                 </figure>
-                
-                Enter the configuration parameters as specified in the table below and click <emphasis>Validate Connection</emphasis> to ensure that
-                the add-in can both access VersionOne’s API and authenticate using the supplied username and password.				
-                
+            </para></listitem>
+            <listitem><para>Enter the configuration parameters as specified in the table below 				
                 <table
                     frame="none" id="install.configure.table">
                     <title>VSAddin Configuration Parameters</title>
@@ -99,24 +99,22 @@
                         </tbody>
                     </tgroup>
                 </table>
-            </para>
-        </section>
-    </section>
+            </para></listitem>
+            <listitem><para>
+                Click <emphasis>Validate Connection</emphasis> to ensure that
+                the add-in can both access VersionOne’s API and authenticate using the supplied username and password.
+            </para></listitem>
+            <listitem><para>
+                Click <emphasis>OK</emphasis> to close the Settings dialog
+            </para></listitem>            
+        </orderedlist>
+    </section>    
     <section id="usage">
         <title>Usage</title>
         <para>
-            &name; contributes two new components to the IntelliJ IDEA environment; a Task Window and a Detail Window.  The Task Window is available in the tool button bar located at the bottom of the UI. 
-            <figure
-                id="usage.newtask.figure">
-                <title>Tasks Window</title>
-                <graphic fileref="NewTaskWindow.JPG"/>
-            </figure>
-            The Details Window is available in the tool button bar located on the right hand side of the UI 
-            <figure id="usage.newdetails.figure">
-                <title>Details Window</title>
-                <graphic fileref="NewDetailsView.JPG"/>
-            </figure>
-        </para>
+        &name; contributes two new components to the IntelliJ IDEA environment; a Task Window and a Detail Window.  The Task Window is available in the tool button bar located at the bottom of the UI.  
+        This view exposes a list of task defined in VersionOne based on the selected filter.  <graphic fileref="NewTaskWindow.JPG"/></para>
+        <para>The Details Window is available in the tool button bar located on the right hand side of the UI .  This view provides additional details about a specific Task selected in the Task view<graphic fileref="NewDetailsView.JPG"/></para>
         <section id="usage.project">
             <title>Selecting Projects</title>
             <para>In order to view VersionOne Task you must first select a Project.  To select a Project click the <emphasis>Filter</emphasis> icon located on the left side of the Task Window. 
@@ -126,7 +124,9 @@
                     <graphic fileref="Projects.JPG"/>
                 </figure>
                 To choose a specific project to work on, simply navigate the tree and select it.  Once selected, click <emphasis>OK</emphasis> to exit.
-                <note><para>The Filter dialog also supports a "Show All Tasks" checkbox.  Use this option to view all task in the active iteration.  When this checkbox is clear you only see task assigned to the configured user in the active iteration</para></note>
+                <note>
+                    <para>By default the Task view will only show Task assigned to the current user for the active iteration in the selected project.  The Filter dialog supports a "Show All Tasks" checkbox.  Use this option to view tasks for all users in the active iteration. </para>
+                </note>
             </para>
         </section>
         <section id="usage.tasks">
