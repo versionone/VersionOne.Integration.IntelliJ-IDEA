@@ -36,12 +36,13 @@ public class FilterAction extends AnAction {
             ideaProject = project;
         }
 
-        if (ideaProject != null && filterDialog(ideaProject)) {
-            ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+        if (ideaProject != null) {
+            filterDialog(ideaProject);
+            //ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
         }
     }
 
-    public boolean filterDialog(final Project ideaProject) {
+    public void filterDialog(final Project ideaProject) {
 
         final ProgressManager progressManager = ProgressManager.getInstance();
         final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
@@ -49,6 +50,14 @@ public class FilterAction extends AnAction {
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final IDataLayer data = tc.getDataLayer();
+
+        if (data.isTaskChanged()) {
+            int confirmRespond = Messages.showDialog("Do you want to change preject? All changed information will be reseted.", "Using filters", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
+            if (confirmRespond == 1) {
+                return;
+            }
+        }
+
         tc.removeEdition();
         dc.removeEdition();
 
@@ -73,17 +82,19 @@ public class FilterAction extends AnAction {
         );
 
         if (!isCanceled) {
-            return false;
+            return;
         }
 
         if ((Boolean)isError[0]) {
             Icon icon = (Boolean)isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
             Messages.showMessageDialog(isError[1].toString(), "Error", icon);
-            return false;
+            return;
         }
 
         final FilterForm form = new FilterForm(projectsRoot[0], settings);
-        return ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form);
+        if (ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form)) {
+            Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
+        }
     }
 
     public void setSettings(WorkspaceSettings settings) {

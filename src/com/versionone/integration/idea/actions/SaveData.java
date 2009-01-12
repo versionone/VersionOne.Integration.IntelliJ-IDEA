@@ -35,7 +35,7 @@ public class SaveData extends AnAction {
 
         if (ideaProject == null && project == null) {
             return;
-        } else {
+        } else if (ideaProject == null) {
             ideaProject = project;
         }
 
@@ -76,7 +76,8 @@ public class SaveData extends AnAction {
             return;
         }
 
-        ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+        //ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+        Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
     }
 
     public void setProject(Project project) {

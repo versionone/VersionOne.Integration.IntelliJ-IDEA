@@ -30,4 +30,6 @@ public interface IDataLayer {
     void reconnect() throws V1PluginException;
 
     boolean isConnectionValid(String path, String userName, String password);
+
+    boolean isTaskChanged();
 }

@@ -206,6 +206,18 @@ public final class APIDataLayer implements IDataLayer {
         this.services.save(assets);
     }
 
+    public boolean isTaskChanged() {
+        boolean result = false;
+        for (Task oneTask : taskList) {
+            if (oneTask.isChanged()) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
+    }
+
     public int getTasksCount() {
         synchronized (taskList) {
             return taskList.length;

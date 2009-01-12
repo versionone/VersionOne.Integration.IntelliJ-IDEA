@@ -25,20 +25,30 @@ public class Refresh extends AnAction {
 
     public void actionPerformed(AnActionEvent e) {
         System.out.println("Refresh.actionPerformed()");//TODO delete trace output
-
         final DataContext dataContext = e.getDataContext();
         Project ideaProject = DataKeys.PROJECT.getData(dataContext);
 
         if (ideaProject == null && project == null) {
             return;
-        } else {
+        } else if (ideaProject == null) {
             ideaProject = project;
         }
-
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
-        final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final IDataLayer data = tc.getDataLayer();
+        
+        if (data.isTaskChanged()) {
+            int confirmRespond = Messages.showDialog("Do you want to make refresh? All changed information will be reseted.", "Refresh", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
+            if (confirmRespond == 1) {
+                return;
+            }
+        }
+
+        final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final ProgressManager progressManager = ProgressManager.getInstance();
+        refreshData(ideaProject, tc, data, dc, progressManager);
+    }
+
+    static void refreshData(Project ideaProject, TasksComponent tc, final IDataLayer data, DetailsComponent dc, final ProgressManager progressManager) {
         final Object[] isError = {false, "", false};
         tc.removeEdition();
         dc.removeEdition();
