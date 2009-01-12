@@ -24,10 +24,15 @@ import com.versionone.integration.idea.WorkspaceSettings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * This class requests, stores data from VersionOne server and send changed data back.
@@ -38,6 +43,7 @@ public final class APIDataLayer implements IDataLayer {
     private static final String META_URL_SUFFIX = "meta.v1/";
     private static final String DATA_URL_SUFFIX = "rest-1.v1/";
     private static final String CONFIG_URL_SUFFIX = "config.v1/";
+    private static final String ERROR_CONNECTION_TO_V1 = "Error connection to VersionOne";
 
     // APIClient objects
     private IServices services = null;
@@ -47,17 +53,12 @@ public final class APIDataLayer implements IDataLayer {
     private final WorkspaceSettings cfg;
 
     private String member;
-//    private ListTypeValues statusList;
-//    private ListTypeValues typesList;
-//    private ListTypeValues sourcesList;
-
     private boolean trackEffort = false;
-
-    private Task[] taskList = new Task[0];
-
-    private static String ERROR_CONNECTION_TO_V1 = "Error connection to VersionOne";
-
     private boolean isConnectSet = false;
+    private Task[] taskList = new Task[0];
+    private Map<TasksProperties, ListTypeValues> propertiesValues =
+            new HashMap<TasksProperties, ListTypeValues>(TasksProperties.values().length);
+
 
     public APIDataLayer(WorkspaceSettings workspaceSettings) {
         cfg = workspaceSettings;
@@ -95,7 +96,6 @@ public final class APIDataLayer implements IDataLayer {
     }
 
     public void refresh() throws V1PluginException {
-        System.out.println("DataLayer.refresh() prj=" + cfg.projectName);
         taskList = new Task[0];
 
         if (!isConnectSet) {
@@ -113,7 +113,7 @@ public final class APIDataLayer implements IDataLayer {
         }
 
         try {
-            TasksProperties.reloadListValues(metaModel, services);
+            reloadPropertiesValues();
             taskList = getTasks();
         } catch (Exception e) {
             LOG.warn(ERROR_CONNECTION_TO_V1, e);
@@ -236,13 +236,11 @@ public final class APIDataLayer implements IDataLayer {
         if (value == null) {
             return null;
         }
-        String res = value.toString();
+        final String res;
         if (value instanceof Oid) {
-            Oid oid = (Oid) value;
-            if (!oid.isNull()) {
-                if (property.type == TasksProperties.Type.LIST) {
-                    res = property.getValueName(oid);
-                }
+            final Oid oid = (Oid) value;
+            if (!oid.isNull() && (property.type == TasksProperties.Type.LIST) && propertiesValues.containsKey(property)) {
+                res = propertiesValues.get(property).getName(oid);
             } else {
                 res = null;
             }
@@ -260,7 +258,7 @@ public final class APIDataLayer implements IDataLayer {
 
     public void setTaskPropertyValue(int task, TasksProperties property, String value) {
         synchronized (taskList) {
-            taskList[task].setProperty(property, value);
+            taskList[task].setProperty(property, value, this);
         }
     }
 
@@ -332,12 +330,46 @@ public final class APIDataLayer implements IDataLayer {
         boolean result = true;
 
         IAPIConnector connector = new V1APIConnector(path + DATA_URL_SUFFIX + "Data/StoryStatus", userName, password);
+        Reader reader = null;
         try {
-            connector.getData().close();
+            reader = connector.getData();
         } catch (Exception e) {
             result = false;
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                //do nothing
+            }
         }
 
         return result;
+    }
+
+    private void reloadPropertiesValues() throws V1Exception {
+        for (TasksProperties property : TasksProperties.values()) {
+            if (property.assetType != null) {
+                propertiesValues.put(property, new ListTypeValues(metaModel, services, property.assetType));
+            }
+        }
+    }
+
+    public Vector<String> getPropertyValues(TasksProperties property) {
+        if (propertiesValues != null && propertiesValues.containsKey(property)) {
+            return propertiesValues.get(property).getAllNames();
+        }
+        return null;
+    }
+
+    /**
+     * Returns Oid of specifies Task property value.
+     */
+    public Oid getPropertyValueOid(String value, TasksProperties property) {
+        if (propertiesValues != null && propertiesValues.containsKey(property)) {
+            return propertiesValues.get(property).getOid(value);
+        }
+        return null;
     }
 }

@@ -50,11 +50,11 @@ class Task {
         return value;
     }
 
-    public void setProperty(TasksProperties property, String value) {
+    public void setProperty(TasksProperties property, String value, IDataLayer dataLayer) {
         try {
             switch (property.type) {
                 case LIST: {
-                    final Oid oid = property.getValueOid(value);
+                    final Oid oid = dataLayer.getPropertyValueOid(value, property);
                     if (oid != null && !TasksProperties.isEqual(getProperty(property), oid)) {
                         asset.setAttributeValue(getDefinition(property.propertyName), oid);
                     }

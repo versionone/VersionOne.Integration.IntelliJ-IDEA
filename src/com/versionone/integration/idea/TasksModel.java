@@ -26,7 +26,7 @@ public class TasksModel extends AbstractModel {
     }
 
     public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
-        return getProperty(rowIndex, columnIndex).getListValues();
+        return data.getPropertyValues(getProperty(rowIndex, columnIndex));
     }
 
     public int getRowCount() {

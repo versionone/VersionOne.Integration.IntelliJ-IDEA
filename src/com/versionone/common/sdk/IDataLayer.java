@@ -2,7 +2,10 @@
 package com.versionone.common.sdk;
 
 import com.versionone.integration.idea.V1PluginException;
+import com.versionone.Oid;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Vector;
 
 public interface IDataLayer {
     void refresh() throws V1PluginException;
@@ -32,4 +35,8 @@ public interface IDataLayer {
     boolean isConnectionValid(String path, String userName, String password);
 
     boolean isTaskChanged();
+
+    Vector<String> getPropertyValues(TasksProperties property);
+
+    Oid getPropertyValueOid(String value, TasksProperties property);
 }

@@ -33,9 +33,7 @@ public enum TasksProperties {
     public final Type type;
     public final boolean isEditable;
     public final String propertyName;
-    private String assetType;
-    private ListTypeValues listValues;
-
+    String assetType;
 
     TasksProperties(String name, Type type, boolean editable) {
         this.columnName = name;
@@ -83,40 +81,7 @@ public enum TasksProperties {
         return oldProp.equals(newProp);
     }
 
-    public static void reloadListValues(IMetaModel model, IServices services) throws V1Exception {
-        for (TasksProperties property : TasksProperties.values()) {
-            property.reloadValues(model, services);
-        }
-    }
-
-    private void reloadValues(IMetaModel metaModel, IServices services) throws V1Exception {
-        if (assetType != null) {
-            listValues = new ListTypeValues(metaModel, services, assetType);
-        }
-    }
-
-    public String getValueName(Oid oid) {
-        return listValues.getName(oid);
-    }
-
-    public Vector<String> getListValues() {
-        if (listValues != null) {
-            return listValues.getAllNames();
-        }
-        return null;
-    }
-
-    /**
-     * Returns Oid of specifies Task property value.
-     */
-    public Oid getValueOid(String value) {
-        if (listValues != null) {
-            return listValues.getOid(value);
-        }
-        return null;
-    }
-
     public static enum Type {
-        NUMBER, RICH_TEXT, TEXT, STATUS_LIST, LIST
+        NUMBER, RICH_TEXT, TEXT, LIST
     }
 }

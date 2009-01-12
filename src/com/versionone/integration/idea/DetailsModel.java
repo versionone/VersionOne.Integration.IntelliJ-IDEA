@@ -57,7 +57,7 @@ public class DetailsModel extends AbstractModel {
 
     public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
         if (columnIndex == 1 && isTaskSet()) {
-            return getProperty(rowIndex, columnIndex).getListValues();
+            return data.getPropertyValues(getProperty(rowIndex, columnIndex));
         }
         return null;
     }
