@@ -49,7 +49,7 @@ public class SaveData extends AnAction {
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
-                progressManager.getProgressIndicator().setText("Save task's data");
+                progressManager.getProgressIndicator().setText("Saving changes to VersionOne");
                 try {
                     data.commitChangedTaskData();
                 } catch (V1PluginException e1) {
@@ -59,13 +59,13 @@ public class SaveData extends AnAction {
                     LOG.warn(isError[1],e1);
                 } catch (Exception e1) {
                     isError[0] = true;
-                    isError[1] = "Error connection to the VesionOne";
+                    isError[1] = "Error connecting to VesionOne";
                     isError[2] = true;
                     LOG.warn(isError[1],e1);
                 }
             }
         },
-                "Save task's data",
+                "Save changes to VersionOne",
                 false,
                 ideaProject
         );

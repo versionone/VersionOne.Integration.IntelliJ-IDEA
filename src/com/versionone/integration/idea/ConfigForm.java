@@ -81,11 +81,11 @@ public class ConfigForm implements UnnamedConfigurable {
         
         isConnectionCorrect = dataLayer.isConnectionValid(serverUrl.getText(), userName.getText(), password.getText());
         if (isConnectionCorrect) {
-            Messages.showInfoMessage("Connection is correct", "Connection status");
+            Messages.showInfoMessage("Connection is valid", "Connection Status");
             isConnectionCorrect = true;
             validateConnectionButton.setEnabled(false);
         } else {
-            Messages.showWarningDialog("Connection is not correct", "Connection status");
+            Messages.showWarningDialog("Connection is invalid", "Connection Status");
             isConnectionCorrect = false;
         }
         isConnectionVerified = true;

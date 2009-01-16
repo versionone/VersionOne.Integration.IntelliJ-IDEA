@@ -52,7 +52,7 @@ public class FilterAction extends AnAction {
         final IDataLayer data = tc.getDataLayer();
 
         if (data.isTaskChanged()) {
-            int confirmRespond = Messages.showDialog("Do you want to change preject? All changed information will be reseted.", "Using filters", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
+            int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten if you change projects.\nDo you wish to continue?.", "Filter Warning", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
             if (confirmRespond == 1) {
                 return;
             }
@@ -65,7 +65,7 @@ public class FilterAction extends AnAction {
             public void run() {
                 final ProgressIndicator indicator = progressManager.getProgressIndicator();
 //                data.setProgressIndicator(indicator);
-                indicator.setText("Loading project list");
+                indicator.setText("Loading VersionOne Projects");
                 try {
                     projectsRoot[0] = data.getProjects();
                 } catch (V1PluginException e) {
@@ -76,7 +76,7 @@ public class FilterAction extends AnAction {
 //                data.setProgressIndicator(null);
             }
         },
-                "Loading project list",
+                "Loading VersionOne Projects",
                 true,
                 ideaProject
         );

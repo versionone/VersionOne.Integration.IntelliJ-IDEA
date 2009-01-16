@@ -37,7 +37,7 @@ public class Refresh extends AnAction {
         final IDataLayer data = tc.getDataLayer();
         
         if (data.isTaskChanged()) {
-            int confirmRespond = Messages.showDialog("Do you want to make refresh? All changed information will be reseted.", "Refresh", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
+            int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten.\nDo you want to continue?", "Refresh Warning", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
             if (confirmRespond == 1) {
                 return;
             }
@@ -55,7 +55,7 @@ public class Refresh extends AnAction {
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             public void run() {
-                progressManager.getProgressIndicator().setText("Update tasks list");
+                progressManager.getProgressIndicator().setText("Updating VersionOne Task List");
                 try {
                     data.refresh();
                 } catch (V1PluginException e1) {
@@ -66,7 +66,7 @@ public class Refresh extends AnAction {
                 }
             }
         },
-                "Update tasks list",
+                "Update VersionOne Task List",
                 false,
                 ideaProject
         );

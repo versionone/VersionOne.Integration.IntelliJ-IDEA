@@ -34,7 +34,7 @@ public class MainSettings implements ApplicationComponent, Configurable {
     }
 
     public String getDisplayName() {
-        return "Version One";
+        return "VersionOne";
     }
 
     public Icon getIcon() {
@@ -67,7 +67,7 @@ public class MainSettings implements ApplicationComponent, Configurable {
                 dc.update();
             }
             else {
-                throw new ConfigurationException("Connect is not validated or is not correct");
+                throw new ConfigurationException("Connection has not been validated or contains invalid values");
             }
 
         }

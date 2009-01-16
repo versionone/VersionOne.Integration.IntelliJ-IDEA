@@ -43,7 +43,8 @@ public final class APIDataLayer implements IDataLayer {
     private static final String META_URL_SUFFIX = "meta.v1/";
     private static final String DATA_URL_SUFFIX = "rest-1.v1/";
     private static final String CONFIG_URL_SUFFIX = "config.v1/";
-    private static final String ERROR_CONNECTION_TO_V1 = "Error connection to VersionOne";
+    private static final String ERROR_CONNECTION_TO_V1 = "Error Connecting to VersionOne Server";
+    private static final String ERROR_SELECT_A_PROJECT = "No project selected.\nPlease select a VersionOne Project using Filters";
 
     // APIClient objects
     private IServices services = null;
@@ -109,7 +110,7 @@ public final class APIDataLayer implements IDataLayer {
         if (!isConnectionValid(cfg.v1Path, cfg.user, cfg.passwd)) {
             throw new V1PluginException(ERROR_CONNECTION_TO_V1, true);
         } else if (cfg.projectToken.equals("")) {
-            throw new V1PluginException("Project is not selected. Please use filter for set it.", false);
+            throw new V1PluginException(ERROR_SELECT_A_PROJECT, false);
         }
 
         try {
@@ -183,7 +184,7 @@ public final class APIDataLayer implements IDataLayer {
         if (!isConnectionValid(cfg.v1Path, cfg.user, cfg.passwd)) {
             throw new V1PluginException(ERROR_CONNECTION_TO_V1, true);
         } else if (cfg.projectToken.equals("")) {
-            throw new V1PluginException("Project is not selected. Please use filter for set it.", false);
+            throw new V1PluginException(ERROR_SELECT_A_PROJECT, false);
         }
         synchronized (taskList) {
             save(taskList);

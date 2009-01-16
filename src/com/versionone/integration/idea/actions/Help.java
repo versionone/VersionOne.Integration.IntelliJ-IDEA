@@ -16,6 +16,6 @@ public class Help extends AnAction {
         final PluginId id = PluginManager.getPluginByClassName(TasksComponent.class.getCanonicalName());
         final File path = PluginManager.getPlugin(id).getPath();
         final String url = BrowserUtil.getDocURL(path.getPath());
-        BrowserUtil.launchBrowser(url + "/doc/index.html");
+        BrowserUtil.launchBrowser(url + "/doc/V1IntelliJPlugIn/V1IntelliJPlugIn.html");
     }
 }
