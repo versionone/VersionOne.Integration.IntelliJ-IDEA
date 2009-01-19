@@ -37,84 +37,102 @@
         <para>
                 To install the VersionOne plugin
                 <orderedlist>
-                    <listitem>
-                        <para>Close any open instance of the IntelliJ IDEA IDE</para>
-                    </listitem>
-                    <listitem>
-                        <para>Unzip the &name;.zip file into a temporary location. </para>
-                    </listitem>
-                    <listitem>
-                        <para>Locate the IntelliJ installation directory. </para>
-                    </listitem>
-                    <listitem>
-                        <para>Copy the VersionOne subdirectory from the temporary location to the <emphasis>plugin </emphasis> subdirectory located under the IntelliJ installation directory</para>
-                    </listitem>
-                    <listitem>
-                        <para>Run the IntelliJ IDEA IDE</para>
-                    </listitem>
-                </orderedlist>
-            </para>
+                <listitem>
+                    <para>Close any open instance of the IntelliJ IDEA IDE</para>
+                </listitem>
+                <listitem>
+                    <para>Unzip the &name;.zip file into a temporary location. </para>
+                </listitem>
+                <listitem>
+                    <para>Locate the IntelliJ installation directory. </para>
+                </listitem>
+                <listitem>
+                    <para>Copy the VersionOne subdirectory from the temporary location to the <emphasis>plugin </emphasis> subdirectory located under the IntelliJ installation directory</para>
+                </listitem>
+                    <listitem><para>Configure IntelliJ IDEA to use the VersionOne Plugin. </para>
+                    <para>
+                        <orderedlist>
+                            <listitem><para>Launch IntelliJ IDEA</para></listitem>
+                            <listitem><para>Select <emphasis>Configure Plugins</emphasis> from the <emphasis>File</emphasis> menu to launch the <emphasis>"IntelliJ IDEA Plugin Configuration Wizard"</emphasis>. </para></listitem>
+                            <listitem><para>Click <emphasis>Next</emphasis> until you reach the <emphasis>"Select Other Plugins"</emphasis> page </para></listitem>
+                            <listitem><para>Enable the "VersionOne Integration" </para></listitem>
+                            <listitem><para>Click Finish</para></listitem>
+                            <listitem><para>Restart IntelliJ IDEA</para></listitem>
+                        </orderedlist>
+                    </para></listitem>
+            </orderedlist>
+        </para>
     </section>
     <section>
         <title>Configuration</title>
         <para>To configure the VersionOne plugin:</para>
         <orderedlist>
-            <listitem><para>Select <emphasis>Settings</emphasis> from the <emphasis>File</emphasis> 
+            <listitem>
+                <para>Select <emphasis>Settings</emphasis> from the <emphasis>File</emphasis> 
                 menu (File | Settings), and navigate to the VersionOne settings as show in <xref
-                    linkend="install.configure.options"/>.
+                        linkend="install.configure.options"/>.
                 <figure
-                    id="install.configure.options">
-                    <title>Configuration Options Screen</title>
-                    <graphic fileref="Options.JPG"/>
-                </figure>
-            </para></listitem>
-            <listitem><para>Enter the configuration parameters as specified in the table below 				
+                        id="install.configure.options">
+                        <title>Configuration Options Screen</title>
+                        <graphic fileref="Options.JPG"/>
+                    </figure>
+                </para>
+            </listitem>
+            <listitem>
+                <para>Enter the configuration parameters as specified in the table below 				
                 <table
-                    frame="none" id="install.configure.table">
-                    <title>VSAddin Configuration Parameters</title>
-                    <tgroup cols="2">
-                        <thead>
-                            <row>
-                                <entry>Parameter</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>Windows Integrated Authentication</entry>
-                                <entry>Check this box if your VersionOne instance uses Windows Integraten Authentication.</entry>
-                            </row>
-                            <row>
-                                <entry>Application URL</entry>
-                                <entry>VersionOne installation URL</entry>
-                            </row>
-                            <row>
-                                <entry>Username</entry>
-                                <entry>User that will access VersionOne.</entry>
-                            </row>
-                            <row>
-                                <entry>Password</entry>
-                                <entry>Password for the username above.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
-            </para></listitem>
-            <listitem><para>
+                        frame="none" id="install.configure.table">
+                        <title>VSAddin Configuration Parameters</title>
+                        <tgroup cols="2">
+                            <thead>
+                                <row>
+                                    <entry>Parameter</entry>
+                                    <entry>Description</entry>
+                                </row>
+                            </thead>
+                            <tbody>
+                                <row>
+                                    <entry>Windows Integrated Authentication</entry>
+                                    <entry>Check this box if your VersionOne instance uses Windows Integraten Authentication.</entry>
+                                </row>
+                                <row>
+                                    <entry>Application URL</entry>
+                                    <entry>VersionOne installation URL</entry>
+                                </row>
+                                <row>
+                                    <entry>Username</entry>
+                                    <entry>User that will access VersionOne.</entry>
+                                </row>
+                                <row>
+                                    <entry>Password</entry>
+                                    <entry>Password for the username above.</entry>
+                                </row>
+                            </tbody>
+                        </tgroup>
+                    </table>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
                 Click <emphasis>Validate Connection</emphasis> to ensure that
                 the add-in can both access VersionOne’s API and authenticate using the supplied username and password.
-            </para></listitem>
-            <listitem><para>
+            </para>
+            </listitem>
+            <listitem>
+                <para>
                 Click <emphasis>OK</emphasis> to close the Settings dialog
-            </para></listitem>            
+            </para>
+            </listitem>
         </orderedlist>
-    </section>    
+    </section>
     <section id="usage">
         <title>Usage</title>
         <para>
         &name; contributes two new components to the IntelliJ IDEA environment; a Task Window and a Detail Window.  The Task Window is available in the tool button bar located at the bottom of the UI.  
-        This view exposes a list of task defined in VersionOne based on the selected filter.  <graphic fileref="NewTaskWindow.JPG"/></para>
-        <para>The Details Window is available in the tool button bar located on the right hand side of the UI .  This view provides additional details about a specific Task selected in the Task view<graphic fileref="NewDetailsView.JPG"/></para>
+        This view exposes a list of task defined in VersionOne based on the selected filter.  <graphic
+                fileref="NewTaskWindow.JPG"/></para>
+        <para>The Details Window is available in the tool button bar located on the right hand side of the UI .  This view provides additional details about a specific Task selected in the Task view<graphic
+                fileref="NewDetailsView.JPG"/></para>
         <section id="usage.project">
             <title>Selecting Projects</title>
             <para>In order to view VersionOne Task you must first select a Project.  To select a Project click the <emphasis>Filter</emphasis> icon located on the left side of the Task Window. 
