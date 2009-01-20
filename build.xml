@@ -17,6 +17,7 @@
     <property name="build.version" value="${ver.major}.${ver.minor}.${ver.build}"/>
     <property name="jar.filename" value="V1IdeaPlugin.jar"/>
     <property name="zip.filename" value="V1IdeaPlugin.${build.version}.zip"/>
+    <property name="source.zip.filename" value="V1IdeaPlugin.Source.${build.version}.zip"/>
     <property name="coverage.file" value="cobertura.ser"/>
 
     <!-- Directories -->
@@ -129,10 +130,10 @@
     <target name="package.clean">
         <delete dir="${distr.dir}"/>
         <delete file="${zip.filename}"/>
+        <delete file="${zip.source.filename}"/>
         <delete dir="${junit.output.dir}"/>
         <delete dir="." includes="cobertura.ser"/>
     </target>
-
 
     <target name="plugin.package.idea" depends="plugin.build.idea">
         <mkdir dir="${publish.lib.dir}"/>
@@ -149,6 +150,21 @@
             <fileset dir="${publish.dir}/tmpl/"/>
         </zip>
         <delete dir="${publish.dir}/tmpl"/>
+		
+		<zip destfile="${publish.dir}/${source.zip.filename}">
+			<fileset dir="${base.dir}">
+				<include name="build.xml"/>
+				<include name="build.properties"/>
+				<include name="stripDTD.xsl"/>
+				<include name="res/**/*"/>
+				<include name="src/**/*"/>
+				<include name="tests/**/*"/>
+				<include name="lib/**/*"/>
+				<include name="DocSource/**/*"/>
+			</fileset>
+		</zip>		
+
+		
     </target>
 
     <target name="init" description="Build initialization">
