@@ -10,8 +10,8 @@
     <property name="compiler.args" value=""/>
 
     <!--Settings-->
-    <property name="ver.major" value="8"/>
-    <property name="ver.minor" value="1"/>
+    <property name="ver.major" value="9"/>
+    <property name="ver.minor" value="0"/>
     <property name="ver.build" value="0"/>
     <property name="publish.dir" value="./_publish"/>
     <property name="build.version" value="${ver.major}.${ver.minor}.${ver.build}"/>
@@ -123,6 +123,8 @@
             <manifest>
                 <attribute name="BuiltBy" value="VersionOne"/>
                 <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="BuildVersion" value="${build.version}"/>
+                <attribute name="BuildRev" value="${ver.build}"/>				
             </manifest>
         </jar>
     </target>
