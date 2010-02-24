@@ -1,14 +1,10 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
-package com.versionone.common.sdk;
+package com.versionone.common.oldsdk;
 
 import com.versionone.Oid;
-import com.versionone.apiclient.IMetaModel;
-import com.versionone.apiclient.IServices;
-import com.versionone.apiclient.V1Exception;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Vector;
 
 public enum TasksProperties {
 

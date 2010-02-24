@@ -5,7 +5,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.oldsdk.IDataLayer;
 
 import javax.swing.*;
 import java.awt.*;

@@ -3,10 +3,10 @@ package com.versionone.integration.idea.tests;
 
 import com.versionone.DB;
 import com.versionone.Duration;
-import com.versionone.common.sdk.APIDataLayer;
-import com.versionone.common.sdk.IDataLayer;
-import com.versionone.common.sdk.ProjectTreeNode;
-import com.versionone.common.sdk.TasksProperties;
+import com.versionone.common.oldsdk.APIDataLayer;
+import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.oldsdk.ProjectTreeNode;
+import com.versionone.common.oldsdk.TasksProperties;
 import com.versionone.integration.idea.V1PluginException;
 import com.versionone.integration.idea.WorkspaceSettings;
 import com.versionone.om.Iteration;

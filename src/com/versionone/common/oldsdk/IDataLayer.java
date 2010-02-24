@@ -1,8 +1,10 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
-package com.versionone.common.sdk;
+package com.versionone.common.oldsdk;
 
 import com.versionone.integration.idea.V1PluginException;
 import com.versionone.Oid;
+import com.versionone.common.oldsdk.TasksProperties;
+import com.versionone.common.oldsdk.ProjectTreeNode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Vector;

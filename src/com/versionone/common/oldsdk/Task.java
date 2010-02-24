@@ -1,6 +1,7 @@
-package com.versionone.common.sdk;
+package com.versionone.common.oldsdk;
 
 import com.versionone.Oid;
+import com.versionone.common.oldsdk.IDataLayer;
 import com.versionone.apiclient.APIException;
 import com.versionone.apiclient.Asset;
 import com.versionone.apiclient.IAttributeDefinition;

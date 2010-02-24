@@ -1,16 +1,16 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
-import com.versionone.common.sdk.IDataLayer;
-import com.versionone.common.sdk.TasksProperties;
-import static com.versionone.common.sdk.TasksProperties.DETAIL_ESTIMATE;
-import static com.versionone.common.sdk.TasksProperties.DONE;
-import static com.versionone.common.sdk.TasksProperties.EFFORT;
-import static com.versionone.common.sdk.TasksProperties.ID;
-import static com.versionone.common.sdk.TasksProperties.PARENT;
-import static com.versionone.common.sdk.TasksProperties.STATUS;
-import static com.versionone.common.sdk.TasksProperties.TITLE;
-import static com.versionone.common.sdk.TasksProperties.TO_DO;
+import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.oldsdk.TasksProperties;
+import static com.versionone.common.oldsdk.TasksProperties.DETAIL_ESTIMATE;
+import static com.versionone.common.oldsdk.TasksProperties.DONE;
+import static com.versionone.common.oldsdk.TasksProperties.EFFORT;
+import static com.versionone.common.oldsdk.TasksProperties.ID;
+import static com.versionone.common.oldsdk.TasksProperties.PARENT;
+import static com.versionone.common.oldsdk.TasksProperties.STATUS;
+import static com.versionone.common.oldsdk.TasksProperties.TITLE;
+import static com.versionone.common.oldsdk.TasksProperties.TO_DO;
 
 import java.util.Vector;
 

@@ -1,23 +1,23 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
-import com.versionone.common.sdk.IDataLayer;
-import com.versionone.common.sdk.TasksProperties;
-import static com.versionone.common.sdk.TasksProperties.BUILD;
-import static com.versionone.common.sdk.TasksProperties.DESCRIPTION;
-import static com.versionone.common.sdk.TasksProperties.DETAIL_ESTIMATE;
-import static com.versionone.common.sdk.TasksProperties.DONE;
-import static com.versionone.common.sdk.TasksProperties.EFFORT;
-import static com.versionone.common.sdk.TasksProperties.OWNER;
-import static com.versionone.common.sdk.TasksProperties.PARENT;
-import static com.versionone.common.sdk.TasksProperties.PROJECT;
-import static com.versionone.common.sdk.TasksProperties.REFERENCE;
-import static com.versionone.common.sdk.TasksProperties.SOURCE;
-import static com.versionone.common.sdk.TasksProperties.SPRINT;
-import static com.versionone.common.sdk.TasksProperties.STATUS;
-import static com.versionone.common.sdk.TasksProperties.TITLE;
-import static com.versionone.common.sdk.TasksProperties.TO_DO;
-import static com.versionone.common.sdk.TasksProperties.TYPE;
+import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.oldsdk.TasksProperties;
+import static com.versionone.common.oldsdk.TasksProperties.BUILD;
+import static com.versionone.common.oldsdk.TasksProperties.DESCRIPTION;
+import static com.versionone.common.oldsdk.TasksProperties.DETAIL_ESTIMATE;
+import static com.versionone.common.oldsdk.TasksProperties.DONE;
+import static com.versionone.common.oldsdk.TasksProperties.EFFORT;
+import static com.versionone.common.oldsdk.TasksProperties.OWNER;
+import static com.versionone.common.oldsdk.TasksProperties.PARENT;
+import static com.versionone.common.oldsdk.TasksProperties.PROJECT;
+import static com.versionone.common.oldsdk.TasksProperties.REFERENCE;
+import static com.versionone.common.oldsdk.TasksProperties.SOURCE;
+import static com.versionone.common.oldsdk.TasksProperties.SPRINT;
+import static com.versionone.common.oldsdk.TasksProperties.STATUS;
+import static com.versionone.common.oldsdk.TasksProperties.TITLE;
+import static com.versionone.common.oldsdk.TasksProperties.TO_DO;
+import static com.versionone.common.oldsdk.TasksProperties.TYPE;
 
 import java.util.Vector;
 
