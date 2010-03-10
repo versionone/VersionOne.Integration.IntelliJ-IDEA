@@ -38,7 +38,7 @@ import com.versionone.apiclient.IV1Configuration.TrackingLevel;
 
 import static com.versionone.common.sdk.EntityType.*;
 
-public class ApiDataLayer {
+public class ApiDataLayer implements IDataLayer {
 
     private static final String META_SUFFIX = "meta.v1/";
     private static final String LOCALAIZER_SUFFIX = "loc.v1/";
@@ -130,6 +130,13 @@ public class ApiDataLayer {
     public static ApiDataLayer getInstance() {
         if (instance == null) {
             instance = new ApiDataLayer();
+        }
+//            TODO temporary by DIR
+        try {
+            instance.connect("http://integsrv01/VersionOne/", "admin", "admin", false);
+            instance.setCurrentProjectId("Scope:0");
+        } catch (DataLayerException e) {
+            e.printStackTrace();
         }
         return instance;
     }
@@ -546,6 +553,25 @@ public class ApiDataLayer {
         efforts.remove(asset);
     }
 
+    public boolean hasChanges() {
+        try {
+            for (PrimaryWorkitem pri : getWorkitemTree()) {
+                if (pri.hasChanges()) {
+                    return true;
+                }
+                for ( SecondaryWorkitem sec : pri.children) {
+                    if (sec.hasChanges()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (DataLayerException e) {
+            //This means assets wasn't queried, so wasn't modified
+            return false;
+        }
+    }
+
     public void commitChanges() throws DataLayerException, ValidatorException {
         checkConnection();
         commitWorkitemTree(getWorkitemTree());
@@ -735,7 +761,6 @@ public class ApiDataLayer {
     /**
      * 
      * @param type
-     * @param parent
      * @return newly created Workitem.
      * @throws DataLayerException
      * @throws IllegalArgumentException

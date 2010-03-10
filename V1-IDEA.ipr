@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project relativePaths="false" version="4">
+<project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
@@ -18,13 +18,8 @@
     <option name="PROJECT_PROFILE" />
     <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
   </component>
-  <component name="CodeStyleSettingsManager">
-    <option name="PER_PROJECT_SETTINGS" />
-    <option name="USE_PER_PROJECT_SETTINGS" value="false" />
-  </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="0" />
     <excludeFromCompile>
       <file url="file://$PROJECT_DIR$/src/com/versionone/common/sdk/V1Server.java" />
     </excludeFromCompile>
@@ -43,6 +38,7 @@
       <entry name="?*.jpeg" />
       <entry name="?*.jpg" />
     </wildcardResourcePatterns>
+    <annotationProcessing enabled="false" useClasspath="true" />
   </component>
   <component name="CopyrightManager" default="">
     <module2copyright />
@@ -62,11 +58,8 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="EclipseCompilerSettings">
-    <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />
     <option name="DEPRECATION" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="EclipseEmbeddedCompilerSettings">
     <option name="DEBUGGING_INFO" value="true" />
@@ -85,25 +78,6 @@
     <option name="OUTPUT_DIRECTORY" />
   </component>
   <component name="IdProvider" IDEtalkID="8198305E045903228A807847F7F86367" />
-  <component name="InspectionProjectProfileManager">
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
-    <profiles>
-      <profile version="1.0" is_locked="false">
-        <option name="myName" value="Project Default" />
-        <option name="myLocal" value="false" />
-      </profile>
-    </profiles>
-    <list size="0" />
-  </component>
-  <component name="JavacSettings">
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="DEPRECATION" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
-  </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
     <option name="OPTION_SCOPE" value="protected" />
@@ -120,14 +94,6 @@
     <option name="HEAP_SIZE" />
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
-  </component>
-  <component name="JikesSettings">
-    <option name="JIKES_PATH" value="" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="DEPRECATION" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="IS_EMACS_ERRORS_MODE" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="Palette2">
     <group name="Swing">
@@ -202,31 +168,38 @@
         <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
       </item>
       <item class="javax.swing.JProgressBar" icon="/com/intellij/uiDesigner/icons/progressbar.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="$TeamCityDistribution$" />
+        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1" />
       </item>
       <item class="javax.swing.JToolBar" icon="/com/intellij/uiDesigner/icons/toolbar.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="$TeamCityDistribution$">
+        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1">
           <preferred-size width="-1" height="20" />
         </default-constraints>
       </item>
       <item class="javax.swing.JToolBar$Separator" icon="/com/intellij/uiDesigner/icons/toolbarSeparator.png" removable="false" auto-create-binding="false" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="0" anchor="0" fill="$TeamCityDistribution$" />
+        <default-constraints vsize-policy="0" hsize-policy="0" anchor="0" fill="1" />
       </item>
     </group>
   </component>
   <component name="ProjectDetails">
     <option name="projectName" value="V1Integration" />
   </component>
-  <component name="ProjectFileVersion" converted="true" />
+  <component name="ProjectDictionaryState">
+    <dictionary name="rozhnev">
+      <words>
+        <w>localizer</w>
+        <w>workitem</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectKey">
-    <option name="state" value="project://D:\V2\V1Integration\Java\IDEA\V1-IDEA.ipr" />
+    <option name="state" value="https://svn.corp.versionone.net/svn/1/Trunk/V1Integration/Java/IDEA/V1-IDEA.ipr" />
   </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/V1-IDEA.iml" filepath="$PROJECT_DIR$/V1-IDEA.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 8.0 JDK 1.5" project-jdk-type="IDEA JDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IC-93.94" project-jdk-type="IDEA JDK" />
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
       <value>
@@ -234,19 +207,26 @@
       </value>
     </option>
   </component>
-  <component name="RmicSettings">
-    <option name="IS_EANABLED" value="false" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="GENERATE_IIOP_STUBS" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-  </component>
   <component name="SvnBranchConfigurationManager">
     <option name="myConfigurationMap">
       <map>
         <entry key="$PROJECT_DIR$">
           <value>
             <SvnBranchConfiguration>
+              <option name="branchMap">
+                <map>
+                  <entry key="svn://platform.versionone.com/V1SDK/branches">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                  <entry key="svn://platform.versionone.com/V1SDK/tags">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                </map>
+              </option>
               <option name="branchUrls">
                 <list>
                   <option value="svn://platform.versionone.com/V1SDK/branches" />
@@ -271,12 +251,6 @@
     <option name="autoscroll" value="false" />
     <option name="showOnlyWarnings" value="false" />
   </component>
-  <component name="copyright">
-    <option name="body" value="/*&#10; * Copyright (c) $today.year Your Corporation. All Rights Reserved.&#10; */" />
-    <option name="location" value="$TeamCityDistribution$" />
-    <option name="remove" value="true" />
-    <option name="replace" value="2" />
-  </component>
   <component name="libraryTable">
     <library name="V1SDK">
       <CLASSES>
@@ -284,16 +258,8 @@
         <root url="jar://$PROJECT_DIR$/lib/VersionOne.ObjectModel.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES>
-        <root url="jar://O:/PROJECTSRES/VersionOne/INTEG/Distributive/V1 Integrations/VersionOne.JavaSDK.Source-8.0.194.zip!/src" />
-        <root url="jar://$APPLICATION_HOME_DIR$/lib/src/src_extensions.zip!/" />
-        <root url="jar://$APPLICATION_HOME_DIR$/lib/src/src_persistence-openapi.zip!/" />
-        <root url="jar://$APPLICATION_HOME_DIR$/lib/src/src_openapi.zip!/" />
-      </SOURCES>
+      <SOURCES />
     </library>
   </component>
-  <UsedPathMacros>
-    <macro name="TeamCityDistribution" description="" />
-  </UsedPathMacros>
 </project>
 

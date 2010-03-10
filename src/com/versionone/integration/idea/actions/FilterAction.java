@@ -11,8 +11,10 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.oldsdk.ProjectTreeNode;
+import com.versionone.common.sdk.DataLayerException;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.FilterForm;
 import com.versionone.integration.idea.WorkspaceSettings;
 import com.versionone.integration.idea.TasksComponent;
@@ -21,6 +23,7 @@ import com.versionone.integration.idea.DetailsComponent;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import java.util.List;
 
 public class FilterAction extends AnAction {
 
@@ -45,14 +48,15 @@ public class FilterAction extends AnAction {
     public void filterDialog(final Project ideaProject) {
 
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final ProjectTreeNode[] projectsRoot = new ProjectTreeNode[1];
-        final Object[] isError = {false, "", false};
+        final Object[] projectsRoot = new Object[1];
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
-        final IDataLayer data = tc.getDataLayer();
+        final IDataLayer data = IDataLayer.INSTANCE;
 
-        if (data.isTaskChanged()) {
-            int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten if you change projects.\nDo you wish to continue?.", "Filter Warning", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
+        if (data.hasChanges()) {
+            int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten if you change " +
+                    "projects.\nDo you wish to continue?.", "Filter Warning",
+                    new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
             if (confirmRespond == 1) {
                 return;
             }
@@ -61,39 +65,36 @@ public class FilterAction extends AnAction {
         tc.removeEdition();
         dc.removeEdition();
 
-        boolean isCanceled = ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-            public void run() {
-                final ProgressIndicator indicator = progressManager.getProgressIndicator();
-//                data.setProgressIndicator(indicator);
-                indicator.setText("Loading VersionOne Projects");
-                try {
-                    projectsRoot[0] = data.getProjects();
-                } catch (V1PluginException e) {
-                    isError[0] = true;
-                    isError[1] = e.getMessage();
-                    isError[2] = e.isError();
-                }
-//                data.setProgressIndicator(null);
-            }
-        },
-                "Loading VersionOne Projects",
-                true,
-                ideaProject
+        boolean isCanceled = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                new Runnable() {
+                    public void run() {
+                        final ProgressIndicator indicator = progressManager.getProgressIndicator();
+                        indicator.setText("Loading VersionOne Projects");
+                        try {
+                            projectsRoot[0] = data.getProjectTree();
+                        } catch (DataLayerException e) {
+                            projectsRoot[0] = e;
+                        }
+                    }
+                },
+                "Loading VersionOne Projects", true, ideaProject
         );
 
         if (!isCanceled) {
             return;
         }
 
-        if ((Boolean)isError[0]) {
-            Icon icon = (Boolean)isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
-            Messages.showMessageDialog(isError[1].toString(), "Error", icon);
+        if (projectsRoot[0] instanceof DataLayerException) {
+//            TODO temporary by DIR
+//            Icon icon = ((DataLayerException)projectsRoot[0]).isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
+//            Messages.showMessageDialog(isError[1].toString(), "Error", icon);
             return;
         }
 
-        final FilterForm form = new FilterForm(projectsRoot[0], settings);
+        final FilterForm form = new FilterForm((List<com.versionone.common.sdk.Project>)projectsRoot[0], settings);
         if (ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form)) {
-            Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
+//            TODO temporary by DIR
+//            Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
         }
     }
 

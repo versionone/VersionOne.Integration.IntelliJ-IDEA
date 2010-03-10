@@ -3,11 +3,14 @@ package com.versionone.integration.idea;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.versionone.common.oldsdk.ProjectTreeNode;
+import com.versionone.common.sdk.Project;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeSelectionModel;
+import java.util.List;
 
 public class FilterForm implements Configurable {
     private JTree projectTree;
@@ -15,10 +18,10 @@ public class FilterForm implements Configurable {
     private JCheckBox showAllTasksCheckBox;
     private WorkspaceSettings settings;
 
-    private final ProjectTreeNode projectRoot;
+    private final List<Project> projectRoots;
 
-    public FilterForm(ProjectTreeNode projectRoot, WorkspaceSettings settings) {
-        this.projectRoot = projectRoot;
+    public FilterForm(List<Project> projectRoots, WorkspaceSettings settings) {
+        this.projectRoots = projectRoots;
         this.settings = settings;
     }
 
@@ -43,19 +46,19 @@ public class FilterForm implements Configurable {
         if (settings.isShowAllTask != showAllTasksCheckBox.isSelected()) {
             return true;
         }
-        final ProjectTreeNode selectedPrj = (ProjectTreeNode) projectTree.getLastSelectedPathComponent();
+        final Project selectedPrj = (Project) projectTree.getLastSelectedPathComponent();
         if (selectedPrj == null) {
             return false;
         }
         final String cfgPrj = settings.projectToken;
-        return !cfgPrj.equals(selectedPrj.getToken());
+        return !cfgPrj.equals(selectedPrj.getId());
     }
 
     public void apply() throws ConfigurationException {
-        final ProjectTreeNode node = (ProjectTreeNode) projectTree.getLastSelectedPathComponent();
+        final Project node = (Project) projectTree.getLastSelectedPathComponent();
         if (node != null) {
             settings.projectName = node.toString();
-            settings.projectToken = node.getToken();
+            settings.projectToken = node.getId();
         }
         settings.isShowAllTask = showAllTasksCheckBox.isSelected();
 
@@ -72,7 +75,10 @@ public class FilterForm implements Configurable {
     }
 
     private void createUIComponents() {
-        projectTree = new JTree(projectRoot);
+        projectTree = new JTree(new ProjectsModel(projectRoots));
         projectTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        renderer.setLeafIcon(renderer.getDefaultClosedIcon());
+        projectTree.setCellRenderer(renderer);
     }
 }
