@@ -1,26 +1,30 @@
 package com.versionone.integration.idea;
 
 import com.versionone.common.sdk.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ProjectsModel implements TreeModel {
 
-    private final  List<Project> roots;
+    private final ProjectWrapper root;
 
-    public ProjectsModel(List<Project> roots) {
-        this.roots = roots;
+    public ProjectsModel(@NotNull List<Project> roots) {
+        root = new ProjectWrapper(roots);
     }
 
     public Object getRoot() {
-        return new ProjectWrapper(roots);
+        return root;
     }
 
     public Object getChild(Object parent, int index) {
-        return ((ProjectWrapper) parent).children;
+        return ((ProjectWrapper) parent).children[index];
     }
 
     public int getChildCount(Object parent) {
@@ -52,16 +56,26 @@ public class ProjectsModel implements TreeModel {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    private class ProjectWrapper {
+    @Nullable
+    public TreePath getPathById(String id) {
+        List<ProjectWrapper> path = root.getPathById(id);
+        if (path == null) {
+            return null;
+        }
+        return new TreePath(path.toArray());
+    }
 
-        private final ProjectWrapper[] children;
-        private final String name;
-        private final int index;
+    public static class ProjectWrapper {
 
-        public ProjectWrapper(List<Project> roots) {
+        public final ProjectWrapper[] children;
+        public final String name;
+        public final String id;
+        public final int index;
+
+        public ProjectWrapper(@NotNull List<Project> roots) {
             index = -1;
-            name = "";
-            children = roots.toArray(new ProjectWrapper[roots.size()]);
+            name = id = "";
+            children = new ProjectWrapper[roots.size()];
             int i=0;
             for (Project prj : roots) {
                 children[i] = new ProjectWrapper(prj, i);
@@ -69,10 +83,38 @@ public class ProjectsModel implements TreeModel {
             }
         }
 
-        public ProjectWrapper(Project project, int index) {
+        public ProjectWrapper(@NotNull Project project, int index) {
             name = (String) project.getProperty(Project.NAME_PROPERTY);
+            id = project.getId();
             this.index = index;
-            children = project.children.toArray(new ProjectWrapper[project.children.size()]);
+            children = new ProjectWrapper[project.children.size()];
+            int i=0;
+            for (Project prj : project.children) {
+                children[i] = new ProjectWrapper(prj, i);
+                i++;
+            }
+        }
+
+        @Nullable
+        private LinkedList<ProjectWrapper> getPathById(String id) {
+            if (this.id.equals(id)) {
+                LinkedList<ProjectWrapper> res = new LinkedList<ProjectWrapper>();
+                res.add(this);
+                return res;
+            }
+            for (ProjectWrapper child : children) {
+                LinkedList<ProjectWrapper> res = child.getPathById(id);
+                if (res != null){
+                    res.addFirst(this);
+                    return res;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 }

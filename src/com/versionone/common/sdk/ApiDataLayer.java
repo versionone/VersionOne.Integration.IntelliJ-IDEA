@@ -59,7 +59,10 @@ public class ApiDataLayer implements IDataLayer {
         propertyAliases.put("DefectScope", "Scope");
         propertyAliases.put("TestScope", "Scope");
     }
-    
+
+    /** Set of attributes to be queried in Workitem requests */
+    private Set<AttributeInfo> attributesToQuery = new HashSet<AttributeInfo>();
+
     public final Map<String, EntityType> validAssets = new HashMap<String, EntityType>();    
 
     private final Map<EntityType, IAssetType> types = new HashMap<EntityType, IAssetType>(EntityType.values().length);
@@ -81,8 +84,6 @@ public class ApiDataLayer implements IDataLayer {
     private boolean integrated;
 
     private List<Asset> assetList;
-    /** Set of attributes to be queried in Workitem requests */
-    private static Set<AttributeInfo> attributesToQuery = new HashSet<AttributeInfo>();
     private Map<String, PropertyValues> listPropertyValues;
 
     private boolean trackEffort;
@@ -135,6 +136,7 @@ public class ApiDataLayer implements IDataLayer {
         try {
             instance.connect("http://integsrv01/VersionOne/", "admin", "admin", false);
             instance.setCurrentProjectId("Scope:0");
+            instance.addProperty(Project.NAME_PROPERTY, Scope, false);
         } catch (DataLayerException e) {
             e.printStackTrace();
         }
@@ -433,8 +435,8 @@ public class ApiDataLayer implements IDataLayer {
         }
     }
 
-    public void addProperty(String attr, EntityType type, boolean isList) {
-        attributesToQuery.add(new AttributeInfo(attr, type, isList));
+    public void addProperty(String name, EntityType type, boolean isList) {
+        attributesToQuery.add(new AttributeInfo(name, type, isList));
     }
 
     private Map<String, PropertyValues> getListPropertyValues() throws V1Exception, MetaException {
