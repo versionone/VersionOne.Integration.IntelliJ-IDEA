@@ -87,11 +87,6 @@ public class TestDataLayer extends ApiDataLayer {
     }
 
     @Override
-    public boolean isAssetClosed(Asset asset) {
-        return false;
-    }
-
-    @Override
     public boolean isShowed(Asset asset) {
         return false;
     }

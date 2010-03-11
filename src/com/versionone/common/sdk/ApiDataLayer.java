@@ -1,17 +1,8 @@
 package com.versionone.common.sdk;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.versionone.Oid;
-import com.versionone.apiclient.AndFilterTerm;
 import com.versionone.apiclient.APIException;
+import com.versionone.apiclient.AndFilterTerm;
 import com.versionone.apiclient.Asset;
 import com.versionone.apiclient.AssetState;
 import com.versionone.apiclient.Attribute;
@@ -22,7 +13,9 @@ import com.versionone.apiclient.IAttributeDefinition;
 import com.versionone.apiclient.IFilterTerm;
 import com.versionone.apiclient.ILocalizer;
 import com.versionone.apiclient.IMetaModel;
+import com.versionone.apiclient.IOperation;
 import com.versionone.apiclient.IServices;
+import com.versionone.apiclient.IV1Configuration.TrackingLevel;
 import com.versionone.apiclient.Localizer;
 import com.versionone.apiclient.MetaException;
 import com.versionone.apiclient.MetaModel;
@@ -32,11 +25,21 @@ import com.versionone.apiclient.QueryResult;
 import com.versionone.apiclient.Services;
 import com.versionone.apiclient.V1APIConnector;
 import com.versionone.apiclient.V1Configuration;
-import com.versionone.apiclient.IOperation;
 import com.versionone.apiclient.V1Exception;
-import com.versionone.apiclient.IV1Configuration.TrackingLevel;
 
-import static com.versionone.common.sdk.EntityType.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.versionone.common.sdk.EntityType.Defect;
+import static com.versionone.common.sdk.EntityType.Scope;
+import static com.versionone.common.sdk.EntityType.Story;
 
 public class ApiDataLayer implements IDataLayer {
 
@@ -46,6 +49,7 @@ public class ApiDataLayer implements IDataLayer {
     private static final String CONFIG_SUFFIX = "config.v1/";
 
     private static final Map<String, String> propertyAliases = new HashMap<String, String>();
+
     static {
         propertyAliases.put("DefectStatus", "StoryStatus");
         propertyAliases.put("DefectSource", "StorySource");
@@ -62,8 +66,6 @@ public class ApiDataLayer implements IDataLayer {
 
     /** Set of attributes to be queried in Workitem requests */
     private Set<AttributeInfo> attributesToQuery = new HashSet<AttributeInfo>();
-
-    public final Map<String, EntityType> validAssets = new HashMap<String, EntityType>();    
 
     private final Map<EntityType, IAssetType> types = new HashMap<EntityType, IAssetType>(EntityType.values().length);
     /** All uncommitted Effort records */
@@ -106,7 +108,7 @@ public class ApiDataLayer implements IDataLayer {
      * Special method ONLY for testing.
      */
     public void connectFotTesting(Object services, Object metaModel, Object localizer, Object storyTrackingLevel,
-            Object defectTrackingLevel) throws Exception {
+                                  Object defectTrackingLevel) throws Exception {
         this.metaModel = (IMetaModel) metaModel;
         this.services = (IServices) services;
         this.localizer = (ILocalizer) localizer;
@@ -181,8 +183,6 @@ public class ApiDataLayer implements IDataLayer {
             updateCurrentProjectId();
             requiredFieldsValidator = new RequiredFieldsValidator(metaModel, services);
             requiredFieldsValidator.init();
-
-            return;
         } catch (MetaException e) {
             throw createAndLogException("Cannot connect to V1 server.", e);
         } catch (V1Exception e) {
@@ -230,7 +230,7 @@ public class ApiDataLayer implements IDataLayer {
 
     /**
      * Reconnect with settings, used in last Connect() call.
-     * 
+     *
      * @throws DataLayerException
      */
     public void reconnect() throws DataLayerException {
@@ -292,12 +292,10 @@ public class ApiDataLayer implements IDataLayer {
 
             final Asset[] assets = services.retrieve(query).getAssets();
             final ArrayList<Asset> list = new ArrayList<Asset>(assets.length + 20);
-            //list.addAll(Arrays.asList(assets));
-//            initValidAssets();
             for (Asset asset : assets) {
-            	if (checkWorkitemIsValid(asset)) {
-            		list.add(asset);
-            	}
+                if (checkWorkitemIsValid(asset)) {
+                    list.add(asset);
+                }
             }
             return list;
         } catch (MetaException ex) {
@@ -309,20 +307,18 @@ public class ApiDataLayer implements IDataLayer {
 
     /**
      * Sets visibility for workitems
-     * 
-     * @param showAllTasks
-     *            true - all workitems can be shown false - only changed, new
-     *            and workitem with current owner can be shown
+     *
+     * @param showAllTasks true - all workitems can be shown false - only changed, new
+     *                     and workitem with current owner can be shown
      */
     public void setShowAllTasks(boolean showAllTasks) {
         this.showAllTasks = showAllTasks;
     }
 
     /**
-     * Determines whether this Asset can be showed or no.
-     * 
-     * @param asset
-     *            to determine visibility status.
+     * Determines whether this Asset can be showed or not.
+     *
+     * @param asset to determine visibility status.
      * @return true if Asset can be showed at the moment; otherwise - false.
      */
     boolean isShowed(Asset asset) {
@@ -346,17 +342,15 @@ public class ApiDataLayer implements IDataLayer {
         return false;
     }
 
-    public boolean checkConnection(String url, String user, String pass, boolean auth) {
-        boolean result = true;
-
-        V1APIConnector metaConnector = new V1APIConnector(url.toString() + META_SUFFIX);
+    public boolean checkConnection(String url, String user, String pass, boolean integratedAuth) {
+        V1APIConnector metaConnector = new V1APIConnector(url + META_SUFFIX);
         MetaModel model = new MetaModel(metaConnector);
 
-        V1APIConnector dataConnector = null;
-        if (auth) {
-            dataConnector = new V1APIConnector(url.toString() + DATA_SUFFIX);
+        final V1APIConnector dataConnector;
+        if (integratedAuth) {
+            dataConnector = new V1APIConnector(url + DATA_SUFFIX);
         } else {
-            dataConnector = new V1APIConnector(url.toString() + DATA_SUFFIX, user, pass);
+            dataConnector = new V1APIConnector(url + DATA_SUFFIX, user, pass);
         }
 
         Services v1Service = new Services(model, dataConnector);
@@ -364,25 +358,18 @@ public class ApiDataLayer implements IDataLayer {
         try {
             v1Service.getLoggedIn();
         } catch (V1Exception e) {
-            result = false;
+            return false;
         } catch (MetaException e) {
-            result = false;
+            return false;
         }
-
-        return result;
+        return true;
     }
-    
-//    private void initValidAssets() {
-//    	validAssets.put(Workitem.STORY_NAME, EntityType.Story);
-//    	validAssets.put(Workitem.DEFECT_NAME, EntityType.Defect);
-//    	validAssets.put(Workitem.TASK_NAME, EntityType.Task);
-//    	validAssets.put(Workitem.TEST_NAME, EntityType.Test);
-//    }
-    
+
     private boolean checkWorkitemIsValid(Asset asset) {
-    	return (asset.getAssetType().getToken().equals(Workitem.STORY_NAME) || asset.getAssetType().getToken().equals(Workitem.DEFECT_NAME)
-    			|| asset.getAssetType().getToken().equals(Workitem.TASK_NAME) || asset.getAssetType().getToken().equals(Workitem.TEST_NAME));
-    	//return validAssets.containsKey(asset.getAssetType().getToken());
+        return (asset.getAssetType().getToken().equals(Workitem.STORY_NAME)
+                || asset.getAssetType().getToken().equals(Workitem.DEFECT_NAME)
+                || asset.getAssetType().getToken().equals(Workitem.TASK_NAME)
+                || asset.getAssetType().getToken().equals(Workitem.TEST_NAME));
     }
 
     private void checkConnection() throws DataLayerException {
@@ -395,7 +382,7 @@ public class ApiDataLayer implements IDataLayer {
     }
 
     private IFilterTerm getScopeFilter(IAssetType assetType) {
-        List<FilterTerm> terms = new ArrayList<FilterTerm>(5);
+        List<FilterTerm> terms = new LinkedList<FilterTerm>();
         FilterTerm term = new FilterTerm(assetType.getAttributeDefinition("Scope.AssetState"));
         term.NotEqual(AssetState.Closed);
         terms.add(term);
@@ -561,7 +548,7 @@ public class ApiDataLayer implements IDataLayer {
                 if (pri.hasChanges()) {
                     return true;
                 }
-                for ( SecondaryWorkitem sec : pri.children) {
+                for (SecondaryWorkitem sec : pri.children) {
                     if (sec.hasChanges()) {
                         return true;
                     }
@@ -609,23 +596,11 @@ public class ApiDataLayer implements IDataLayer {
         services.executeOperation(operation, asset.getOid());
     }
 
-    boolean isAssetClosed(Asset asset) {
-        try {
-            IAttributeDefinition stateDef = asset.getAssetType().getAttributeDefinition("AssetState");
-            AssetState state = AssetState.valueOf((Integer) asset.getAttribute(stateDef).getValue());
-            return state == AssetState.Closed;
-        } catch (MetaException e) {
-        } catch (APIException e) {
-        }
-        return false;
-    }
-
     /**
      * Update specified Workitem in cache from the server. Information about
      * children isn't queried and isn't updated.
-     * 
-     * @param workitem
-     *            to update
+     *
+     * @param workitem to update
      * @return updated Asset of this Workitem.
      * @throws DataLayerException
      */
@@ -658,9 +633,8 @@ public class ApiDataLayer implements IDataLayer {
     /**
      * Removes Workitem from Workitem cache. So on next getWorkitemTree call it
      * won't returned.
-     * 
-     * @param item
-     *            to remove.
+     *
+     * @param item to remove.
      */
     void removeWorkitem(Workitem item) {
         if (item instanceof SecondaryWorkitem) {
@@ -718,7 +692,7 @@ public class ApiDataLayer implements IDataLayer {
         return id;
     }
 
-    /***
+    /**
      * Update current project Id to the root project Id from current server
      */
     public String updateCurrentProjectId() {
@@ -761,13 +735,13 @@ public class ApiDataLayer implements IDataLayer {
     }
 
     /**
-     * 
-     * @param type
+     * Creates new Story or Defect.
+     *
+     * @param type of ne Workitem.
      * @return newly created Workitem.
-     * @throws DataLayerException
-     * @throws IllegalArgumentException
-     *             when prefix or parent inn't a Workitem, or trying to create a
-     *             wrong Workitem hierarchy.
+     * @throws DataLayerException       if any error.
+     * @throws IllegalArgumentException when prefix or parent isn't a Workitem, or trying to create a
+     *                                  wrong Workitem hierarchy.
      */
     public PrimaryWorkitem createNewPrimaryWorkitem(EntityType type) throws DataLayerException {
         try {
@@ -775,12 +749,11 @@ public class ApiDataLayer implements IDataLayer {
                 throw new IllegalArgumentException("Wrong type:" + type);
             }
             final Asset asset = createNewAsset(type);
-
-            loadAssetAttribute(asset, "Scope.Name", getCurrentProject().getProperty(Entity.NAME_PROPERTY));
-            loadAssetAttribute(asset, "Timebox.Name", getCurrentProject().getProperty(
-                    "Schedule.EarliestActiveTimebox.Name"));
+            final Project project = getCurrentProject();
+            loadAssetAttribute(asset, "Scope.Name", project.getProperty(Entity.NAME_PROPERTY));
+            loadAssetAttribute(asset, "Timebox.Name", project.getProperty("Schedule.EarliestActiveTimebox.Name"));
             setAssetAttribute(asset, "Scope", currentProjectId);
-            setAssetAttribute(asset, "Timebox", getCurrentProject().getProperty("Schedule.EarliestActiveTimebox"));
+            setAssetAttribute(asset, "Timebox", project.getProperty("Schedule.EarliestActiveTimebox"));
             assetList.add(asset);
 
             return new PrimaryWorkitem(this, asset);
@@ -833,14 +806,11 @@ public class ApiDataLayer implements IDataLayer {
 
     /**
      * Set or ensure Asset attribute value.
-     * 
-     * @param value
-     *            of the attribute; if null or Oid.Null then attribute will be
-     *            just ensured.
-     * @throws MetaException
-     *             if something wrong with attribute name.
-     * @throws APIException
-     *             if something wrong with attribute setting/ensuring.
+     *
+     * @param value of the attribute; if null or Oid.Null then attribute will be
+     *              just ensured.
+     * @throws MetaException if something wrong with attribute name.
+     * @throws APIException  if something wrong with attribute setting/ensuring.
      */
     static void setAssetAttribute(final Asset asset, final String attrName, final Object value) throws MetaException,
             APIException {
