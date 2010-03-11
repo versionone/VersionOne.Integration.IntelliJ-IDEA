@@ -258,7 +258,9 @@
         <root url="jar://$PROJECT_DIR$/lib/VersionOne.ObjectModel.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/lib/VersionOne.JavaSDK.Source.zip!/src" />
+      </SOURCES>
     </library>
   </component>
 </project>

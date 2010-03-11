@@ -29,6 +29,7 @@ public class FilterForm implements Configurable {
     public FilterForm(@NotNull List<Project> rootProjects, @NotNull WorkspaceSettings settings) {
         this.settings = settings;
         model = new ProjectsModel(rootProjects);
+        projectTree.setModel(model);
     }
 
     @Nls
@@ -76,7 +77,7 @@ public class FilterForm implements Configurable {
 
     public void reset() {
         showAllTasksCheckBox.setSelected(settings.isShowAllTask);
-        projectTree.setModel(model);
+//        projectTree.setModel(model);
         projectTree.clearSelection();
         projectTree.expandRow(0);
         final TreePath path = model.getPathById(settings.projectToken);
