@@ -16,6 +16,8 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
 import com.versionone.common.oldsdk.APIDataLayer;
 import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.ApiDataLayer;
+import com.versionone.common.sdk.DataLayerException;
 import com.versionone.integration.idea.actions.FilterAction;
 import com.versionone.integration.idea.actions.Refresh;
 import com.versionone.integration.idea.actions.SaveData;
@@ -50,7 +52,7 @@ public class TasksComponent implements ProjectComponent {
         cfg = settings;
         dataLayer = new APIDataLayer(cfg);
 
-        if (!project.isDefault()) {
+        if (project != null && !project.isDefault()) {
             ActionManager actions = ActionManager.getInstance();
             ((FilterAction) actions.getAction("Filter")).setSettings(cfg);
             //set projects to the actions
@@ -98,6 +100,9 @@ public class TasksComponent implements ProjectComponent {
     }
 
     private void initToolWindow() {
+        Configuration config = new Configuration();
+        config.fill();
+
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         JPanel contentPanel = createContentPanel();
 
@@ -141,16 +146,30 @@ public class TasksComponent implements ProjectComponent {
     private JPanel createContentPanel() {
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
-        table = createTable();
+        try {
+            table = createTable();
+        } catch (DataLayerException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
         panel.add(new JScrollPane(table));
         return panel;
     }
 
-    private TasksTable createTable() {
-        final TasksTable table = new TasksTable(new TasksModel(dataLayer));
+    private TasksTable createTable() throws DataLayerException {
+        ApiDataLayer dataLayer = ApiDataLayer.getInstance();
+        WorkspaceSettings settings = new WorkspaceSettings();
+        try {
+            dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
+        } catch (DataLayerException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        //final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()));
+        final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()));
+        table.setRootVisible(false);
+        table.setShowGrid(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getModel().addTableModelListener(tableChangesListener);
-        table.getSelectionModel().addListSelectionListener(tableSelectionListener);
+        //table.getModel().addTableModelListener(tableChangesListener);
+        //table.getSelectionModel().addListSelectionListener(tableSelectionListener);
         return table;
     }
 
@@ -170,6 +189,8 @@ public class TasksComponent implements ProjectComponent {
      * Temporary method for testing purposes. TODO delete
      */
     public static void main(String[] args) {
+        Configuration config = new Configuration();
+        config.fill();
         TasksComponent plugin = new TasksComponent(null, new WorkspaceSettings());
         JPanel panel = plugin.createContentPanel();
         JFrame frame = new JFrame("IDEA V1 Plugin");
@@ -177,6 +198,7 @@ public class TasksComponent implements ProjectComponent {
         frame.setPreferredSize(new Dimension(800, 100));
         frame.add(panel);
         frame.pack();
+        frame.show();
         frame.setVisible(true);
     }
 

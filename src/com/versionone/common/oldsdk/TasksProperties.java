@@ -13,7 +13,7 @@ public enum TasksProperties {
     PARENT("Story", Type.TEXT, false, "Parent.Name"),
     DETAIL_ESTIMATE("Detailed Estimate", Type.NUMBER, true, "DetailEstimate"),
     DONE("Done", Type.NUMBER, false, "Actuals.Value.@Sum"),
-    EFFORT("Effort", Type.NUMBER, true),
+    EFFORT("Effort", Type.NUMBER, true, "Actuals"),
     TO_DO("Todo", Type.NUMBER, true, "ToDo"),
     STATUS("Status", Type.LIST, true, "Status"),
     DESCRIPTION("Description", Type.RICH_TEXT, true, "Description"),

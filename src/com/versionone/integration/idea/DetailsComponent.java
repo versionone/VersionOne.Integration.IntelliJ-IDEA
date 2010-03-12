@@ -11,6 +11,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.Table;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.treetable.TreeTableModel;
 import com.versionone.common.oldsdk.APIDataLayer;
 import com.versionone.common.oldsdk.IDataLayer;
 import org.apache.log4j.Logger;
@@ -120,7 +121,7 @@ public class DetailsComponent implements ProjectComponent {
 
     private JPanel createContentPanel(IDataLayer dataLayer) {
         model = new DetailsModel(dataLayer);
-        table = new TasksTable(model);
+        table = new TasksTable((TreeTableModel) model);//CastException
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
