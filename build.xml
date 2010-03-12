@@ -188,7 +188,7 @@
         <cobertura-instrument todir="${coverage.classes}" datafile="${coverage.file}">
             <fileset dir="${bin.product.dir}">
                 <include name="**/*.class"/>
-                <exclude name="**/*Test.class"/>
+                <exclude name="**/*Tester.class"/>
             </fileset>
         </cobertura-instrument>
 
@@ -206,7 +206,7 @@
 
             <batchtest fork="yes" todir="${junit.output.dir}">
                 <fileset dir="${bin.product.dir}">
-                    <include name="**/*Test.class"/>
+                    <include name="**/*Tester.class"/>
                 </fileset>
             </batchtest>
         </junit>
