@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.DataLayerException;
 import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.V1PluginException;
@@ -24,7 +25,6 @@ public class Refresh extends AnAction {
     private Project project;
 
     public void actionPerformed(AnActionEvent e) {
-        System.out.println("Refresh.actionPerformed()");//TODO delete trace output
         final DataContext dataContext = e.getDataContext();
         Project ideaProject = DataKeys.PROJECT.getData(dataContext);
 
@@ -48,32 +48,35 @@ public class Refresh extends AnAction {
         refreshData(ideaProject, tc, data, dc, progressManager);
     }
 
-    static void refreshData(Project ideaProject, TasksComponent tc, final IDataLayer data, DetailsComponent dc, final ProgressManager progressManager) {
-        final Object[] isError = {false, "", false};
+    static void refreshData(Project ideaProject, TasksComponent tc, final Object data, DetailsComponent dc, final ProgressManager progressManager) {
+        final Exception[] isError = {null};
         tc.removeEdition();
         dc.removeEdition();
 
-        ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-            public void run() {
-                progressManager.getProgressIndicator().setText("Updating VersionOne Task List");
-                try {
-                    data.refresh();
-                } catch (V1PluginException e1) {
-                    LOG.warn(e1.getMessage(),e1);
-                    isError[0] = true;
-                    isError[1] = e1.getMessage();
-                    isError[2] = e1.isError();
-                }
-            }
-        },
-                "Update VersionOne Task List",
+        ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                new Runnable() {
+                    public void run() {
+                        progressManager.getProgressIndicator().setText("Updating VersionOne Task List");
+                        try {
+                            if (data instanceof com.versionone.common.oldsdk.IDataLayer) {
+                                ((com.versionone.common.oldsdk.IDataLayer) data).refresh();
+                            } else if (data instanceof com.versionone.common.sdk.IDataLayer) {
+                                ((com.versionone.common.sdk.IDataLayer) data).reconnect();
+                            }
+                        } catch (Exception ex) {
+                            LOG.error("Failed to refresh workitems.", ex);
+                            isError[0] = ex;
+                        }
+                    }
+                },
+                "VersionOne Workitem List Refreshing",
                 false,
                 ideaProject
         );
 
-        if ((Boolean) isError[0]) {
-            Icon icon = (Boolean)isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
-            Messages.showMessageDialog(isError[1].toString(), "Error", icon);
+        if (isError[0] != null) {
+            Icon icon = Messages.getErrorIcon();
+            Messages.showMessageDialog(isError[0].getMessage(), "Error", icon);
         }
 
         tc.update();

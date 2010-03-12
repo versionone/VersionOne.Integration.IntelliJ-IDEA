@@ -33,7 +33,6 @@ public class FilterAction extends AnAction {
 
     public void actionPerformed(AnActionEvent e) {
         final DataContext dataContext = e.getDataContext();
-//        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
         Project ideaProject = DataKeys.PROJECT.getData(dataContext);
         if (ideaProject == null && project != null) {
             ideaProject = project;
@@ -41,17 +40,16 @@ public class FilterAction extends AnAction {
 
         if (ideaProject != null) {
             filterDialog(ideaProject);
-            //ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+            ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
         }
     }
 
     public void filterDialog(final Project ideaProject) {
-
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final Object[] projectsRoot = new Object[1];
+        final Object[] res = new Object[1];
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
-        final IDataLayer data = IDataLayer.INSTANCE;
+        final IDataLayer data = IDataLayer.INSTANCE;//TODO temp by DIR tc.getDataLayer
 
         if (data.hasChanges()) {
             int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten if you change " +
@@ -71,9 +69,9 @@ public class FilterAction extends AnAction {
                         final ProgressIndicator indicator = progressManager.getProgressIndicator();
                         indicator.setText("Loading VersionOne Projects");
                         try {
-                            projectsRoot[0] = data.getProjectTree();
-                        } catch (DataLayerException e) {
-                            projectsRoot[0] = e;
+                            res[0] = data.getProjectTree();
+                        } catch (Exception e) {
+                            res[0] = e;
                         }
                     }
                 },
@@ -84,18 +82,17 @@ public class FilterAction extends AnAction {
             return;
         }
 
-        if (projectsRoot[0] instanceof DataLayerException) {
-//            TODO temporary by DIR
-//            Icon icon = ((DataLayerException)projectsRoot[0]).isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
-//            Messages.showMessageDialog(isError[1].toString(), "Error", icon);
-            return;
+        if (res[0] instanceof List) {
+            List<com.versionone.common.sdk.Project> projectsRoot = (List<com.versionone.common.sdk.Project>) res[0];
+            final FilterForm form = new FilterForm(projectsRoot, settings);
+            if (ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form)) {
+                Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
+            }
         }
 
-        final FilterForm form = new FilterForm((List<com.versionone.common.sdk.Project>)projectsRoot[0], settings);
-        if (ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form)) {
-//            TODO temporary by DIR
-//            Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
-        }
+        final Exception ex = (Exception) res[0];
+        LOG.error("Failed to get list of projects.", ex);
+        Messages.showMessageDialog(ex.getMessage(), "Error", Messages.getErrorIcon());
     }
 
     public void setSettings(WorkspaceSettings settings) {

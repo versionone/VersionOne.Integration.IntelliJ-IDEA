@@ -63,17 +63,8 @@ public class TasksComponent implements ProjectComponent {
     }
 
     public void projectOpened() {
-        String ideaVersion = ApplicationInfo.getInstance().getMajorVersion();
-        String minorVersion = ApplicationInfo.getInstance().getMinorVersion();
-        //TODO remove trace out
-        System.out.println("IDEA version = " + ideaVersion + '.' + minorVersion);
-        ideaVersion = ApplicationInfo.getInstance().getVersionName();
-        //TODO remove trace out
-        System.out.println("IDEA name = " + ideaVersion);
         initToolWindow();
-
         TableModelListener listener = new TableModelListener() {
-
             public void tableChanged(TableModelEvent e) {
                 update();
             }
@@ -114,7 +105,6 @@ public class TasksComponent implements ProjectComponent {
         ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
         ContentFactory contentFactory;
         contentFactory = ContentFactory.SERVICE.getInstance();
-//        contentFactory = PeerFactory.getInstance().getContentFactory();
         content = contentFactory.createContent(contentPanel, cfg.projectName, false);
         toolWindow.getContentManager().addContent(content);
     }

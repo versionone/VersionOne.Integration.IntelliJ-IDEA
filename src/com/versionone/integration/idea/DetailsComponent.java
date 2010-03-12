@@ -40,9 +40,6 @@ public class DetailsComponent implements ProjectComponent {
 
 
     public DetailsComponent(Project project, WorkspaceSettings settings) {
-        //TODO remove trace out
-        System.out.println("DetailsComponent.DetailsComponent() prj=" + project + " settings=" + settings);
-        System.out.println("\tproject.getName() = " + project.getName());
         this.project = project;
     }
 
