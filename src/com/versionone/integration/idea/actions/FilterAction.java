@@ -11,6 +11,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.FilterForm;
 import com.versionone.integration.idea.WorkspaceSettings;
@@ -34,35 +35,34 @@ public class FilterAction extends AnAction {
         }
 
         if (ideaProject != null) {
-            filterDialog(ideaProject);
-            ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+            if (filterDialog(ideaProject)) {
+                ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+            }
         }
     }
 
-    private void filterDialog(final Project ideaProject) {
+    private boolean filterDialog(final Project ideaProject) {
         final ProgressManager progressManager = ProgressManager.getInstance();
         final Object[] res = new Object[1];
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
-        final IDataLayer data = IDataLayer.INSTANCE;//TODO temp by DIR tc.getDataLayer
+        final IDataLayer data = ApiDataLayer.getInstance();
 
         if (data.hasChanges()) {
             int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten if you change " +
                     "projects.\nDo you wish to continue?.", "Filter Warning",
                     new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
             if (confirmRespond == 1) {
-                return;
+                return false;
             }
         }
 
         tc.removeEdition();
         dc.removeEdition();
 
-        boolean isCanceled = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+        boolean isCanceled = progressManager.runProcessWithProgressSynchronously(
                 new Runnable() {
                     public void run() {
-                        final ProgressIndicator indicator = progressManager.getProgressIndicator();
-                        indicator.setText("Loading VersionOne Projects");
                         try {
                             res[0] = data.getProjectTree();
                         } catch (Exception e) {
@@ -74,20 +74,20 @@ public class FilterAction extends AnAction {
         );
 
         if (!isCanceled) {
-            return;
+            return false;
         }
 
-        if (res[0] instanceof List) {
-            List<com.versionone.common.sdk.Project> projectsRoot = (List<com.versionone.common.sdk.Project>) res[0];
-            final FilterForm form = new FilterForm(projectsRoot, settings);
-            if (ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form)) {
-                Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
-            }
-        } else {
+        if (res[0] instanceof Exception) {
             final Exception ex = (Exception) res[0];
-            LOG.error("Failed to get list of projects.", ex);
-            Messages.showMessageDialog(ex.getMessage(), "Error", Messages.getErrorIcon());
+            LOG.warn("Failed to get list of projects.", ex);
+            Messages.showMessageDialog(ideaProject, ex.getMessage(), "Error", Messages.getErrorIcon());
+            return false;
         }
+
+        List<com.versionone.common.sdk.Project> projectsRoot = (List<com.versionone.common.sdk.Project>) res[0];
+        final FilterForm form = new FilterForm(projectsRoot, settings);
+
+        return ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form);
     }
 
     public void setSettings(WorkspaceSettings settings) {

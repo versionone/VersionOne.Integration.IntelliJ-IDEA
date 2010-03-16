@@ -4,8 +4,6 @@ import java.util.List;
 
 public interface IDataLayer {
 
-    static final IDataLayer INSTANCE = ApiDataLayer.getInstance();
-
     boolean checkConnection(String url, String user, String pass, boolean integratedAuth);
     void connect(String path, String userName, String password, boolean integrated) throws DataLayerException;
 

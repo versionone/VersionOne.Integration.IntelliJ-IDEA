@@ -4,7 +4,6 @@ package com.versionone.integration.idea;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.project.Project;
@@ -49,7 +48,7 @@ public class TasksComponent implements ProjectComponent {
     public TasksComponent(Project project, WorkspaceSettings settings) {
         this.project = project;
         cfg = settings;
-        dataLayer = IDataLayer.INSTANCE;
+        dataLayer = ApiDataLayer.getInstance();
 
         if (project != null && !project.isDefault()) {
             ActionManager actions = ActionManager.getInstance();
