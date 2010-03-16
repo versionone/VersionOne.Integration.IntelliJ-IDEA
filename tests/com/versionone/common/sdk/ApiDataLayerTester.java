@@ -16,7 +16,6 @@ import static com.versionone.common.sdk.EntityType.Test;
 
 public class ApiDataLayerTester implements IntegrationalTest {
 
-    @Ignore("This test is integrational. It works with V1 server.")
     @Test
     public void testCreateAndGetDefect() throws Exception {
         final ApiDataLayer data = ApiDataLayer.getInstance();
@@ -69,7 +68,6 @@ public class ApiDataLayerTester implements IntegrationalTest {
         assertTrue(data.getWorkitemTree().contains(defect));
     }
 
-    @Ignore("This test is integrational. It works with V1 server.")
     @Test
     public void testCreateAndGetTask() throws Exception {
         final ApiDataLayer data = ApiDataLayer.getInstance();
@@ -124,7 +122,6 @@ public class ApiDataLayerTester implements IntegrationalTest {
         assertTrue(story2.children.contains(task));
     }
 
-    @Ignore("Intergational test")
     @Test
     public void testCreateChild() throws Exception {
         final ApiDataLayer data = ApiDataLayer.getInstance();
