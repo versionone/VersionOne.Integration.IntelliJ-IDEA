@@ -134,14 +134,6 @@ public class ApiDataLayer implements IDataLayer {
         if (instance == null) {
             instance = new ApiDataLayer();
         }
-//            TODO temporary by DIR
-        try {
-            instance.connect("http://integsrv01/VersionOne/", "admin", "admin", false);
-//            instance.setCurrentProjectId("Scope:0");
-            instance.addProperty(Project.NAME_PROPERTY, Scope, false);
-        } catch (DataLayerException e) {
-            e.printStackTrace();
-        }
         return instance;
     }
 

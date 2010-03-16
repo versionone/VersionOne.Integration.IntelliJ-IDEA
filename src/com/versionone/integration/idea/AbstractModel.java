@@ -1,7 +1,7 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
-import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.oldsdk.TasksProperties;
 
 import javax.swing.*;
@@ -79,7 +79,8 @@ public abstract class AbstractModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (getProperty(rowIndex, columnIndex).isEditable) {
-            data.setTaskPropertyValue(getTask(rowIndex, columnIndex), getProperty(rowIndex, columnIndex), (String) aValue);
+            //TODO Old DataLayer
+            //data.setTaskPropertyValue(getTask(rowIndex, columnIndex), getProperty(rowIndex, columnIndex), (String) aValue);
             fireTableCellUpdated(rowIndex, columnIndex);
         }
     }

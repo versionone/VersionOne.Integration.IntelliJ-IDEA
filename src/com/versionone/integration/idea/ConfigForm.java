@@ -5,7 +5,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.DataLayerException;
+import com.versionone.common.sdk.IDataLayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,7 +80,8 @@ public class ConfigForm implements UnnamedConfigurable {
             serverUrl.setText(pathVersionOne + "/");
         }
         
-        isConnectionCorrect = dataLayer.isConnectionValid(serverUrl.getText(), userName.getText(), password.getText());
+        isConnectionCorrect = dataLayer.checkConnection(serverUrl.getText(), userName.getText(), password.getText(),
+                windowsIntegratedAuthentication.isSelected());
         if (isConnectionCorrect) {
             Messages.showInfoMessage("Connection is valid", "Connection Status");
             isConnectionCorrect = true;
@@ -142,10 +144,10 @@ public class ConfigForm implements UnnamedConfigurable {
             settings.projectName = "";
 
             try {
-                dataLayer.reconnect();
-            } catch (V1PluginException e) {
-                Icon icon = e.isError() ? Messages.getErrorIcon() : Messages.getWarningIcon();
-                Messages.showMessageDialog(e.getMessage(), "Error", icon);
+                dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
+            } catch (DataLayerException ex) {
+                Icon icon = Messages.getErrorIcon();
+                Messages.showMessageDialog(ex.getMessage(), "Error", icon);
             }
 
             tc.update();

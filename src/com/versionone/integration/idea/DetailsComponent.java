@@ -11,9 +11,9 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.Table;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.treetable.TreeTable;
 import com.intellij.util.ui.treetable.TreeTableModel;
-import com.versionone.common.oldsdk.APIDataLayer;
-import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.IDataLayer;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -116,9 +116,9 @@ public class DetailsComponent implements ProjectComponent {
         table.repaint();
     }
 
-    private JPanel createContentPanel(IDataLayer dataLayer) {
+    JPanel createContentPanel(IDataLayer dataLayer) {
         model = new DetailsModel(dataLayer);
-        table = new TasksTable((TreeTableModel) model);//CastException
+        table = new Table(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
@@ -149,19 +149,5 @@ public class DetailsComponent implements ProjectComponent {
                 });
             }
         }
-    }
-
-    /**
-     * Temporary method for testing purposes. TODO delete
-     */
-    public static void main(String[] args) {
-        DetailsComponent plugin = new DetailsComponent(null, new WorkspaceSettings());
-        JPanel panel = plugin.createContentPanel(new APIDataLayer(new WorkspaceSettings()));
-        JFrame frame = new JFrame("IDEA V1 Plugin - Details");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(200, 500));
-        frame.add(panel);
-        frame.pack();
-        frame.setVisible(true);
     }
 }

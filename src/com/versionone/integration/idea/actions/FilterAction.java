@@ -11,18 +11,13 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.common.sdk.ApiDataLayer;
-import com.versionone.common.oldsdk.ProjectTreeNode;
-import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.FilterForm;
 import com.versionone.integration.idea.WorkspaceSettings;
 import com.versionone.integration.idea.TasksComponent;
-import com.versionone.integration.idea.V1PluginException;
 import com.versionone.integration.idea.DetailsComponent;
 import org.apache.log4j.Logger;
 
-import javax.swing.*;
 import java.util.List;
 
 public class FilterAction extends AnAction {
@@ -44,7 +39,7 @@ public class FilterAction extends AnAction {
         }
     }
 
-    public void filterDialog(final Project ideaProject) {
+    private void filterDialog(final Project ideaProject) {
         final ProgressManager progressManager = ProgressManager.getInstance();
         final Object[] res = new Object[1];
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
@@ -88,11 +83,11 @@ public class FilterAction extends AnAction {
             if (ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form)) {
                 Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
             }
+        } else {
+            final Exception ex = (Exception) res[0];
+            LOG.error("Failed to get list of projects.", ex);
+            Messages.showMessageDialog(ex.getMessage(), "Error", Messages.getErrorIcon());
         }
-
-        final Exception ex = (Exception) res[0];
-        LOG.error("Failed to get list of projects.", ex);
-        Messages.showMessageDialog(ex.getMessage(), "Error", Messages.getErrorIcon());
     }
 
     public void setSettings(WorkspaceSettings settings) {

@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.TasksComponent;
@@ -36,7 +36,7 @@ public class Refresh extends AnAction {
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final IDataLayer data = tc.getDataLayer();
         
-        if (data.isTaskChanged()) {
+        if (data.hasChanges()) {
             int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten.\nDo you want to continue?", "Refresh Warning", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
             if (confirmRespond == 1) {
                 return;

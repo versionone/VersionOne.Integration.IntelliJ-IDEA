@@ -9,7 +9,8 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.DataLayerException;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.V1PluginException;
@@ -51,12 +52,12 @@ public class SaveData extends AnAction {
             public void run() {
                 progressManager.getProgressIndicator().setText("Saving changes to VersionOne");
                 try {
-                    data.commitChangedTaskData();
-                } catch (V1PluginException e1) {
+                    data.commitChanges();
+                } catch (DataLayerException ex) {
                     isError[0] = true;
-                    isError[1] = e1.getMessage();
-                    isError[2] = e1.isError();
-                    LOG.warn(isError[1],e1);
+                    isError[1] = ex.getMessage();
+                    isError[2] = true; //ex.isError();
+                    LOG.warn(isError[1],ex);
                 } catch (Exception e1) {
                     isError[0] = true;
                     isError[1] = "Error connecting to VesionOne";

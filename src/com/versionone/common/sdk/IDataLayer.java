@@ -6,6 +6,9 @@ public interface IDataLayer {
 
     static final IDataLayer INSTANCE = ApiDataLayer.getInstance();
 
+    boolean checkConnection(String url, String user, String pass, boolean integratedAuth);
+    void connect(String path, String userName, String password, boolean integrated) throws DataLayerException;
+
     /**
      * Reconnect with settings, used in last Connect() call.
      *

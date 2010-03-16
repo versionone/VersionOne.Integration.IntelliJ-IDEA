@@ -14,8 +14,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
-import com.versionone.common.oldsdk.APIDataLayer;
-import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.integration.idea.actions.FilterAction;
@@ -37,7 +36,7 @@ public class TasksComponent implements ProjectComponent {
     @NonNls
     public static final String TOOL_WINDOW_ID = "V1Integration";
 
-    private final Project project;
+    public final Project project;
 
     private Content content;
     private final WorkspaceSettings cfg;
@@ -50,7 +49,7 @@ public class TasksComponent implements ProjectComponent {
     public TasksComponent(Project project, WorkspaceSettings settings) {
         this.project = project;
         cfg = settings;
-        dataLayer = new APIDataLayer(cfg);
+        dataLayer = IDataLayer.INSTANCE;
 
         if (project != null && !project.isDefault()) {
             ActionManager actions = ActionManager.getInstance();
@@ -147,9 +146,8 @@ public class TasksComponent implements ProjectComponent {
 
     private TasksTable createTable() throws DataLayerException {
         ApiDataLayer dataLayer = ApiDataLayer.getInstance();
-        WorkspaceSettings settings = new WorkspaceSettings();
         try {
-            dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
+            dataLayer.connect(cfg.v1Path, cfg.user, cfg.passwd, cfg.isWindowsIntegratedAuthentication);
         } catch (DataLayerException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

@@ -1,7 +1,7 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
-import com.versionone.common.oldsdk.IDataLayer;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.oldsdk.TasksProperties;
 import static com.versionone.common.oldsdk.TasksProperties.BUILD;
 import static com.versionone.common.oldsdk.TasksProperties.DESCRIPTION;
@@ -44,7 +44,8 @@ public class DetailsModel extends AbstractModel {
     }
 
     public boolean isTaskSet() {
-        return task < data.getTasksCount();
+        //TODO Old DataLayer
+        return false;//task < data.getTasksCount();
     }
 
     public int getRowCount() {
@@ -56,9 +57,10 @@ public class DetailsModel extends AbstractModel {
     }
 
     public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
-        if (columnIndex == 1 && isTaskSet()) {
-            return data.getPropertyValues(getProperty(rowIndex, columnIndex));
-        }
+        //TODO Old DataLayer
+//        if (columnIndex == 1 && isTaskSet()) {
+//            return data.getPropertyValues(getProperty(rowIndex, columnIndex));
+//        }
         return null;
     }
 
@@ -66,9 +68,10 @@ public class DetailsModel extends AbstractModel {
         if (columnIndex == 0) {
             return getProperty(rowIndex, columnIndex).columnName;
         }
-        if (isTaskSet()) {
-            return data.getTaskPropertyValue(task, getProperty(rowIndex, columnIndex));
-        }
+        //TODO Old DataLayer
+//        if (isTaskSet()) {
+//            return data.getTaskPropertyValue(task, getProperty(rowIndex, columnIndex));
+//        }
         return null;
     }
 
@@ -94,17 +97,20 @@ public class DetailsModel extends AbstractModel {
 
     public boolean isRowChanged(int rowIndex) {
         boolean result = false;
-        if (isTaskSet()) {
-            result = data.isPropertyChanged(task, getProperty(rowIndex, -1));
-        }
+        //TODO Old DataLayer
+//        if (isTaskSet()) {
+//            result = data.isPropertyChanged(task, getProperty(rowIndex, -1));
+//        }
         return result;
     }
 
     protected TasksProperties getProperty(int rowIndex, int columnIndex) {
-        return data.isTrackEffort() ? propertiesWithEffort[rowIndex] : properties[rowIndex];
+        //TODO Old DataLayer
+        return null;//data.isTrackEffort() ? propertiesWithEffort[rowIndex] : properties[rowIndex];
     }
 
     public int getPropertiesCount() {
-        return data.isTrackEffort() ? propertiesWithEffort.length : properties.length;
+        //TODO Old DataLayer
+        return 0;//data.isTrackEffort() ? propertiesWithEffort.length : properties.length;
     }
 }
