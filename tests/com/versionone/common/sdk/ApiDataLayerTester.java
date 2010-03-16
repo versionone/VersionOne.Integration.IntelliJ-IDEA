@@ -23,6 +23,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
         data.addProperty("Name", Defect, false);
         data.addProperty("Owners", Defect, true);
         data.addProperty("Status", Defect, true);
+        data.addProperty("Name", Scope, false);
         data.connect(V1_PATH, V1_USER, V1_PASSWORD, false);
         data.getWorkitemTree();
         final PrimaryWorkitem defect = data.createNewPrimaryWorkitem(Defect);
@@ -76,6 +77,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
         data.addProperty("Owners", Task, true);
         data.addProperty("Status", Task, true);
         data.addProperty("Timebox.Name", Story, false);
+        data.addProperty("Name", Scope, false);
         data.connect(V1_PATH, V1_USER, V1_PASSWORD, false);
         final PrimaryWorkitem story = data.getWorkitemTree().get(0);
         final SecondaryWorkitem task = data.createNewSecondaryWorkitem(Task, story);
@@ -130,6 +132,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
         data.addProperty("Owners", Task, true);
         data.addProperty("Status", Task, true);
         data.addProperty("Timebox.Name", Story, false);
+        data.addProperty("Name", Scope, false);
         data.connect(V1_PATH, V1_USER, V1_PASSWORD, false);
         PrimaryWorkitem story = data.getWorkitemTree().get(0);
         final SecondaryWorkitem test = story.createChild(Test);
