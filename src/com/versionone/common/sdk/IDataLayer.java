@@ -17,4 +17,7 @@ public interface IDataLayer {
     List<PrimaryWorkitem> getWorkitemTree() throws DataLayerException;
     boolean hasChanges();
     void commitChanges() throws DataLayerException, ValidatorException;
+    boolean isTrackEffortEnabled();
+    void addProperty(String name, EntityType type, boolean isList);
+    public String localizerResolve(String key);
 }

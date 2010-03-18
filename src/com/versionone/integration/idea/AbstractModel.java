@@ -2,7 +2,8 @@
 package com.versionone.integration.idea;
 
 import com.versionone.common.sdk.IDataLayer;
-import com.versionone.common.oldsdk.TasksProperties;
+import com.versionone.common.sdk.Workitem;
+import com.versionone.common.sdk.PropertyValues;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -15,7 +16,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Vector;
 
 /**
  *
@@ -23,69 +23,79 @@ import java.util.Vector;
 public abstract class AbstractModel extends AbstractTableModel {
 
     protected final IDataLayer data;
+    protected final Configuration configuration;
 
     public AbstractModel(IDataLayer data) {
         this.data = data;
+        configuration = Configuration.getInstance();
     }
 
-    public abstract Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex);
+    public abstract PropertyValues getAvailableValuesAt(int rowIndex, int columnIndex);
 
     public abstract String getColumnName(int column);
 
     public abstract boolean isCellEditable(int rowIndex, int columnIndex);
 
-    protected abstract TasksProperties getProperty(int rowIndex, int columnIndex);
+    protected abstract Configuration.ColumnSetting getProperty(int rowIndex, int columnIndex);
 
     public abstract boolean isRowChanged(int row);
 
     public TableCellEditor getCellEditor(int row, int col) {
-        final Vector<String> values = getAvailableValuesAt(row, col);
-        if (values != null) {
-            final JComboBox comboEditor = new JComboBox(values);
+        Workitem item = getWorkitem();
+        //item.getProperty(.attribute);
+        if (getProperty(row, col).type.equals("String")) {
+            return createTextField(getProperty(row, col).readOnly && item.isPropertyReadOnly((getProperty(row, col).name)));
+        } else if (getProperty(row, col).type.equals("List")) {
+            final PropertyValues values = getAvailableValuesAt(row, col);
+            final JComboBox comboEditor = new JComboBox(values.toArray());
 
             //select current value
             comboEditor.setSelectedItem(getValueAt(row, col));
             comboEditor.setBorder(null);
             return new DefaultCellEditor(comboEditor);
-        } else {
-            // create text field for ID
-            final JTextField textFild = new JTextField();
-            textFild.setEditable(getProperty(row, col).isEditable);
-            textFild.setEnabled(true);
-            textFild.setFocusable(true);
-            textFild.setBorder(new LineBorder(Color.black));
-            // popup menu with copy functionality
-            JPopupMenu menu = new JPopupMenu();
-            JMenuItem menuItem1 = new JMenuItem("Copy");
-            menuItem1.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    // Get the clipboard
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    // Set the sent text as the new content of the clipboard
-                    //clipboard.setContents(new StringSelection(textFild.getText()), null);
-                    textFild.copy();
-                }
-            });
-            menu.add(menuItem1);
-            textFild.add(menu);
-
-            MouseListener popupListener = new PopupListener(menu);
-            textFild.addMouseListener(popupListener);
-
-            return new DefaultCellEditor(textFild);
         }
+
+        return createTextField(true);
+    }
+
+    private DefaultCellEditor createTextField(boolean isReadOnly) {
+        // create text field for ID
+        final JTextField textFild = new JTextField();
+        textFild.setEditable(!isReadOnly);
+        textFild.setEnabled(true);
+        textFild.setFocusable(true);
+        textFild.setBorder(new LineBorder(Color.black));
+        // popup menu with copy functionality
+        JPopupMenu menu = new JPopupMenu();
+        JMenuItem menuItem1 = new JMenuItem("Copy");
+        menuItem1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Get the clipboard
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                // Set the sent text as the new content of the clipboard
+                //clipboard.setContents(new StringSelection(textFild.getText()), null);
+                textFild.copy();
+            }
+        });
+        menu.add(menuItem1);
+        textFild.add(menu);
+
+        MouseListener popupListener = new PopupListener(menu);
+        textFild.addMouseListener(popupListener);
+
+        return new DefaultCellEditor(textFild);
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (getProperty(rowIndex, columnIndex).isEditable) {
-            //TODO Old DataLayer
-            //data.setTaskPropertyValue(getTask(rowIndex, columnIndex), getProperty(rowIndex, columnIndex), (String) aValue);
+        if (!getProperty(rowIndex, columnIndex).readOnly) {
+            getWorkitem().setProperty(getProperty(rowIndex, columnIndex).attribute, aValue);
+
             fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
 
-    protected abstract int getTask(int rowIndex, int columnIndex);
+    protected abstract Workitem getWorkitem();
 
 
     /**

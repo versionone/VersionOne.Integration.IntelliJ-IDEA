@@ -49,6 +49,8 @@ public class TasksComponent implements ProjectComponent {
         this.project = project;
         cfg = settings;
         dataLayer = ApiDataLayer.getInstance();
+        Configuration config = Configuration.getInstance();
+        config.fill();
 
         if (project != null && !project.isDefault()) {
             ActionManager actions = ActionManager.getInstance();
@@ -89,9 +91,6 @@ public class TasksComponent implements ProjectComponent {
     }
 
     private void initToolWindow() {
-        Configuration config = new Configuration();
-        config.fill();
-
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         JPanel contentPanel = createContentPanel();
 
@@ -176,7 +175,7 @@ public class TasksComponent implements ProjectComponent {
      * Temporary method for testing purposes. TODO delete
      */
     public static void main(String[] args) {
-        Configuration config = new Configuration();
+        Configuration config = Configuration.getInstance();
         config.fill();
         TasksComponent plugin = new TasksComponent(null, new WorkspaceSettings());
         JPanel panel = plugin.createContentPanel();

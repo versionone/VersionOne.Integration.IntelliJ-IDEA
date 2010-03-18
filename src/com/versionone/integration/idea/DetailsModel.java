@@ -2,50 +2,37 @@
 package com.versionone.integration.idea;
 
 import com.versionone.common.sdk.IDataLayer;
-import com.versionone.common.oldsdk.TasksProperties;
-import static com.versionone.common.oldsdk.TasksProperties.BUILD;
-import static com.versionone.common.oldsdk.TasksProperties.DESCRIPTION;
-import static com.versionone.common.oldsdk.TasksProperties.DETAIL_ESTIMATE;
-import static com.versionone.common.oldsdk.TasksProperties.DONE;
-import static com.versionone.common.oldsdk.TasksProperties.EFFORT;
-import static com.versionone.common.oldsdk.TasksProperties.OWNER;
-import static com.versionone.common.oldsdk.TasksProperties.PARENT;
-import static com.versionone.common.oldsdk.TasksProperties.PROJECT;
-import static com.versionone.common.oldsdk.TasksProperties.REFERENCE;
-import static com.versionone.common.oldsdk.TasksProperties.SOURCE;
-import static com.versionone.common.oldsdk.TasksProperties.SPRINT;
-import static com.versionone.common.oldsdk.TasksProperties.STATUS;
-import static com.versionone.common.oldsdk.TasksProperties.TITLE;
-import static com.versionone.common.oldsdk.TasksProperties.TO_DO;
-import static com.versionone.common.oldsdk.TasksProperties.TYPE;
+import com.versionone.common.sdk.Workitem;
+import com.versionone.common.sdk.PropertyValues;
+import com.versionone.common.sdk.ApiDataLayer;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DetailsModel extends AbstractModel {
 
-    private static final TasksProperties[] propertiesWithEffort = {BUILD, DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT,
-            OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
-    private static final TasksProperties[] properties = {BUILD, DESCRIPTION, DETAIL_ESTIMATE,
-            OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
+//    private static final TasksProperties[] propertiesWithEffort = {BUILD, DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT,
+//            OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
+//    private static final TasksProperties[] properties = {BUILD, DESCRIPTION, DETAIL_ESTIMATE,
+//            OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
     private static String[] columnsNames = {"Property", "Value"};
+    /*
+     * Info about data for workitem (lazy)
+     */
+    private Configuration.ColumnSetting[] workitemData;
 
-    private int task = Integer.MAX_VALUE;
+    private Workitem workitem;
 
     public DetailsModel(IDataLayer data) {
         super(data);
     }
 
-    public void setTask(int task) {
-        if (task >= 0) {
-            this.task = task;
-        } else {
-            this.task = Integer.MAX_VALUE;
-        }
+    public void setTask(Workitem workitem) {
+        this.workitem = workitem;
     }
 
-    public boolean isTaskSet() {
-        //TODO Old DataLayer
-        return false;//task < data.getTasksCount();
+    public boolean isWorkitemSet() {
+        return workitem != null;
     }
 
     public int getRowCount() {
@@ -56,22 +43,22 @@ public class DetailsModel extends AbstractModel {
         return 2;
     }
 
-    public Vector<String> getAvailableValuesAt(int rowIndex, int columnIndex) {
-        //TODO Old DataLayer
-//        if (columnIndex == 1 && isTaskSet()) {
-//            return data.getPropertyValues(getProperty(rowIndex, columnIndex));
-//        }
+    public PropertyValues getAvailableValuesAt(int rowIndex, int columnIndex) {
+
+        Configuration.ColumnSetting column = getProperty(rowIndex, columnIndex);
+        if (columnIndex == 1 && isWorkitemSet()) {
+            return ApiDataLayer.getInstance().getListPropertyValues(getWorkitem().getType(), column.attribute);
+        }
         return null;
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (columnIndex == 0) {
-            return getProperty(rowIndex, columnIndex).columnName;
+            return data.localizerResolve(getProperty(rowIndex, 0).name);
         }
-        //TODO Old DataLayer
-//        if (isTaskSet()) {
-//            return data.getTaskPropertyValue(task, getProperty(rowIndex, columnIndex));
-//        }
+        if (isWorkitemSet()) {
+            return workitem.getProperty(getProperty(rowIndex, columnIndex).attribute);
+        }
         return null;
     }
 
@@ -85,32 +72,44 @@ public class DetailsModel extends AbstractModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (isTaskSet()) {
+        if (isWorkitemSet() && !workitem.isPropertyReadOnly(getProperty(rowIndex, columnIndex).attribute) && !getProperty(rowIndex, columnIndex).readOnly) {
             super.setValueAt(aValue, rowIndex, columnIndex);
         }
     }
 
     @Override
-    protected int getTask(int rowIndex, int columnIndex) {
-        return task;
+    protected Workitem getWorkitem() {
+        return workitem;
     }
 
     public boolean isRowChanged(int rowIndex) {
         boolean result = false;
-        //TODO Old DataLayer
-//        if (isTaskSet()) {
-//            result = data.isPropertyChanged(task, getProperty(rowIndex, -1));
-//        }
+        if (isWorkitemSet()) {
+            result = workitem.isPropertyChanged(getProperty(rowIndex, 1).attribute);
+        }
         return result;
     }
 
-    protected TasksProperties getProperty(int rowIndex, int columnIndex) {
-        //TODO Old DataLayer
-        return null;//data.isTrackEffort() ? propertiesWithEffort[rowIndex] : properties[rowIndex];
+    protected Configuration.ColumnSetting getProperty(int rowIndex, int columnIndex) {
+        return getWorkitemData()[rowIndex];
     }
 
     public int getPropertiesCount() {
-        //TODO Old DataLayer
-        return 0;//data.isTrackEffort() ? propertiesWithEffort.length : properties.length;
+        return getWorkitemData().length;
+    }
+
+
+    private Configuration.ColumnSetting[] getWorkitemData() {
+        if (workitemData == null) {
+            final Configuration.ColumnSetting[] columns = configuration.getColumns(getWorkitem().getType());
+            final List<Configuration.ColumnSetting> workitemData = new ArrayList<Configuration.ColumnSetting>(columns.length);
+            for (Configuration.ColumnSetting column : columns) {
+                if (!column.effortTracking || ApiDataLayer.getInstance().isTrackEffortEnabled()) {
+                    workitemData.add(column);
+                }
+            }
+            this.workitemData = workitemData.toArray(new Configuration.ColumnSetting[workitemData.size()]); 
+        }
+        return workitemData;
     }
 }

@@ -11,9 +11,9 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.Table;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.util.ui.treetable.TreeTable;
-import com.intellij.util.ui.treetable.TreeTableModel;
 import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.sdk.ApiDataLayer;
+import com.versionone.common.sdk.DataLayerException;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -37,9 +37,11 @@ public class DetailsComponent implements ProjectComponent {
     private Table table;
     private DetailsModel model;
     private TableModelListener tableChangesListener;
+    private WorkspaceSettings settings;
 
 
     public DetailsComponent(Project project, WorkspaceSettings settings) {
+        this.settings = settings;
         this.project = project;
     }
 
@@ -57,7 +59,8 @@ public class DetailsComponent implements ProjectComponent {
                 ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                 int index = lsm.getMinSelectionIndex();
 
-                model.setTask(index);
+                //model.setTask(dataLayer.getWorkitemTree().get(0));
+
                 update();
             }
         };
@@ -118,7 +121,15 @@ public class DetailsComponent implements ProjectComponent {
 
     JPanel createContentPanel(IDataLayer dataLayer) {
         model = new DetailsModel(dataLayer);
-        table = new Table(model);
+        table = new DetailsTable(model);
+        //test version 
+        try {
+            dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
+            model.setTask(dataLayer.getWorkitemTree().get(0));
+        } catch (DataLayerException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        //\\
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
@@ -132,7 +143,15 @@ public class DetailsComponent implements ProjectComponent {
     }
 
     public void setCurrentTask(int task) {
-        model.setTask(task);
+        //model.setTask(task);
+        ApiDataLayer dataLayer = ApiDataLayer.getInstance();
+        try {
+            dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
+            model.setTask(dataLayer.getWorkitemTree().get(0));
+        } catch (DataLayerException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
         table.repaint();
     }
 

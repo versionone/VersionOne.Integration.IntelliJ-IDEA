@@ -9,7 +9,9 @@ import java.awt.*;
 
 public class DetailsComponentTester {
 
-    public static void main(String[] args) throws DataLayerException {
+    public static void main(String[] args) throws Exception {
+        Configuration config = Configuration.getInstance();
+        config.fill();
         final WorkspaceSettings settings = new WorkspaceSettings();
         DetailsComponent plugin = new DetailsComponent(null, settings);
         final IDataLayer data = ApiDataLayer.getInstance();
