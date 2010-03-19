@@ -43,8 +43,8 @@ public abstract class AbstractModel extends AbstractTableModel {
     public TableCellEditor getCellEditor(int row, int col) {
         Workitem item = getWorkitem();
         //item.getProperty(.attribute);
-        if (getProperty(row, col).type.equals("String")) {
-            return createTextField(getProperty(row, col).readOnly && item.isPropertyReadOnly((getProperty(row, col).name)));
+        if (getProperty(row, col).type.equals("String")  || getProperty(row, col).type.equals("Effort")) {
+            return createTextField(getProperty(row, col).readOnly || item.isPropertyReadOnly((getProperty(row, col).attribute)));
         } else if (getProperty(row, col).type.equals("List")) {
             final PropertyValues values = getAvailableValuesAt(row, col);
             final JComboBox comboEditor = new JComboBox(values.toArray());

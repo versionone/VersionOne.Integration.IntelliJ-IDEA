@@ -59,7 +59,7 @@ public class DetailsComponent implements ProjectComponent {
                 ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                 int index = lsm.getMinSelectionIndex();
 
-                //model.setTask(dataLayer.getWorkitemTree().get(0));
+                //model.setWorkitem(dataLayer.getWorkitemTree().get(0));
 
                 update();
             }
@@ -125,7 +125,7 @@ public class DetailsComponent implements ProjectComponent {
         //test version 
         try {
             dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
-            model.setTask(dataLayer.getWorkitemTree().get(0));
+            model.setWorkitem(dataLayer.getWorkitemTree().get(0).children.get(0));
         } catch (DataLayerException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -143,11 +143,11 @@ public class DetailsComponent implements ProjectComponent {
     }
 
     public void setCurrentTask(int task) {
-        //model.setTask(task);
+        //model.setWorkitem(task);
         ApiDataLayer dataLayer = ApiDataLayer.getInstance();
         try {
             dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
-            model.setTask(dataLayer.getWorkitemTree().get(0));
+            model.setWorkitem(dataLayer.getWorkitemTree().get(0));
         } catch (DataLayerException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

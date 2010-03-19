@@ -27,7 +27,7 @@ public class DetailsModel extends AbstractModel {
         super(data);
     }
 
-    public void setTask(Workitem workitem) {
+    public void setWorkitem(Workitem workitem) {
         this.workitem = workitem;
     }
 
