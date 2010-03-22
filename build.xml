@@ -276,10 +276,10 @@
     </target>
 
     <target name="clean"
-        depends="compile.clean,package.clean,build.clean,coverage.clean,gendoc.clean"
+        depends="compile.clean, package.clean, build.clean, coverage.clean, gendoc.clean"
         description="cleanup all"/>
 
-    <target name="ccnet.build" depends="init, clean, coverage,gendoc,plugin.package.idea"
+    <target name="ccnet.build" depends="init, clean, coverage, gendoc, plugin.package.idea"
         description="build all"/>
 
     <target name="patchTo9">
@@ -296,5 +296,5 @@
         </replace>
     </target>
 
-    <target name="ccnet.build.8" depends="patchTo8,ccnet.build"/>
+    <target name="build.9" depends="patchTo9, ccnet.build"/>
 </project>
