@@ -24,9 +24,11 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
 
 public class TasksComponent implements ProjectComponent {
@@ -42,7 +44,7 @@ public class TasksComponent implements ProjectComponent {
     private TasksTable table;
     private final IDataLayer dataLayer;
     private TableModelListener tableChangesListener;
-    private ListSelectionListener tableSelectionListener;
+    private TreeSelectionListener tableSelectionListener;
 
 
     public TasksComponent(Project project, WorkspaceSettings settings) {
@@ -153,9 +155,10 @@ public class TasksComponent implements ProjectComponent {
         final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()));
         table.setRootVisible(false);
         table.setShowGrid(true);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         //table.getModel().addTableModelListener(tableChangesListener);
         //table.getSelectionModel().addListSelectionListener(tableSelectionListener);
+        table.getTree().addTreeSelectionListener(tableSelectionListener);
         return table;
     }
 
@@ -195,10 +198,20 @@ public class TasksComponent implements ProjectComponent {
         }
     }
 
+    /*
     public void registerTableSelectListener(ListSelectionListener selectionListener) {
         tableSelectionListener = selectionListener;
         if (table != null) {
             table.getSelectionModel().addListSelectionListener(tableSelectionListener);
         }
+    }*/
+
+    public void registerTableSelectListener(TreeSelectionListener selectionListener) {
+        if (table != null) {
+            table.getTree().removeTreeSelectionListener(tableSelectionListener);
+            table.getTree().addTreeSelectionListener(selectionListener);
+        }
+        tableSelectionListener = selectionListener;
     }
+
 }

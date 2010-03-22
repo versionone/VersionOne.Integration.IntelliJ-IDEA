@@ -14,15 +14,19 @@ import com.intellij.util.ui.UIUtil;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.DataLayerException;
+import com.versionone.common.sdk.Workitem;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
 import java.awt.*;
 
 public class DetailsComponent implements ProjectComponent {
@@ -54,6 +58,7 @@ public class DetailsComponent implements ProjectComponent {
             }
         };
 
+        /*
         ListSelectionListener selectListener = new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 ListSelectionModel lsm = (ListSelectionModel) e.getSource();
@@ -62,6 +67,16 @@ public class DetailsComponent implements ProjectComponent {
                 //model.setWorkitem(dataLayer.getWorkitemTree().get(0));
 
                 update();
+            }
+        };*/
+
+        TreeSelectionListener selectListener = new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent e){
+                System.out.println(e);
+                if (e.getNewLeadSelectionPath() != null && (!model.isWorkitemSet() || !model.getWorkitem().equals(e.getNewLeadSelectionPath().getLastPathComponent()))) {
+                    model.setWorkitem((Workitem)e.getNewLeadSelectionPath().getLastPathComponent());
+                    update();
+                }
             }
         };
 
@@ -127,14 +142,14 @@ public class DetailsComponent implements ProjectComponent {
     JPanel createContentPanel(IDataLayer dataLayer) {
         model = new DetailsModel(dataLayer);
         //test version
-        try {
-            dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
-            model.setWorkitem(dataLayer.getWorkitemTree().get(0).children.get(0));
-        } catch (DataLayerException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();  //thrown when no pri/sec workitems.
-        }
+//        try {
+//            dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
+//            model.setWorkitem(dataLayer.getWorkitemTree().get(0).children.get(0));
+//        } catch (DataLayerException e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        } catch (IndexOutOfBoundsException e) {
+//            e.printStackTrace();  //thrown when no pri/sec workitems.
+//        }
         //\\
         table = new DetailsTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

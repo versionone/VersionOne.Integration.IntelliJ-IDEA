@@ -28,6 +28,9 @@ public class DetailsModel extends AbstractModel {
     }
 
     public void setWorkitem(Workitem workitem) {
+        if (this.workitem == null || !workitem.getType().equals(this.workitem.getType())) {
+            workitemData = null;
+        }
         this.workitem = workitem;
     }
 
@@ -36,7 +39,10 @@ public class DetailsModel extends AbstractModel {
     }
 
     public int getRowCount() {
-        return getPropertiesCount();
+        if (isWorkitemSet()) {
+            return getPropertiesCount();
+        }
+        return 0;
     }
 
     public int getColumnCount() {
