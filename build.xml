@@ -90,7 +90,7 @@
         <mkdir dir="${bin.product.dir}"/>
         <javac2 destdir="${bin.product.dir}" debug="${compiler.debug}"
             nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}"
-            fork="true" executable="${java.dir}/javac" target="1.5">
+            fork="true" target="1.5">
             <compilerarg line="${compiler.args}"/>
             <!--<bootclasspath refid="idea.module.bootclasspath"/>-->
             <classpath refid="classpath"/>
@@ -192,7 +192,7 @@
             </fileset>
         </cobertura-instrument>
 
-        <junit fork="true" printsummary="withOutAndErr" jvm="${java.dir}\..\jre\bin\java.exe">
+        <junit fork="true" printsummary="withOutAndErr">
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${coverage.file}"/>
             <!--<sysproperty key="test.websiteurl" value="${test.websiteurl}"/>-->
 
