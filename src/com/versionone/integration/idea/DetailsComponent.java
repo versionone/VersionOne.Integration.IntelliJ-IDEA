@@ -121,15 +121,17 @@ public class DetailsComponent implements ProjectComponent {
 
     JPanel createContentPanel(IDataLayer dataLayer) {
         model = new DetailsModel(dataLayer);
-        table = new DetailsTable(model);
-        //test version 
+        //test version
         try {
             dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
             model.setWorkitem(dataLayer.getWorkitemTree().get(0).children.get(0));
         } catch (DataLayerException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();  //thrown when no pri/sec workitems.
         }
         //\\
+        table = new DetailsTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
