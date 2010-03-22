@@ -1,11 +1,10 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea.actions;
 
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -13,7 +12,6 @@ import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.TasksComponent;
-import com.versionone.integration.idea.V1PluginException;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -31,8 +29,7 @@ public class SaveData extends AnAction {
         System.out.println("Save.actionPerformed()");
 
         final DataContext dataContext = e.getDataContext();
-//        final Project ideaProject = (Project) dataContext.getData(DataConstantsEx.PROJECT);
-        Project ideaProject = DataKeys.PROJECT.getData(dataContext);
+        Project ideaProject = PlatformDataKeys.PROJECT.getData(dataContext);
 
         if (ideaProject == null && project == null) {
             return;
@@ -60,7 +57,7 @@ public class SaveData extends AnAction {
                     LOG.warn(isError[1],ex);
                 } catch (Exception e1) {
                     isError[0] = true;
-                    isError[1] = "Error connecting to VesionOne";
+                    isError[1] = "Error connecting to VersionOne";
                     isError[2] = true;
                     LOG.warn(isError[1],e1);
                 }
@@ -77,7 +74,7 @@ public class SaveData extends AnAction {
             return;
         }
 
-        //ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+        //TODO ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
         Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
     }
 

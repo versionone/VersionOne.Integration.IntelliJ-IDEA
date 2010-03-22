@@ -54,6 +54,7 @@ public class TasksComponent implements ProjectComponent {
         Configuration config = Configuration.getInstance();
         config.fill();
 
+        //TODO remove. Actions must get Project from AnActionEvent.DataContext
         if (project != null && !project.isDefault()) {
             ActionManager actions = ActionManager.getInstance();
             ((FilterAction) actions.getAction("Filter")).setSettings(cfg);
@@ -132,7 +133,7 @@ public class TasksComponent implements ProjectComponent {
         }
     }
 
-    private JPanel createContentPanel() {
+    JPanel createContentPanel() {
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
         try {
@@ -174,23 +175,6 @@ public class TasksComponent implements ProjectComponent {
         return dataLayer;
     }
 
-    /**
-     * Temporary method for testing purposes. TODO delete
-     */
-    public static void main(String[] args) {
-        Configuration config = Configuration.getInstance();
-        config.fill();
-        TasksComponent plugin = new TasksComponent(null, new WorkspaceSettings());
-        JPanel panel = plugin.createContentPanel();
-        JFrame frame = new JFrame("IDEA V1 Plugin");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(800, 100));
-        frame.add(panel);
-        frame.pack();
-        frame.show();
-        frame.setVisible(true);
-    }
-
     public void registerTableChangeListener(TableModelListener listener) {
         tableChangesListener = listener;
         if (table != null) {
@@ -213,5 +197,4 @@ public class TasksComponent implements ProjectComponent {
         }
         tableSelectionListener = selectionListener;
     }
-
 }
