@@ -279,7 +279,7 @@
         depends="compile.clean,package.clean,build.clean,coverage.clean,gendoc.clean"
         description="cleanup all"/>
 
-    <target name="ccnet.build" depends="patchTo9, init, clean, coverage,gendoc,plugin.package.idea"
+    <target name="ccnet.build" depends="init, clean, coverage,gendoc,plugin.package.idea"
         description="build all"/>
 
     <target name="patchTo9">
