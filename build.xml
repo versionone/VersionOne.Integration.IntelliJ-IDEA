@@ -279,6 +279,22 @@
         depends="compile.clean,package.clean,build.clean,coverage.clean,gendoc.clean"
         description="cleanup all"/>
 
-    <target name="ccnet.build" depends="init, clean, coverage,gendoc,plugin.package.idea"
+    <target name="ccnet.build" depends="patchTo9, init, clean, coverage,gendoc,plugin.package.idea"
         description="build all"/>
+
+    <target name="patchTo9">
+        <replace dir="${src.dir}" token="com.intellij.util.ui.treetable"
+                 value="com.intellij.ui.treeStructure.treetable">
+            <include name="**/*.java"/>
+        </replace>
+    </target>
+
+    <target name="patchTo8">
+        <replace dir="${src.dir}" token="com.intellij.ui.treeStructure.treetable"
+                 value="com.intellij.util.ui.treetable">
+            <include name="**/*.java"/>
+        </replace>
+    </target>
+
+    <target name="ccnet.build.8" depends="patchTo8,ccnet.build"/>
 </project>
