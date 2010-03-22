@@ -95,7 +95,12 @@ public class DetailsComponent implements ProjectComponent {
     }
 
     private void initToolWindow() {
-        IDataLayer dataLayer = project.getComponent(TasksComponent.class).getDataLayer();
+        final TasksComponent tasksComponent = project.getComponent(TasksComponent.class);
+        if (tasksComponent == null) {
+            throw new IllegalStateException("Cannot access " + TasksComponent.TOOL_WINDOW_ID + " component." +
+                    " May be you use wrong versions of VersionOne plugin.");
+        }
+        IDataLayer dataLayer = tasksComponent.getDataLayer();
         JPanel contentPanel = createContentPanel(dataLayer);
 
 //        ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction(COMPONENT_NAME);
