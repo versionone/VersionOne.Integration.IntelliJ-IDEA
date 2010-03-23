@@ -293,12 +293,20 @@
                  value="com.intellij.ui.treeStructure.treetable">
             <include name="**/*.java"/>
         </replace>
+        <replace file="${base.dir}/META-INF/plugin.xml">
+            <replacetoken><![CDATA[<idea-version since-build="7000" until-build="10000"/>]]></replacetoken>
+            <replacevalue><![CDATA[<idea-version since-build="10000"/>]]></replacevalue>
+        </replace>
     </target>
 
     <target name="patchTo8">
         <replace dir="${src.dir}" token="com.intellij.ui.treeStructure.treetable"
                  value="com.intellij.util.ui.treetable">
             <include name="**/*.java"/>
+        </replace>
+        <replace file="${base.dir}/META-INF/plugin.xml">
+            <replacetoken><![CDATA[<idea-version since-build="10000"/>]]></replacetoken>
+            <replacevalue><![CDATA[<idea-version since-build="7000" until-build="10000"/>]]></replacevalue>
         </replace>
     </target>
 

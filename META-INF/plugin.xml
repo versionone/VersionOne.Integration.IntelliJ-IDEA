@@ -19,7 +19,7 @@
 
     <category>Tools Integration</category>
 
-    <idea-version since-build="7000"/>
+    <idea-version since-build="7000" until-build="10000"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceInterface="com.versionone.integration.idea.WorkspaceSettings"
