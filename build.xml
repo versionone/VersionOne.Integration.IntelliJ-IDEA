@@ -141,6 +141,12 @@
         <mkdir dir="${publish.lib.dir}"/>
 
         <copy file="${distr.dir}/${jar.filename}" todir="${publish.lib.dir}"/>
+        <copy file="${lib.dir}/jaxb-api.jar"
+            tofile="${publish.lib.dir}/jaxb-api.jar"/>
+        <copy file="${lib.dir}/jaxb-impl.jar"
+            tofile="${publish.lib.dir}/jaxb-impl.jar"/>
+        <copy file="${lib.dir}/jaxen-1.1-beta-8.jar"
+            tofile="${publish.lib.dir}/jaxen-1.1-beta-8.jar"/>
         <copy file="${lib.dir}/VersionOne.APIClient.jar"
             tofile="${publish.lib.dir}/VersionOne.APIClient.jar"/>
 
