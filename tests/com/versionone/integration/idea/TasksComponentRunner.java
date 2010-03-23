@@ -3,7 +3,7 @@ package com.versionone.integration.idea;
 import javax.swing.*;
 import java.awt.*;
 
-public class TasksComponentTester {
+public class TasksComponentRunner {
 
     public static void main(String[] args) {
         Configuration config = Configuration.getInstance();

@@ -7,7 +7,7 @@ import com.versionone.common.sdk.IDataLayer;
 import javax.swing.*;
 import java.awt.*;
 
-public class DetailsComponentTester {
+public class DetailsComponentRunner {
 
     public static void main(String[] args) throws Exception {
         Configuration config = Configuration.getInstance();
