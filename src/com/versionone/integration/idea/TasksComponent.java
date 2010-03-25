@@ -113,6 +113,8 @@ public class TasksComponent implements ProjectComponent {
         if (content != null) {
             content.setDisplayName(cfg.projectName);
         }
+        table.getTree().revalidate();
+        table.getTree().updateUI();
         table.createDefaultColumnsFromModel();
         table.revalidate();
         table.repaint();
@@ -160,6 +162,7 @@ public class TasksComponent implements ProjectComponent {
         //table.getModel().addTableModelListener(tableChangesListener);
         //table.getSelectionModel().addListSelectionListener(tableSelectionListener);
         table.getTree().addTreeSelectionListener(tableSelectionListener);
+        table.getTree().setShowsRootHandles(true);
         return table;
     }
 

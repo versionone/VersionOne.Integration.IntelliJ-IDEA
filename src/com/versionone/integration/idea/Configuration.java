@@ -28,7 +28,8 @@ public class Configuration {
 
     @XmlElement(name = "APIVersion")
     public final String apiVersion = "8.3";
-    // private GridSettings gridSettings = new GridSettings();
+    @XmlElement(name = "GridSettings")
+    public final GridSettings gridSettings = new GridSettings();
     @XmlElement(name = "AssetDetail")
     public final AssetDetailSettings assetDetailSettings = new AssetDetailSettings();
     @XmlElement(name = "ProjectTree")
@@ -65,6 +66,12 @@ public class Configuration {
         setAttributes(assetDetailSettings.testColumns, Test);
         setAttributes(assetDetailSettings.taskColumns, Task);
         setAttributes(projectTreeSettings.projectColumns, Scope);
+
+        setAttributes(gridSettings.workitemColumns, Defect);
+        setAttributes(gridSettings.workitemColumns, Story);
+        setAttributes(gridSettings.workitemColumns, Test);
+        setAttributes(gridSettings.workitemColumns, Task);
+        /*
         final Map<String, Boolean> properties = new HashMap<String, Boolean>();
         properties.put(Entity.ID_PROPERTY, false);
         properties.put(Entity.NAME_PROPERTY, false);
@@ -88,6 +95,7 @@ public class Configuration {
             }
         }
         //dataLayer.addProperty(Project.NAME_PROPERTY, Scope, false);
+        */
     }
 
     private static void setAttributes(ColumnSetting[] columns, EntityType type) {
@@ -185,5 +193,15 @@ public class Configuration {
         } else {
             throw new IllegalArgumentException("Unknown type: " + type);
         }
+    }
+
+    public ColumnSetting[] getColumnsForMainTable() {
+        return gridSettings.workitemColumns;
+    }
+
+    private static class GridSettings {
+        @XmlElementWrapper(name = "Columns")
+        @XmlElement(name = "ColumnSetting")
+        public ColumnSetting[] workitemColumns;
     }
 }

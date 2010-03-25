@@ -20,7 +20,6 @@ public class DetailsModel extends AbstractModel {
      * Info about data for workitem (lazy)
      */
     private Configuration.ColumnSetting[] workitemData;
-
     private Workitem workitem;
 
     public DetailsModel(IDataLayer data) {
@@ -28,7 +27,7 @@ public class DetailsModel extends AbstractModel {
     }
 
     public void setWorkitem(Workitem workitem) {
-        if (this.workitem == null || !workitem.getType().equals(this.workitem.getType())) {
+        if (this.workitem == null || workitem == null || !workitem.getType().equals(this.workitem.getType())) {
             workitemData = null;
         }
         this.workitem = workitem;

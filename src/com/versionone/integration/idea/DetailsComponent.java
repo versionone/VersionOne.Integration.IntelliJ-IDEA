@@ -72,11 +72,13 @@ public class DetailsComponent implements ProjectComponent {
 
         TreeSelectionListener selectListener = new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e){
-                System.out.println(e);
-                if (e.getNewLeadSelectionPath() != null && (!model.isWorkitemSet() || !model.getWorkitem().equals(e.getNewLeadSelectionPath().getLastPathComponent()))) {
+                if (e.getNewLeadSelectionPath() != null && e.getNewLeadSelectionPath().getLastPathComponent() instanceof Workitem && 
+                        (!model.isWorkitemSet() || !model.getWorkitem().equals(e.getNewLeadSelectionPath().getLastPathComponent()))) {
                     model.setWorkitem((Workitem)e.getNewLeadSelectionPath().getLastPathComponent());
-                    update();
+                } else {
+                    model.setWorkitem(null);
                 }
+                update();
             }
         };
 
