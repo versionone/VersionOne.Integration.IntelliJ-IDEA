@@ -15,6 +15,7 @@ import java.util.HashMap;
  */
 public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
     private final Map<EntityType, Icon> icons;
+
     public WorkItemTreeTableCellRenderer() {
         icons = new HashMap<EntityType, Icon>();
 
@@ -24,6 +25,10 @@ public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
         icons.put(EntityType.Task, new ImageIcon("res/task.gif"));
     }
 
+    /**
+     * Sets specify icon for tree.
+     * @param icon - icon for nodes.
+     */
     private void setWorkitemIcon(Icon icon) {
         setIcon(icon);
         setOpenIcon(icon);

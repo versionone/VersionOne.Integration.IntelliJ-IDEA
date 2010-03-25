@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.TreeSelectionModel;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.TreeSelectionListener;
@@ -157,7 +156,7 @@ public class TasksComponent implements ProjectComponent {
         //final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()));
         final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()));
         table.setRootVisible(false);
-        table.setShowGrid(true);
+        table.setShowGrid(false);
         table.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         //table.getModel().addTableModelListener(tableChangesListener);
         //table.getSelectionModel().addListSelectionListener(tableSelectionListener);

@@ -11,10 +11,6 @@ import java.util.List;
 
 public class DetailsModel extends AbstractModel {
 
-//    private static final TasksProperties[] propertiesWithEffort = {BUILD, DESCRIPTION, DETAIL_ESTIMATE, DONE, EFFORT,
-//            OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
-//    private static final TasksProperties[] properties = {BUILD, DESCRIPTION, DETAIL_ESTIMATE,
-//            OWNER, PARENT, PROJECT, REFERENCE, SOURCE, SPRINT, STATUS, TITLE, TO_DO, TYPE};
     private static String[] columnsNames = {"Property", "Value"};
     /*
      * Info about data for workitem (lazy)

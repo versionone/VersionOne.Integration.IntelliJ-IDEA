@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

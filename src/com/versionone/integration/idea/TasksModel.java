@@ -1,28 +1,15 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
-import com.versionone.common.oldsdk.IDataLayer;
-import com.versionone.common.oldsdk.TasksProperties;
-import static com.versionone.common.oldsdk.TasksProperties.DETAIL_ESTIMATE;
-import static com.versionone.common.oldsdk.TasksProperties.DONE;
-import static com.versionone.common.oldsdk.TasksProperties.EFFORT;
-import static com.versionone.common.oldsdk.TasksProperties.ID;
-import static com.versionone.common.oldsdk.TasksProperties.PARENT;
-import static com.versionone.common.oldsdk.TasksProperties.STATUS;
-import static com.versionone.common.oldsdk.TasksProperties.TITLE;
-import static com.versionone.common.oldsdk.TasksProperties.TO_DO;
+
 import com.versionone.common.sdk.ApiDataLayer;
-import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.common.sdk.Workitem;
 
 import com.intellij.util.ui.treetable.TreeTableModel;
 
-import javax.swing.tree.TreePath;
-import javax.swing.event.TreeModelListener;
 import javax.swing.*;
-import java.util.Vector;
-import java.util.Date;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
