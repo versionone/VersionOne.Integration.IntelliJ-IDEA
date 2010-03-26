@@ -90,7 +90,7 @@
         <mkdir dir="${bin.product.dir}"/>
         <javac2 destdir="${bin.product.dir}" debug="${compiler.debug}"
             nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}"
-            fork="true" target="1.6" executable="${java.dir}/javac">
+            fork="true">
             <compilerarg line="${compiler.args}"/>
             <!--<bootclasspath refid="idea.module.bootclasspath"/>-->
             <classpath refid="classpath"/>
@@ -143,6 +143,13 @@
         <copy file="${distr.dir}/${jar.filename}" todir="${publish.lib.dir}"/>
         <copy file="${lib.dir}/VersionOne.APIClient.jar"
             tofile="${publish.lib.dir}/VersionOne.APIClient.jar"/>
+
+        <copy file="${lib.dir}/jaxb-api.jar"
+            tofile="${publish.lib.dir}/jaxb-api.jar"/>
+        <copy file="${lib.dir}/jaxb-impl.jar"
+            tofile="${publish.lib.dir}/jaxb-impl.jar"/>
+        <copy file="${lib.dir}/jsr173_1.0_api.jar"
+            tofile="${publish.lib.dir}/jsr173_1.0_api.jar"/>
 
 		<move todir="${publish.lib.dir}/../doc">
 			<fileset dir="${doc.dir}"/>
