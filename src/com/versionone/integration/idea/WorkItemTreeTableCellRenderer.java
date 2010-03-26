@@ -3,6 +3,7 @@ package com.versionone.integration.idea;
 
 import com.versionone.common.sdk.Workitem;
 import com.versionone.common.sdk.EntityType;
+import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -19,10 +20,10 @@ public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
     public WorkItemTreeTableCellRenderer() {
         icons = new HashMap<EntityType, Icon>();
 
-        icons.put(EntityType.Defect, new ImageIcon("res/defect.gif"));
-        icons.put(EntityType.Story, new ImageIcon("res/story.gif"));
-        icons.put(EntityType.Test, new ImageIcon("res/test.gif"));
-        icons.put(EntityType.Task, new ImageIcon("res/task.gif"));
+        icons.put(EntityType.Defect, IconLoader.getIcon("/defect.gif"));
+        icons.put(EntityType.Story, IconLoader.getIcon("/story.gif"));
+        icons.put(EntityType.Test, IconLoader.getIcon("/test.gif"));
+        icons.put(EntityType.Task, IconLoader.getIcon("/task.gif"));
     }
 
     /**
@@ -45,7 +46,7 @@ public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
         Object newValue = "***ERROR***";
         if (value instanceof Workitem) {
             newValue = ((Workitem)value).getProperty("Name");
-            //setWorkitemIcon(icons.get(((Workitem)value).getType()));
+            setWorkitemIcon(icons.get(((Workitem)value).getType()));
         }        
         return super.getTreeCellRendererComponent(tree, newValue, sel, expanded, leaf, row, hasFocus);
     }
