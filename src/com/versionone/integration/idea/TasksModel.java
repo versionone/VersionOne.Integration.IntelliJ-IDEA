@@ -56,7 +56,6 @@ public class TasksModel extends AbstractTreeTableModel {
 
     public Object getValueAt(Object node, int column) {
         if (node instanceof Workitem) {
-
             return ((Workitem)node).getProperty(getProperty(-1, column).attribute);
         }
         
@@ -64,12 +63,13 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     public void setValueAt(Object aValue, Object node, int column) {
+        // TODO
         System.out.println(aValue.toString());
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public boolean isRowChanged(int row) {
-        return false;
+    public boolean isRowChanged(int row, Object lastTreePathComponent) {
+        Workitem item = (Workitem) lastTreePathComponent;
+        return item.hasChanges();
     }
 
     protected Configuration.ColumnSetting getProperty(int rowIndex, int columnIndex) {

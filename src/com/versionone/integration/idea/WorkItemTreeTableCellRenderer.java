@@ -1,6 +1,9 @@
 /*(c) Copyright 2010, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
+import com.intellij.openapi.editor.colors.ColorKey;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.versionone.common.sdk.Workitem;
 import com.versionone.common.sdk.EntityType;
 import com.intellij.openapi.util.IconLoader;
@@ -16,6 +19,8 @@ import java.util.HashMap;
  */
 public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
     private final Map<EntityType, Icon> icons;
+    private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
+    private final Color defaultForeColor = getForeground();
 
     public WorkItemTreeTableCellRenderer() {
         icons = new HashMap<EntityType, Icon>();
@@ -44,10 +49,24 @@ public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
 						  boolean hasFocus) {
 
         Object newValue = "***ERROR***";
+        Workitem item = null;
+
         if (value instanceof Workitem) {
-            newValue = ((Workitem)value).getProperty("Name");
+            item = (Workitem) value;
+            newValue = item.getProperty("Name");
             setWorkitemIcon(icons.get(((Workitem)value).getType()));
-        }        
+        }
+        
+        if(item != null) {
+            if (item.hasChanges()) {
+                setBackgroundNonSelectionColor(colorsScheme.getColor(ColorKey.find("V1_CHANGED_ROW")));
+                setForeground(Color.black);
+            } else {
+                setBackgroundNonSelectionColor(getBackground());
+                setForeground(defaultForeColor);
+            }
+        }
+
         return super.getTreeCellRendererComponent(tree, newValue, sel, expanded, leaf, row, hasFocus);
     }
 }
