@@ -140,7 +140,7 @@ public class TasksComponent implements ProjectComponent {
         try {
             table = createTable();
         } catch (DataLayerException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         panel.add(new JScrollPane(table));
         return panel;
@@ -148,15 +148,17 @@ public class TasksComponent implements ProjectComponent {
 
     private TasksTable createTable() throws DataLayerException {
         ApiDataLayer dataLayer = ApiDataLayer.getInstance();
+
         try {
             dataLayer.connect(cfg.v1Path, cfg.user, cfg.passwd, cfg.isWindowsIntegratedAuthentication);
         } catch (DataLayerException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
-        //final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()));
+
         final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()));
         table.setRootVisible(false);
-        table.setShowGrid(false);
+        table.setShowGrid(true);
+        table.setIntercellSpacing(new Dimension(1, 1));        
         table.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         //table.getModel().addTableModelListener(tableChangesListener);
         //table.getSelectionModel().addListSelectionListener(tableSelectionListener);
