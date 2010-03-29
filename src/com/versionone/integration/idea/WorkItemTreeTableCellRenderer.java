@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- * Render for workitems in tree. 
+ * Renderer for workitems in tree.
  */
 public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
     private final Map<EntityType, Icon> icons;
@@ -33,6 +33,7 @@ public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
 
     /**
      * Sets specify icon for tree.
+     *
      * @param icon - icon for nodes.
      */
     private void setWorkitemIcon(Icon icon) {
@@ -43,28 +44,22 @@ public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
     }
 
     public Component getTreeCellRendererComponent(JTree tree, Object value,
-						  boolean sel,
-						  boolean expanded,
-						  boolean leaf, int row,
-						  boolean hasFocus) {
+                                                  boolean sel,
+                                                  boolean expanded,
+                                                  boolean leaf, int row,
+                                                  boolean hasFocus) {
 
-        Object newValue = "***ERROR***";
-        Workitem item = null;
+        Workitem item = (Workitem) value;
 
-        if (value instanceof Workitem) {
-            item = (Workitem) value;
-            newValue = item.getProperty("Name");
-            setWorkitemIcon(icons.get(((Workitem)value).getType()));
-        }
-        
-        if(item != null) {
-            if (item.hasChanges()) {
-                setBackgroundNonSelectionColor(colorsScheme.getColor(ColorKey.find("V1_CHANGED_ROW")));
-                setForeground(Color.black);
-            } else {
-                setBackgroundNonSelectionColor(getBackground());
-                setForeground(defaultForeColor);
-            }
+        Object newValue = item.getProperty("Name");
+        setWorkitemIcon(icons.get(item.getType()));
+
+        if (item.hasChanges()) {
+            setBackgroundNonSelectionColor(colorsScheme.getColor(ColorKey.find("V1_CHANGED_ROW")));
+            setForeground(Color.black);
+        } else {
+            setBackgroundNonSelectionColor(getBackground());
+            setForeground(defaultForeColor);
         }
 
         return super.getTreeCellRendererComponent(tree, newValue, sel, expanded, leaf, row, hasFocus);
