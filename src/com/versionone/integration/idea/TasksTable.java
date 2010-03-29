@@ -24,7 +24,7 @@ public class TasksTable extends TreeTable {
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int vColIndex) {
         Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
-        System.out.println("row " + rowIndex + ", col " + vColIndex + ", converted " + convertRowIndexToModel(rowIndex));
+        
         if (rowIndex != getSelectedRow()) {
             TasksModel model = (TasksModel) getTableModel();
             Object lastPathComponent = getTree().getPathForRow(rowIndex).getLastPathComponent();
