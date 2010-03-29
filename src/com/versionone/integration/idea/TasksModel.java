@@ -30,7 +30,7 @@ public class TasksModel extends AbstractTreeTableModel {
 
     public TasksModel(List<PrimaryWorkitem> data) {
         super("root");
-        workitems = data;
+        update(data);
         configuration = Configuration.getInstance();
         cTypes.put(Configuration.AssetDetailSettings.STRING_TYPE, String.class);
         cTypes.put(Configuration.AssetDetailSettings.LIST_TYPE, JComboBox.class);
@@ -60,6 +60,10 @@ public class TasksModel extends AbstractTreeTableModel {
         }
         
         return null;
+    }
+
+    public void update(List<PrimaryWorkitem> data) {
+        workitems = data;
     }
 
     public void setValueAt(Object aValue, Object node, int column) {

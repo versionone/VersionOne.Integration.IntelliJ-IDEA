@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
@@ -36,11 +37,12 @@ public class TasksComponent implements ProjectComponent {
     @NonNls
     public static final String TOOL_WINDOW_ID = "V1Integration";
 
+    private TasksTable table;
+
     public final Project project;
 
     private Content content;
     private final WorkspaceSettings cfg;
-    private TasksTable table;
     private final IDataLayer dataLayer;
     private TableModelListener tableChangesListener;
     private TreeSelectionListener tableSelectionListener;
@@ -49,10 +51,15 @@ public class TasksComponent implements ProjectComponent {
     public TasksComponent(Project project, WorkspaceSettings settings) {
         this.project = project;
         cfg = settings;
-        dataLayer = ApiDataLayer.getInstance();
         Configuration config = Configuration.getInstance();
         config.fill();
+        dataLayer = ApiDataLayer.getInstance();
 
+        try {
+            dataLayer.connect(cfg.v1Path, cfg.user, cfg.passwd, cfg.isWindowsIntegratedAuthentication);
+        } catch (DataLayerException e) {
+            e.printStackTrace();
+        }
         //TODO remove. Actions must get Project from AnActionEvent.DataContext
         if (project != null && !project.isDefault()) {
             ActionManager actions = ActionManager.getInstance();
@@ -112,11 +119,22 @@ public class TasksComponent implements ProjectComponent {
         if (content != null) {
             content.setDisplayName(cfg.projectName);
         }
+
         table.getTree().revalidate();
         table.getTree().updateUI();
         table.createDefaultColumnsFromModel();
         table.revalidate();
         table.repaint();
+    }
+
+    public void refresh() {
+        try {
+            table.updateData();
+            //((TasksModel)table.getModel()).update(dataLayer.getWorkitemTree());
+        } catch (DataLayerException e) {
+            Icon icon = Messages.getErrorIcon();
+            Messages.showMessageDialog(e.getMessage(), "Error", icon);
+        }
     }
 
     public void removeEdition() {
@@ -147,15 +165,7 @@ public class TasksComponent implements ProjectComponent {
     }
 
     private TasksTable createTable() throws DataLayerException {
-        ApiDataLayer dataLayer = ApiDataLayer.getInstance();
-
-        try {
-            dataLayer.connect(cfg.v1Path, cfg.user, cfg.passwd, cfg.isWindowsIntegratedAuthentication);
-        } catch (DataLayerException e) {
-            e.printStackTrace();
-        }
-
-        final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()));
+        final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()), dataLayer);
         table.setRootVisible(false);
         table.setShowGrid(true);
         table.setIntercellSpacing(new Dimension(1, 1));        

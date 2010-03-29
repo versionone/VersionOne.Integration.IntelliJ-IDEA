@@ -58,13 +58,9 @@ public class Refresh extends AnAction {
                     public void run() {
                         progressManager.getProgressIndicator().setText("Updating VersionOne Task List");
                         try {
-                            /* todo implement for new datalayer
-                            if (data instanceof com.versionone.common.oldsdk.IDataLayer) {
-                                ((com.versionone.common.oldsdk.IDataLayer) data).refresh();
-                            } else if (data instanceof com.versionone.common.sdk.IDataLayer) {
+                            if (data instanceof com.versionone.common.sdk.IDataLayer) {
                                 ((com.versionone.common.sdk.IDataLayer) data).reconnect();
                             }
-                            */
                         } catch (Exception ex) {
                             LOG.error("Failed to refresh workitems.", ex);
                             isError[0] = ex;
@@ -81,6 +77,7 @@ public class Refresh extends AnAction {
             Messages.showMessageDialog(isError[0].getMessage(), "Error", icon);
         }
 
+        tc.refresh();
         tc.update();
         dc.update();
     }

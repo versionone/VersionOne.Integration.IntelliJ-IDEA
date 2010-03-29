@@ -6,19 +6,29 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.treetable.TreeTable;
 import com.intellij.util.ui.treetable.TreeTableModel;
+import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.sdk.DataLayerException;
 
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
 public class TasksTable extends TreeTable {
     private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
+    private final IDataLayer dataLayer;
+    private final TasksModel treeTableModel;
 
-    public TasksTable(TreeTableModel treeTableModel) {
+    public TasksTable(TasksModel treeTableModel, IDataLayer dataLayer) {
         super(treeTableModel);
+        this.dataLayer = dataLayer;
+        this.treeTableModel = treeTableModel;
         WorkItemTreeTableCellRenderer treeCellRenderer = new WorkItemTreeTableCellRenderer();
         getTree().setCellRenderer(treeCellRenderer);
         //getTree().setCellEditor(new TreeCellEditor2());
         //setDefaultEditor(TreeTableModel.class, new TreeTableCellEditor2(createTableRenderer(treeTableModel)));
+    }
+
+    public void updateData() throws DataLayerException {
+        treeTableModel.update(dataLayer.getWorkitemTree());
     }
 
     @Override
