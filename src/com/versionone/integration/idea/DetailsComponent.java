@@ -120,7 +120,7 @@ public class DetailsComponent implements ProjectComponent {
         final TasksComponent tasksComponent = project.getComponent(TasksComponent.class);
         if (tasksComponent == null) {
             throw new IllegalStateException("Cannot access " + TasksComponent.TOOL_WINDOW_ID + " component." +
-                    " May be you use wrong versions of VersionOne plugin.");
+                    " Maybe you are using wrong version of VersionOne plugin.");
         }
         IDataLayer dataLayer = tasksComponent.getDataLayer();
         JPanel contentPanel = createContentPanel(dataLayer);
@@ -178,7 +178,7 @@ public class DetailsComponent implements ProjectComponent {
             dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
             model.setWorkitem(dataLayer.getWorkitemTree().get(0));
         } catch (DataLayerException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
         table.repaint();

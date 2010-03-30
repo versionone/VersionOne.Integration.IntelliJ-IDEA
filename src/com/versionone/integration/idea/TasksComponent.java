@@ -131,9 +131,9 @@ public class TasksComponent implements ProjectComponent {
         try {
             table.updateData();
             //((TasksModel)table.getModel()).update(dataLayer.getWorkitemTree());
-        } catch (DataLayerException e) {
+        } catch (DataLayerException ex) {
             Icon icon = Messages.getErrorIcon();
-            Messages.showMessageDialog(e.getMessage(), "Error", icon);
+            Messages.showMessageDialog(ex.getMessage(), "Error", icon);
         }
     }
 

@@ -115,11 +115,11 @@ public abstract class Workitem extends Entity {
     public boolean canQuickClose() {
         try {
             return isPersistent() && (Boolean) getProperty(CHECK_QUICK_CLOSE_PROPERTY);
-        } catch (IllegalArgumentException e) {
-            ApiDataLayer.createAndLogException("QuickClose not supported.", e);
+        } catch (IllegalArgumentException ex) {
+            ApiDataLayer.logException("QuickClose not supported.", ex);
             return false;
-        } catch (NullPointerException e) {
-            ApiDataLayer.createAndLogException("QuickClose not supported.", e);
+        } catch (NullPointerException ex) {
+            ApiDataLayer.logException("QuickClose not supported.", ex);
             return false;
         }
     }
@@ -127,7 +127,8 @@ public abstract class Workitem extends Entity {
     /**
      * Performs 'QuickClose' operation.
      * 
-     * @throws DataLayerException
+     * @throws DataLayerException if we fail to execute operation
+     * @throws ValidatorException if workitem is not in valid state because executing operation would implicitly perform commit
      */
     public void quickClose() throws DataLayerException, ValidatorException {
         checkPersistance("quickClose");
@@ -135,8 +136,8 @@ public abstract class Workitem extends Entity {
         try {
             dataLayer.executeOperation(asset, asset.getAssetType().getOperation(Workitem.OP_QUICK_CLOSE));
             dataLayer.removeWorkitem(this);
-        } catch (V1Exception e) {
-            throw ApiDataLayer.createAndLogException("Failed to QuickClose workitem: " + this, e);
+        } catch (V1Exception ex) {
+            throw ApiDataLayer.createAndLogException("Failed to QuickClose workitem: " + this, ex);
         }
     }
 
@@ -144,10 +145,10 @@ public abstract class Workitem extends Entity {
         try {
             return isPersistent() && (Boolean) getProperty(CHECK_SIGNUP_PROPERTY);
         } catch (IllegalArgumentException e) {
-            ApiDataLayer.createAndLogException("QuickSignup not supported.", e);
+            ApiDataLayer.logException("QuickSignup not supported.", e);
             return false;
         } catch (NullPointerException e) {
-            ApiDataLayer.createAndLogException("QuickClose not supported.", e);
+            ApiDataLayer.logException("QuickClose not supported.", e);
             return false;
         }
     }
@@ -162,23 +163,23 @@ public abstract class Workitem extends Entity {
         try {
             dataLayer.executeOperation(asset, asset.getAssetType().getOperation(Workitem.OP_SIGNUP));
             dataLayer.refreshWorkitem(this);
-        } catch (V1Exception e) {
-            throw ApiDataLayer.createAndLogException("Failed to QuickSignup workitem: " + this, e);
+        } catch (V1Exception ex) {
+            throw ApiDataLayer.createAndLogException("Failed to QuickSignup workitem: " + this, ex);
         }
     }
 
     /**
      * Perform 'Inactivate' operation.
      * 
-     * @throws DataLayerException
+     * @throws DataLayerException if we fail to close
      */
     public void close() throws DataLayerException {
         checkPersistance("close");
         try {
             dataLayer.executeOperation(asset, asset.getAssetType().getOperation(Workitem.OP_CLOSE));
             dataLayer.removeWorkitem(this);
-        } catch (V1Exception e) {
-            throw ApiDataLayer.createAndLogException("Failed to Close workitem: " + this, e);
+        } catch (V1Exception ex) {
+            throw ApiDataLayer.createAndLogException("Failed to Close workitem: " + this, ex);
         }
     }
 

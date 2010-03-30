@@ -487,15 +487,20 @@ public class ApiDataLayer implements IDataLayer {
         return listPropertyValues.get(propertyKey);
     }
 
-    static DataLayerException createAndLogException(String string, Exception ex) {
-        System.out.println(string);
+    static void logException(String message, Exception ex) {
+        System.out.println(message);
         ex.printStackTrace();
-        return new DataLayerException(string, ex);
     }
 
-    static DataLayerException createAndLogException(String string) {
-        System.out.println(string);
-        return new DataLayerException(string);
+    // TODO refactor this. Why we create exceptions but do not throw them?
+    static DataLayerException createAndLogException(String message, Exception ex) {
+        logException(message, ex);
+        return new DataLayerException(message, ex);
+    }
+
+    static DataLayerException createAndLogException(String message) {
+        System.out.println(message);
+        return new DataLayerException(message);
     }
 
     public boolean isTrackEffortEnabled() {

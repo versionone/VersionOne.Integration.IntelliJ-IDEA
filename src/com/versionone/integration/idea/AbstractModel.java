@@ -18,7 +18,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 /**
- *
+ * Abstract model for Details view
  */
 public abstract class AbstractModel extends AbstractTableModel {
 
@@ -30,22 +30,23 @@ public abstract class AbstractModel extends AbstractTableModel {
         configuration = Configuration.getInstance();
     }
 
-    public abstract PropertyValues getAvailableValuesAt(int rowIndex, int columnIndex);
+    protected abstract PropertyValues getAvailableValuesAt(int rowIndex, int columnIndex);
 
     public abstract String getColumnName(int column);
 
     public abstract boolean isCellEditable(int rowIndex, int columnIndex);
 
-    protected abstract Configuration.ColumnSetting getProperty(int rowIndex, int columnIndex);
+    protected abstract Configuration.ColumnSetting getRowSettings(int rowIndex);
 
     public abstract boolean isRowChanged(int row);
 
     public TableCellEditor getCellEditor(int row, int col) {
         Workitem item = getWorkitem();
-        //item.getProperty(.attribute);
-        if (getProperty(row, col).type.equals(Configuration.AssetDetailSettings.STRING_TYPE)  || getProperty(row, col).type.equals(Configuration.AssetDetailSettings.EFFORT_TYPE)) {
-            return createTextField(getProperty(row, col).readOnly || item.isPropertyReadOnly((getProperty(row, col).attribute)));
-        } else if (getProperty(row, col).type.equals(Configuration.AssetDetailSettings.LIST_TYPE)) {
+        Configuration.ColumnSetting rowSettings = getRowSettings(row);
+
+        if (rowTypeMatches(rowSettings, Configuration.AssetDetailSettings.STRING_TYPE, Configuration.AssetDetailSettings.EFFORT_TYPE)) {
+            return createTextField(rowSettings.readOnly || item.isPropertyReadOnly(rowSettings.attribute));
+        } else if (rowTypeMatches(rowSettings, Configuration.AssetDetailSettings.LIST_TYPE)) {
             final PropertyValues values = getAvailableValuesAt(row, col);
             final JComboBox comboEditor = new JComboBox(values.toArray());
 
@@ -56,6 +57,16 @@ public abstract class AbstractModel extends AbstractTableModel {
         }
 
         return createTextField(true);
+    }
+
+    private boolean rowTypeMatches(Configuration.ColumnSetting settings, String... types) {
+        for(String type : types) {
+            if(settings.type.equals(type)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private DefaultCellEditor createTextField(boolean isReadOnly) {
@@ -76,7 +87,7 @@ public abstract class AbstractModel extends AbstractTableModel {
         menu.add(menuItem1);
         textField.add(menu);
 
-        MouseListener popupListener = new PopupListener(menu);
+        MouseListener popupListener = new ContextMenuMouseListener(menu);
         textField.addMouseListener(popupListener);
 
         return new DefaultCellEditor(textField);
@@ -84,38 +95,12 @@ public abstract class AbstractModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (!getProperty(rowIndex, columnIndex).readOnly) {
-            getWorkitem().setProperty(getProperty(rowIndex, columnIndex).attribute, aValue);
+        if (!getRowSettings(rowIndex).readOnly) {
+            getWorkitem().setProperty(getRowSettings(rowIndex).attribute, aValue);
 
             fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
 
     protected abstract Workitem getWorkitem();
-
-
-    /**
-     * Listens for debug window popup dialog events.
-     */
-    private static class PopupListener extends MouseAdapter {
-        JPopupMenu popup;
-
-        PopupListener(JPopupMenu popupMenu) {
-            popup = popupMenu;
-        }
-
-        public void mousePressed(MouseEvent e) {
-            maybeShowPopup(e);
-        }
-
-        public void mouseReleased(MouseEvent e) {
-            maybeShowPopup(e);
-        }
-
-        private void maybeShowPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                popup.show(e.getComponent(), e.getX(), e.getY());
-            }
-        }
-    }
 }

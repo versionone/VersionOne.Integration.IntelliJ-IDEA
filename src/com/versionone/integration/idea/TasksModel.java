@@ -4,12 +4,19 @@ package com.versionone.integration.idea;
 
 import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.PrimaryWorkitem;
+import com.versionone.common.sdk.PropertyValues;
 import com.versionone.common.sdk.Workitem;
 
 import com.intellij.util.ui.treetable.TreeTableModel;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.table.TableCellEditor;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -125,5 +132,55 @@ public class TasksModel extends AbstractTreeTableModel {
             this.workitemData = workitemData.toArray(new Configuration.ColumnSetting[workitemData.size()]);
         }
         return workitemData;
+    }
+
+    public TableCellEditor getCellEditor(int row, int col, Object workitem) {
+        Workitem item = (Workitem) workitem;
+        Configuration.ColumnSetting settings = getColumnSettings(col);
+
+        if (settings.type.equals(Configuration.AssetDetailSettings.STRING_TYPE)  || settings.type.equals(Configuration.AssetDetailSettings.EFFORT_TYPE)) {
+            return createTextField(settings.readOnly || item.isPropertyReadOnly(settings.attribute));
+        } else if (getColumnSettings(col).type.equals(Configuration.AssetDetailSettings.LIST_TYPE)) {
+            final PropertyValues values = getAvailableValuesAt(row, col, item);
+            final JComboBox comboEditor = new JComboBox(values.toArray());
+
+            //select current value
+            comboEditor.setSelectedItem(getValueAt(row, col));
+            comboEditor.setBorder(null);
+            return new DefaultCellEditor(comboEditor);
+        }
+
+        return createTextField(true);
+    }
+
+    private PropertyValues getAvailableValuesAt(int rowIndex, int columnIndex, Workitem item) {
+        Configuration.ColumnSetting column = getColumnSettings(rowIndex);
+        if (columnIndex == 1) {
+            return ApiDataLayer.getInstance().getListPropertyValues(item.getType(), column.attribute);
+        }
+        return null;
+    }
+
+    private DefaultCellEditor createTextField(boolean isReadOnly) {
+        final JTextField textField = new JTextField();
+        textField.setEditable(!isReadOnly);
+        textField.setEnabled(true);
+        textField.setFocusable(true);
+        textField.setBorder(new LineBorder(Color.black));
+        
+        JPopupMenu menu = new JPopupMenu();
+        JMenuItem menuItem1 = new JMenuItem("Copy");
+        menuItem1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.copy();
+            }
+        });
+        menu.add(menuItem1);
+        textField.add(menu);
+
+        MouseListener popupListener = new ContextMenuMouseListener(menu);
+        textField.addMouseListener(popupListener);
+
+        return new DefaultCellEditor(textField);
     }
 }

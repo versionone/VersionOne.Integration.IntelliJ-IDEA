@@ -44,9 +44,8 @@ public class DetailsModel extends AbstractModel {
         return 2;
     }
 
-    public PropertyValues getAvailableValuesAt(int rowIndex, int columnIndex) {
-
-        Configuration.ColumnSetting column = getProperty(rowIndex, columnIndex);
+    protected PropertyValues getAvailableValuesAt(int rowIndex, int columnIndex) {
+        Configuration.ColumnSetting column = getRowSettings(rowIndex);
         if (columnIndex == 1 && isWorkitemSet()) {
             return ApiDataLayer.getInstance().getListPropertyValues(getWorkitem().getType(), column.attribute);
         }
@@ -55,10 +54,10 @@ public class DetailsModel extends AbstractModel {
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (columnIndex == 0) {
-            return data.localizerResolve(getProperty(rowIndex, 0).name);
+            return data.localizerResolve(getRowSettings(rowIndex).name);
         }
         if (isWorkitemSet()) {
-            return workitem.getProperty(getProperty(rowIndex, columnIndex).attribute);
+            return workitem.getProperty(getRowSettings(rowIndex).attribute);
         }
         return null;
     }
@@ -73,7 +72,7 @@ public class DetailsModel extends AbstractModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (isWorkitemSet() && !workitem.isPropertyReadOnly(getProperty(rowIndex, columnIndex).attribute) && !getProperty(rowIndex, columnIndex).readOnly) {
+        if (isWorkitemSet() && !workitem.isPropertyReadOnly(getRowSettings(rowIndex).attribute) && !getRowSettings(rowIndex).readOnly) {
             super.setValueAt(aValue, rowIndex, columnIndex);
         }
     }
@@ -86,19 +85,18 @@ public class DetailsModel extends AbstractModel {
     public boolean isRowChanged(int rowIndex) {
         boolean result = false;
         if (isWorkitemSet()) {
-            result = workitem.isPropertyChanged(getProperty(rowIndex, 1).attribute);
+            result = workitem.isPropertyChanged(getRowSettings(rowIndex).attribute);
         }
         return result;
     }
 
-    protected Configuration.ColumnSetting getProperty(int rowIndex, int columnIndex) {
+    protected Configuration.ColumnSetting getRowSettings(int rowIndex) {
         return getWorkitemData()[rowIndex];
     }
 
     public int getPropertiesCount() {
         return getWorkitemData().length;
     }
-
 
     private Configuration.ColumnSetting[] getWorkitemData() {
         if (workitemData == null) {

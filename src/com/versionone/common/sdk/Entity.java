@@ -67,6 +67,7 @@ public abstract class Entity {
      * @param propertyName
      *            Name of the property to get, e.g. "Status"
      * @return true if property has changed; false - otherwise.
+     * @throws IllegalArgumentException if property does not exist
      */
     public boolean isPropertyChanged(String propertyName) throws IllegalArgumentException {
         final String fullName = getType() + "." + propertyName;
@@ -164,9 +165,9 @@ public abstract class Entity {
                 setPropertyInternal(propertyName, newValue);
             }
         } catch (APIException ex) {
-            ApiDataLayer.createAndLogException("Cannot set property " + propertyName + " of " + this, ex);
+            ApiDataLayer.logException("Cannot set property " + propertyName + " of " + this, ex);
         } catch (ParseException ex) {
-            ApiDataLayer.createAndLogException("Cannot set property " + propertyName + " of " + this, ex);
+            ApiDataLayer.logException("Cannot set property " + propertyName + " of " + this, ex);
         }
     }
 
