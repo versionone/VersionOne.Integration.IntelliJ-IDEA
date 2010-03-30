@@ -49,17 +49,21 @@ public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
                                                   boolean leaf, int row,
                                                   boolean hasFocus) {
 
-        Workitem item = (Workitem) value;
+        Object newValue = "root";
 
-        Object newValue = item.getProperty("Name");
-        setWorkitemIcon(icons.get(item.getType()));
+        if (value instanceof Workitem) {
+            Workitem item = (Workitem) value;
 
-        if (item.hasChanges()) {
-            setBackgroundNonSelectionColor(colorsScheme.getColor(ColorKey.find("V1_CHANGED_ROW")));
-            setForeground(Color.black);
-        } else {
-            setBackgroundNonSelectionColor(getBackground());
-            setForeground(defaultForeColor);
+            newValue = item.getProperty("Name");
+            setWorkitemIcon(icons.get(item.getType()));
+
+            if (item.hasChanges()) {
+                setBackgroundNonSelectionColor(colorsScheme.getColor(ColorKey.find("V1_CHANGED_ROW")));
+                setForeground(Color.black);
+            } else {
+                setBackgroundNonSelectionColor(getBackground());
+                setForeground(defaultForeColor);
+            }
         }
 
         return super.getTreeCellRendererComponent(tree, newValue, sel, expanded, leaf, row, hasFocus);
