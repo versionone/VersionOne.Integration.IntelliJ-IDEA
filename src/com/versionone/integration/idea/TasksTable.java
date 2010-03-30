@@ -37,8 +37,8 @@ public class TasksTable extends TreeTable {
         
         if (rowIndex != getSelectedRow()) {
             TasksModel model = (TasksModel) getTableModel();
-            Object lastPathComponent = getTree().getPathForRow(rowIndex).getLastPathComponent();
-            if (model.isRowChanged(rowIndex, lastPathComponent)) {
+            Object currentWorkitem = getTree().getPathForRow(rowIndex).getLastPathComponent();
+            if (model.isChanged(currentWorkitem)) {
                 c.setBackground(colorsScheme.getColor(ColorKey.find("V1_CHANGED_ROW")));
                 c.setForeground(Color.black);
             } else {

@@ -22,10 +22,8 @@ public class TasksModel extends AbstractTreeTableModel {
     private Configuration.ColumnSetting[] workitemData;
     protected final Configuration configuration;
 
-
     private List<PrimaryWorkitem> workitems;
 
-    //static protected Class[] cTypes = {TreeTableModel.class, Integer.class, String.class, String.class, String.class, String.class, String.class, String.class};
     protected static final Map<String, Class> cTypes = new HashMap<String, Class>();
 
     public TasksModel(List<PrimaryWorkitem> data) {
@@ -39,11 +37,11 @@ public class TasksModel extends AbstractTreeTableModel {
         cTypes.put(Configuration.AssetDetailSettings.RICH_TEXT_TYPE, String.class);
     }
 
-    public Class getColumnClass(int column) {
-        if (column == 0) {
+    public Class getColumnClass(int columnIndex) {
+        if (columnIndex == 0) {
             return TreeTableModel.class;
         }
-	    return cTypes.get(getProperty(-1, column).type);
+	    return cTypes.get(getColumnSettings(columnIndex).type);
     }
 
     public int getColumnCount() {
@@ -51,12 +49,12 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     public String getColumnName(int columnIndex) {
-        return ApiDataLayer.getInstance().localizerResolve(getProperty(-1, columnIndex).name);//getProperty(-1, columnIndex).columnName;
+        return ApiDataLayer.getInstance().localizerResolve(getColumnSettings(columnIndex).name);
     }
 
-    public Object getValueAt(Object node, int column) {
+    public Object getValueAt(Object node, int columnIndex) {
         if (node instanceof Workitem) {
-            return ((Workitem)node).getProperty(getProperty(-1, column).attribute);
+            return ((Workitem)node).getProperty(getColumnSettings(columnIndex).attribute);
         }
         
         return null;
@@ -71,12 +69,12 @@ public class TasksModel extends AbstractTreeTableModel {
         System.out.println(aValue.toString());
     }
 
-    public boolean isRowChanged(int row, Object lastTreePathComponent) {
-        Workitem item = (Workitem) lastTreePathComponent;
+    public boolean isChanged(Object workitem) {
+        Workitem item = (Workitem) workitem;
         return item.hasChanges();
     }
 
-    protected Configuration.ColumnSetting getProperty(int rowIndex, int columnIndex) {
+    protected Configuration.ColumnSetting getColumnSettings(int columnIndex) {
         return getWorkitemData()[columnIndex];
     }
 

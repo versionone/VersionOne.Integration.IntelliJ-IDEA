@@ -60,30 +60,26 @@ public abstract class AbstractModel extends AbstractTableModel {
 
     private DefaultCellEditor createTextField(boolean isReadOnly) {
         // create text field for ID
-        final JTextField textFild = new JTextField();
-        textFild.setEditable(!isReadOnly);
-        textFild.setEnabled(true);
-        textFild.setFocusable(true);
-        textFild.setBorder(new LineBorder(Color.black));
+        final JTextField textField = new JTextField();
+        textField.setEditable(!isReadOnly);
+        textField.setEnabled(true);
+        textField.setFocusable(true);
+        textField.setBorder(new LineBorder(Color.black));
         // popup menu with copy functionality
         JPopupMenu menu = new JPopupMenu();
         JMenuItem menuItem1 = new JMenuItem("Copy");
         menuItem1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Get the clipboard
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                // Set the sent text as the new content of the clipboard
-                //clipboard.setContents(new StringSelection(textFild.getText()), null);
-                textFild.copy();
+                textField.copy();
             }
         });
         menu.add(menuItem1);
-        textFild.add(menu);
+        textField.add(menu);
 
         MouseListener popupListener = new PopupListener(menu);
-        textFild.addMouseListener(popupListener);
+        textField.addMouseListener(popupListener);
 
-        return new DefaultCellEditor(textFild);
+        return new DefaultCellEditor(textField);
     }
 
     @Override
