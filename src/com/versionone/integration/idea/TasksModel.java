@@ -139,48 +139,24 @@ public class TasksModel extends AbstractTreeTableModel {
         Configuration.ColumnSetting settings = getColumnSettings(col);
 
         if (settings.type.equals(Configuration.AssetDetailSettings.STRING_TYPE)  || settings.type.equals(Configuration.AssetDetailSettings.EFFORT_TYPE)) {
-            return createTextField(settings.readOnly || item.isPropertyReadOnly(settings.attribute));
+            boolean isReadOnly = settings.readOnly || item.isPropertyReadOnly(settings.attribute);
+            return EditorFactory.createTextFieldEditor(!isReadOnly);
         } else if (getColumnSettings(col).type.equals(Configuration.AssetDetailSettings.LIST_TYPE)) {
-            final PropertyValues values = getAvailableValuesAt(row, col, item);
-            final JComboBox comboEditor = new JComboBox(values.toArray());
-
-            //select current value
-            comboEditor.setSelectedItem(getValueAt(row, col));
-            comboEditor.setBorder(null);
-            return new DefaultCellEditor(comboEditor);
+            return EditorFactory.createComboBoxEditor(item, settings.attribute, getValueAt(row, col));
         }
 
-        return createTextField(true);
+        return EditorFactory.createTextFieldEditor(false);
     }
 
-    private PropertyValues getAvailableValuesAt(int rowIndex, int columnIndex, Workitem item) {
-        Configuration.ColumnSetting column = getColumnSettings(rowIndex);
-        if (columnIndex == 1) {
-            return ApiDataLayer.getInstance().getListPropertyValues(item.getType(), column.attribute);
+    @Override
+    // TODO return true? text boxes would not let editing RO fields, and we would have context menu applied to cells
+    public boolean isCellEditable(Object node, int columnIndex) {
+        if(getColumnClass(columnIndex) == TreeTableModel.class) {
+            return false;
         }
-        return null;
-    }
-
-    private DefaultCellEditor createTextField(boolean isReadOnly) {
-        final JTextField textField = new JTextField();
-        textField.setEditable(!isReadOnly);
-        textField.setEnabled(true);
-        textField.setFocusable(true);
-        textField.setBorder(new LineBorder(Color.black));
         
-        JPopupMenu menu = new JPopupMenu();
-        JMenuItem menuItem1 = new JMenuItem("Copy");
-        menuItem1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                textField.copy();
-            }
-        });
-        menu.add(menuItem1);
-        textField.add(menu);
-
-        MouseListener popupListener = new ContextMenuMouseListener(menu);
-        textField.addMouseListener(popupListener);
-
-        return new DefaultCellEditor(textField);
+        Workitem item = (Workitem) node;
+        Configuration.ColumnSetting settings = getColumnSettings(columnIndex);
+        return !settings.readOnly && !item.isPropertyReadOnly(settings.attribute);
     }
 }

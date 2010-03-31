@@ -45,18 +45,13 @@ public abstract class AbstractModel extends AbstractTableModel {
         Configuration.ColumnSetting rowSettings = getRowSettings(row);
 
         if (rowTypeMatches(rowSettings, Configuration.AssetDetailSettings.STRING_TYPE, Configuration.AssetDetailSettings.EFFORT_TYPE)) {
-            return createTextField(rowSettings.readOnly || item.isPropertyReadOnly(rowSettings.attribute));
+            boolean isReadOnly = rowSettings.readOnly || item.isPropertyReadOnly(rowSettings.attribute);
+            return EditorFactory.createTextFieldEditor(!isReadOnly);
         } else if (rowTypeMatches(rowSettings, Configuration.AssetDetailSettings.LIST_TYPE)) {
-            final PropertyValues values = getAvailableValuesAt(row, col);
-            final JComboBox comboEditor = new JComboBox(values.toArray());
-
-            //select current value
-            comboEditor.setSelectedItem(getValueAt(row, col));
-            comboEditor.setBorder(null);
-            return new DefaultCellEditor(comboEditor);
+            return EditorFactory.createComboBoxEditor(item, rowSettings.attribute, getValueAt(row, col));
         }
 
-        return createTextField(true);
+        return EditorFactory.createTextFieldEditor(false);
     }
 
     private boolean rowTypeMatches(Configuration.ColumnSetting settings, String... types) {
@@ -67,30 +62,6 @@ public abstract class AbstractModel extends AbstractTableModel {
         }
 
         return false;
-    }
-
-    private DefaultCellEditor createTextField(boolean isReadOnly) {
-        // create text field for ID
-        final JTextField textField = new JTextField();
-        textField.setEditable(!isReadOnly);
-        textField.setEnabled(true);
-        textField.setFocusable(true);
-        textField.setBorder(new LineBorder(Color.black));
-        // popup menu with copy functionality
-        JPopupMenu menu = new JPopupMenu();
-        JMenuItem menuItem1 = new JMenuItem("Copy");
-        menuItem1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                textField.copy();
-            }
-        });
-        menu.add(menuItem1);
-        textField.add(menu);
-
-        MouseListener popupListener = new ContextMenuMouseListener(menu);
-        textField.addMouseListener(popupListener);
-
-        return new DefaultCellEditor(textField);
     }
 
     @Override
