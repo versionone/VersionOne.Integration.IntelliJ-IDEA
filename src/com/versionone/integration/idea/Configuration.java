@@ -2,8 +2,6 @@ package com.versionone.integration.idea;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,9 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.versionone.common.sdk.EntityType;
 import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.IDataLayer;
-import com.versionone.common.sdk.Entity;
-import com.versionone.common.sdk.Workitem;
-import com.versionone.common.sdk.Project;
 
 import static com.versionone.common.sdk.EntityType.*;
 

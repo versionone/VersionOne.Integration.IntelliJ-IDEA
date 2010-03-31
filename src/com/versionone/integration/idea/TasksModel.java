@@ -4,19 +4,13 @@ package com.versionone.integration.idea;
 
 import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.PrimaryWorkitem;
-import com.versionone.common.sdk.PropertyValues;
 import com.versionone.common.sdk.Workitem;
 
 import com.intellij.util.ui.treetable.TreeTableModel;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
