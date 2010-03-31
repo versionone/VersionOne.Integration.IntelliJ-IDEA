@@ -43,7 +43,18 @@ public abstract class Entity {
     }
 
     public boolean hasChanges() {
-        return asset.hasChanged();
+        double effort = 0;
+        String effortString = (String) getProperty(Workitem.EFFORT_PROPERTY);
+
+        if(effortString != null) {
+            try {
+                effort = numberFormat.parse(effortString).doubleValue();
+            } catch(ParseException ex) {
+                // do nothing
+            }
+        }
+
+        return asset.hasChanged() || effort != 0;
     }
 
     public boolean isPropertyReadOnly(String propertyName) {
