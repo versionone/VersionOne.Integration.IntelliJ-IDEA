@@ -51,7 +51,7 @@ public class Configuration {
                 if (stream != null) {
                     try {
                         stream.close();
-                    } catch (IOException e) {
+                    } catch (IOException ex) {
                         // Do nothing
                     }
                 }
@@ -71,31 +71,6 @@ public class Configuration {
         setAttributes(gridSettings.workitemColumns, Story);
         setAttributes(gridSettings.workitemColumns, Test);
         setAttributes(gridSettings.workitemColumns, Task);
-        /*
-        final Map<String, Boolean> properties = new HashMap<String, Boolean>();
-        properties.put(Entity.ID_PROPERTY, false);
-        properties.put(Entity.NAME_PROPERTY, false);
-        properties.put(Workitem.DETAIL_ESTIMATE_PROPERTY, false);
-        properties.put(Workitem.STATUS_PROPERTY, true);
-        properties.put(Workitem.EFFORT_PROPERTY, false);
-        properties.put(Workitem.DONE_PROPERTY, false);
-        properties.put(Workitem.DESCRIPTION_PROPERTY, false);
-        // properties.put(Workitem.ScheduleNameProperty, false);
-        properties.put(Workitem.OWNERS_PROPERTY, true);
-        properties.put(Workitem.TODO_PROPERTY, false);
-        properties.put(Workitem.CHECK_QUICK_CLOSE_PROPERTY, false);
-        properties.put(Workitem.CHECK_SIGNUP_PROPERTY, false);
-        properties.put(Workitem.SCOPE_NAME_PROPERTY, false);
-        IDataLayer dataLayer = ApiDataLayer.getInstance();
-        for (Map.Entry<String, Boolean> entry : properties.entrySet()) {
-            for (EntityType type : EntityType.values()) {
-                if (type.isWorkitem()) {
-                    dataLayer.addProperty(entry.getKey(), type, entry.getValue());
-                }
-            }
-        }
-        //dataLayer.addProperty(Project.NAME_PROPERTY, Scope, false);
-        */
     }
 
     private static void setAttributes(ColumnSetting[] columns, EntityType type) {

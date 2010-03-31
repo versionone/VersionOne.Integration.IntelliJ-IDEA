@@ -173,18 +173,6 @@ public abstract class AbstractTreeTableModel extends DefaultTreeModel implements
         return getColumnClass(column) == TreeTableModel.class;
     }
 
-    public void setValueAt(Object aValue, Object node, int column) {
-    }
-
-
-    // Left to be implemented in the subclass:
-
-    /*
-     *   public Object getChild(Object parent, int index)
-     *   public int getChildCount(Object parent)
-     *   public int getColumnCount()
-     *   public String getColumnName(Object node, int column)
-     *   public Object getValueAt(Object node, int column)
-     */
+    public void setValueAt(Object aValue, Object node, int column) { }
 }
 
