@@ -211,4 +211,8 @@ public class TasksComponent implements ProjectComponent {
         }
         tableSelectionListener = selectionListener;
     }
+
+    public Object getItem() {
+        return table.getWorkitemAtRow(table.getSelectedRow());
+    }
 }

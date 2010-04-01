@@ -139,11 +139,12 @@ public class DetailsComponent implements ProjectComponent {
     }
 
     public void update() {
-//        if (content != null) {
-//            content.setDisplayName(cfg.projectName);
-//        }
         table.revalidate();
         table.repaint();
+    }
+
+    public void setItem(Object obj) {
+        model.setWorkitem(obj);
     }
 
     JPanel createContentPanel(IDataLayer dataLayer) {
@@ -169,19 +170,6 @@ public class DetailsComponent implements ProjectComponent {
 
     private void unregisterToolWindow() {
         ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_NAME);
-    }
-
-    public void setCurrentTask(int task) {
-        //model.setWorkitem(task);
-        ApiDataLayer dataLayer = ApiDataLayer.getInstance();
-        try {
-            dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
-            model.setWorkitem(dataLayer.getWorkitemTree().get(0));
-        } catch (DataLayerException e) {
-            e.printStackTrace();
-        }
-
-        table.repaint();
     }
 
     public void removeEdition() {
