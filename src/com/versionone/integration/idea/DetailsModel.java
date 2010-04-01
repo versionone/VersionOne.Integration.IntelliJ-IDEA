@@ -54,7 +54,7 @@ public class DetailsModel extends AbstractModel {
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (columnIndex == 0) {
-            return data.localizerResolve(getRowSettings(rowIndex).name);
+            return dataLayer.localizerResolve(getRowSettings(rowIndex).name);
         }
         if (isWorkitemSet()) {
             return workitem.getProperty(getRowSettings(rowIndex).attribute);

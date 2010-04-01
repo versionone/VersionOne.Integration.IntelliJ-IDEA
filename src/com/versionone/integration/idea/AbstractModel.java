@@ -13,11 +13,11 @@ import javax.swing.table.TableCellEditor;
  */
 public abstract class AbstractModel extends AbstractTableModel {
 
-    protected final IDataLayer data;
+    protected final IDataLayer dataLayer;
     protected final Configuration configuration;
 
-    public AbstractModel(IDataLayer data) {
-        this.data = data;
+    public AbstractModel(IDataLayer dataLayer) {
+        this.dataLayer = dataLayer;
         configuration = Configuration.getInstance();
     }
 
