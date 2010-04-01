@@ -22,7 +22,8 @@ public class DetailsModel extends AbstractModel {
         super(data);
     }
 
-    public void setWorkitem(Workitem workitem) {
+    public void setWorkitem(Object obj) {
+        Workitem workitem = (Workitem) obj;
         if (this.workitem == null || workitem == null || !workitem.getType().equals(this.workitem.getType())) {
             workitemData = null;
         }
