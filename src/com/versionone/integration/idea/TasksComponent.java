@@ -196,14 +196,6 @@ public class TasksComponent implements ProjectComponent {
         }
     }
 
-    /*
-    public void registerTableSelectListener(ListSelectionListener selectionListener) {
-        tableSelectionListener = selectionListener;
-        if (table != null) {
-            table.getSelectionModel().addListSelectionListener(tableSelectionListener);
-        }
-    }*/
-
     public void registerTableSelectListener(TreeSelectionListener selectionListener) {
         if (table != null) {
             table.getTree().removeTreeSelectionListener(tableSelectionListener);
