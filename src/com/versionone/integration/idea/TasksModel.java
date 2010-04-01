@@ -10,6 +10,7 @@ import com.intellij.util.ui.treetable.TreeTableModel;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -17,10 +18,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class TasksModel extends AbstractTreeTableModel {
-    /*
-     * Info about column for workitem (lazy)
-     */
-    private Configuration.ColumnSetting[] workitemData;
+
+    private Configuration.ColumnSetting[] columnSettings;
     protected final Configuration configuration;
 
     private List<PrimaryWorkitem> workitems;
@@ -66,8 +65,15 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     public void setValueAt(Object aValue, Object node, int column) {
-        // TODO
-        System.out.println(aValue.toString());
+        if(isPropertyEditable(node, column)) {
+            Workitem item = (Workitem) node;
+            String propertyName = getColumnSettings(column).attribute;
+            item.setProperty(propertyName, aValue);
+
+            // TODO re-check that this works. Also, the next line is reported to be a solution.
+            // fireTreeNodesChanged(node, new TreePath[]{new TreePath(node)}, null, null);
+            fireTreeNodesChanged(node, getPathToRoot(new DefaultMutableTreeNode(node)), null, null);
+        }
     }
 
     public boolean isChanged(Object workitem) {
@@ -76,11 +82,11 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     protected Configuration.ColumnSetting getColumnSettings(int columnIndex) {
-        return getWorkitemData()[columnIndex];
+        return getColumnSettings()[columnIndex];
     }
 
     public int getPropertiesCount() {
-        return getWorkitemData().length;
+        return getColumnSettings().length;
     }
 
 
@@ -114,18 +120,18 @@ public class TasksModel extends AbstractTreeTableModel {
         return getChildren(parent).length;
     }
 
-    private Configuration.ColumnSetting[] getWorkitemData() {
-        if (workitemData == null) {
+    private Configuration.ColumnSetting[] getColumnSettings() {
+        if (columnSettings == null) {
             final Configuration.ColumnSetting[] columns = configuration.getColumnsForMainTable();
-            final List<Configuration.ColumnSetting> workitemData = new ArrayList<Configuration.ColumnSetting>(columns.length);
+            final List<Configuration.ColumnSetting> settingsData = new ArrayList<Configuration.ColumnSetting>(columns.length);
             for (Configuration.ColumnSetting column : columns) {
                 if (!column.effortTracking || ApiDataLayer.getInstance().isTrackEffortEnabled()) {
-                    workitemData.add(column);
+                    settingsData.add(column);
                 }
             }
-            this.workitemData = workitemData.toArray(new Configuration.ColumnSetting[workitemData.size()]);
+            this.columnSettings = settingsData.toArray(new Configuration.ColumnSetting[settingsData.size()]);
         }
-        return workitemData;
+        return columnSettings;
     }
 
     public TableCellEditor getCellEditor(int row, int col, Object workitem) {
@@ -143,14 +149,21 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     @Override
-    // TODO return true? text boxes would not let editing RO fields, and we would have context menu applied to cells
+    /**
+     * All cells, except for the first column, are considered editable.
+     * Read-only cells are handled on editor control level, thus we have copying ability everywhere.
+     */
     public boolean isCellEditable(Object node, int columnIndex) {
-        if(getColumnClass(columnIndex) == TreeTableModel.class) {
-            return false;
-        }
-        
+        return getColumnClass(columnIndex) != TreeTableModel.class;
+    }
+
+    private boolean isPropertyEditable(Object node, int columnIndex) {
         Workitem item = (Workitem) node;
         Configuration.ColumnSetting settings = getColumnSettings(columnIndex);
-        return !settings.readOnly && !item.isPropertyReadOnly(settings.attribute);
+        boolean propertyTypeSupported = settings.type.equals(Configuration.AssetDetailSettings.STRING_TYPE) ||
+                                        settings.type.equals(Configuration.AssetDetailSettings.EFFORT_TYPE) ||
+                                        settings.type.equals(Configuration.AssetDetailSettings.RICH_TEXT_TYPE) ||
+                                        settings.type.equals(Configuration.AssetDetailSettings.LIST_TYPE);
+        return !settings.readOnly && !item.isPropertyReadOnly(settings.attribute) && propertyTypeSupported;
     }
 }
