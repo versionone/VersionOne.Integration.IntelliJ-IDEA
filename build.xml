@@ -295,7 +295,7 @@
             <include name="**/*.java"/>
         </replace>
         <replace file="${base.dir}/META-INF/plugin.xml">
-            <replacetoken><![CDATA[<idea-version since-build="7000" until-build="10000"/>]]></replacetoken>
+            <replacetoken><![CDATA[<idea-version since-build="7000" until-build="9999"/>]]></replacetoken>
             <replacevalue><![CDATA[<idea-version since-build="10000"/>]]></replacevalue>
         </replace>
     </target>
