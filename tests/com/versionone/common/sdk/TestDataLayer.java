@@ -51,11 +51,6 @@ public class TestDataLayer extends ApiDataLayer {
     }
 
     @Override
-    public void connectFotTesting(Object services, Object metaModel, Object localizer, Object storyTL, Object defectTL)
-            throws Exception {
-    }
-
-    @Override
     public String getCurrentMemberToken() {
         return "Member:20";
     }
@@ -87,7 +82,7 @@ public class TestDataLayer extends ApiDataLayer {
     }
 
     @Override
-    public boolean isShowed(Asset asset) {
+    public boolean isDisplayed(Asset asset) {
         return false;
     }
 

@@ -21,7 +21,7 @@ public class PrimaryWorkitem extends Workitem {
 
         children = new ArrayList<SecondaryWorkitem>(asset.getChildren().size());
         for (Asset childAsset : asset.getChildren()) {
-            if (dataLayer.isShowed(childAsset)) {
+            if (dataLayer.isDisplayed(childAsset)) {
                 children.add(new SecondaryWorkitem(dataLayer, childAsset, this));
             }
         }

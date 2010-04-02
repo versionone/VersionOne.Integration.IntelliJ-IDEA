@@ -269,7 +269,7 @@ public abstract class Entity {
     }
 
     public List<RequiredFieldsDTO> validateRequiredFields() throws DataLayerException {
-        return dataLayer.requiredFieldsValidator.validate(asset);
+        return dataLayer.validate(asset);
     }
 
     protected void checkPersistance(String job) {
