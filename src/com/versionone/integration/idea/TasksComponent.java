@@ -130,7 +130,6 @@ public class TasksComponent implements ProjectComponent {
     public void refresh() {
         try {
             table.updateData();
-            //((TasksModel)table.getModel()).update(dataLayer.getWorkitemTree());
         } catch (DataLayerException ex) {
             Icon icon = Messages.getErrorIcon();
             Messages.showMessageDialog(ex.getMessage(), "Error", icon);

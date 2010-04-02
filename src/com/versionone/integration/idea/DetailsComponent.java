@@ -149,16 +149,6 @@ public class DetailsComponent implements ProjectComponent {
 
     JPanel createContentPanel(IDataLayer dataLayer) {
         model = new DetailsModel(dataLayer);
-        //test version
-//        try {
-//            dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
-//            model.setWorkitem(dataLayer.getWorkitemTree().get(0).children.get(0));
-//        } catch (DataLayerException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        } catch (IndexOutOfBoundsException e) {
-//            e.printStackTrace();  //thrown when no pri/sec workitems.
-//        }
-        //\\
         table = new DetailsTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final JPanel panel = new JPanel(new BorderLayout());
@@ -174,7 +164,6 @@ public class DetailsComponent implements ProjectComponent {
 
     public void removeEdition() {
         if (table != null && table.isEditing()) {
-            //table.removeEditor(); cancel editing (without data saving)
             if (SwingUtilities.isEventDispatchThread()) {
                 table.getCellEditor().stopCellEditing();
             } else {
