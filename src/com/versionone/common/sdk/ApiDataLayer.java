@@ -158,7 +158,7 @@ public class ApiDataLayer implements IDataLayer {
     }
 
     /**
-     * Reconnect with settings, used in last Connect() call.
+     * Reconnect with settings used in last connect() call.
      *
      * @throws DataLayerException
      */
