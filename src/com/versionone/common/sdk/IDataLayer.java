@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface IDataLayer {
 
-    boolean checkConnection(String url, String user, String pass, boolean integratedAuth);
+    boolean verifyConnection(String url, String user, String pass, boolean integratedAuth);
     void connect(String path, String userName, String password, boolean integrated) throws DataLayerException;
 
     /**

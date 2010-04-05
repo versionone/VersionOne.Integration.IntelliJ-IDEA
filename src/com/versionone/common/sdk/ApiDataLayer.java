@@ -126,8 +126,8 @@ public class ApiDataLayer implements IDataLayer {
         return connector.getRequiredFieldsValidator().validate(asset);
     }
 
-    public boolean checkConnection(String path, String username, String password, boolean integrated) {
-        return connector.checkConnection(path, username, password, integrated);
+    public boolean verifyConnection(String path, String username, String password, boolean integrated) {
+        return connector.verifyConnection(path, username, password, integrated);
     }
 
     private void processConfig() throws ConnectionException, APIException {
@@ -163,11 +163,12 @@ public class ApiDataLayer implements IDataLayer {
      * @throws DataLayerException
      */
     public void reconnect() throws DataLayerException {
-        connector.reconnect();
+        connect(connector.getPath(), connector.getUserName(), connector.getPassword(), connector.getIntegrated());
     }
 
     public List<Project> getProjectTree() throws DataLayerException {
-        connector.checkConnection();
+        checkConnection();
+
         try {
             final IAssetType projectType = types.get(Scope);
             final Query scopeQuery = new Query(projectType, projectType.getAttributeDefinition("Parent"));
@@ -188,7 +189,8 @@ public class ApiDataLayer implements IDataLayer {
     }
 
     public List<PrimaryWorkitem> getWorkitemTree() throws DataLayerException {
-        connector.checkConnection();
+        checkConnection();
+
         if (currentProjectId == null) {
             currentProjectId = getDefaultProjectId();
         }
@@ -202,6 +204,15 @@ public class ApiDataLayer implements IDataLayer {
             }
         }
         return res;
+    }
+
+     void checkConnection() throws DataLayerException {
+        if (!connector.isConnected()) {
+            reconnect();
+            if (!connector.isConnected()) {
+                throw ApiDataLayer.createAndLogException("Connection is not set.");
+            }
+        }
     }
 
     private List<Asset> queryWorkitemTree() throws DataLayerException {
@@ -466,7 +477,7 @@ public class ApiDataLayer implements IDataLayer {
     }
 
     public void commitChanges() throws DataLayerException, ValidatorException {
-        connector.checkConnection();
+        checkConnection();
         commitWorkitemTree(getWorkitemTree());
     }
 

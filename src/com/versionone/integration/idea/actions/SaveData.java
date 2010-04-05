@@ -39,7 +39,7 @@ public class SaveData extends AnAction {
 
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
-        final IDataLayer data = tc.getDataLayer();
+        final IDataLayer dataLayer = tc.getDataLayer();
         final ProgressManager progressManager = ProgressManager.getInstance();
         final Object[] isError = {false, "", false};
         tc.removeEdition();
@@ -49,17 +49,17 @@ public class SaveData extends AnAction {
             public void run() {
                 progressManager.getProgressIndicator().setText("Saving changes to VersionOne");
                 try {
-                    data.commitChanges();
+                    dataLayer.commitChanges();
                 } catch (DataLayerException ex) {
                     isError[0] = true;
                     isError[1] = ex.getMessage();
                     isError[2] = true; //ex.isError();
-                    LOG.warn(isError[1],ex);
-                } catch (Exception e1) {
+                    LOG.warn(isError[1], ex);
+                } catch (Exception ex) {
                     isError[0] = true;
                     isError[1] = "Error connecting to VersionOne";
                     isError[2] = true;
-                    LOG.warn(isError[1],e1);
+                    LOG.warn(isError[1], ex);
                 }
             }
         },
@@ -75,7 +75,7 @@ public class SaveData extends AnAction {
         }
 
         //TODO ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
-        Refresh.refreshData(ideaProject, tc, data, dc, progressManager);
+        Refresh.refreshData(ideaProject, tc, dataLayer, dc, progressManager);
     }
 
     public void setProject(Project project) {

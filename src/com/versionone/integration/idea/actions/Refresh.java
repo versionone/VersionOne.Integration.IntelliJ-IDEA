@@ -34,9 +34,9 @@ public class Refresh extends AnAction {
             ideaProject = project;
         }
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
-        final IDataLayer data = tc.getDataLayer();
+        final IDataLayer dataLayer = tc.getDataLayer();
         
-        if (data.hasChanges()) {
+        if (dataLayer.hasChanges()) {
             int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten.\nDo you want to continue?", "Refresh Warning", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
             if (confirmRespond == 1) {
                 return;
@@ -45,10 +45,10 @@ public class Refresh extends AnAction {
 
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final ProgressManager progressManager = ProgressManager.getInstance();
-        refreshData(ideaProject, tc, data, dc, progressManager);
+        refreshData(ideaProject, tc, dataLayer, dc, progressManager);
     }
 
-    static void refreshData(Project ideaProject, TasksComponent tc, final Object data, DetailsComponent dc, final ProgressManager progressManager) {
+    static void refreshData(Project ideaProject, TasksComponent tc, final IDataLayer dataLayer, DetailsComponent dc, final ProgressManager progressManager) {
         final Exception[] isError = {null};
         tc.removeEdition();
         dc.removeEdition();
@@ -58,9 +58,7 @@ public class Refresh extends AnAction {
                     public void run() {
                         progressManager.getProgressIndicator().setText("Updating VersionOne Task List");
                         try {
-                            if (data instanceof com.versionone.common.sdk.IDataLayer) {
-                                ((com.versionone.common.sdk.IDataLayer) data).reconnect();
-                            }
+                            dataLayer.reconnect();
                         } catch (Exception ex) {
                             LOG.error("Failed to refresh workitems.", ex);
                             isError[0] = ex;

@@ -38,7 +38,7 @@ public class TestDataLayer extends ApiDataLayer {
     }
 
     @Override
-    public boolean checkConnection(String url, String user, String pass, boolean auth) {
+    public boolean verifyConnection(String url, String user, String pass, boolean auth) {
         return true;
     }
 

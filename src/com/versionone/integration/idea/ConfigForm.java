@@ -80,7 +80,7 @@ public class ConfigForm implements UnnamedConfigurable {
             serverUrl.setText(pathVersionOne + "/");
         }
         
-        isConnectionCorrect = dataLayer.checkConnection(serverUrl.getText(), userName.getText(), password.getText(),
+        isConnectionCorrect = dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText(),
                 windowsIntegratedAuthentication.isSelected());
         if (isConnectionCorrect) {
             Messages.showInfoMessage("Connection is valid", "Connection Status");

@@ -27,6 +27,22 @@ public class VersionOneConnector {
         return requiredFieldsValidator;
     }
 
+    String getPath() {
+        return path;
+    }
+
+    String getUserName() {
+        return userName;
+    }
+
+    String getPassword() {
+        return password;
+    }
+
+    boolean getIntegrated() {
+        return integrated;
+    }
+
     boolean isConnected() {
         return isConnected;
     }
@@ -86,16 +102,7 @@ public class VersionOneConnector {
         connect(path, userName, password, integrated);
     }
 
-    void checkConnection() throws DataLayerException {
-        if (!isConnected) {
-            reconnect();
-            if (!isConnected) {
-                throw ApiDataLayer.createAndLogException("Connection is not set.");
-            }
-        }
-    }
-
-     boolean checkConnection(String url, String user, String pass, boolean integratedAuth) {
+     boolean verifyConnection(String url, String user, String pass, boolean integratedAuth) {
         V1APIConnector metaConnector = new V1APIConnector(url + META_SUFFIX);
         MetaModel model = new MetaModel(metaConnector);
 
