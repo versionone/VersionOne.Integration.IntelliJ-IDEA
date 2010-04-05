@@ -11,6 +11,7 @@ import com.versionone.common.sdk.DataLayerException;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 
 public class TasksTable extends TreeTable {
@@ -81,6 +82,7 @@ public class TasksTable extends TreeTable {
     }
 
     protected Object getWorkitemAtRow(int rowIndex) {
-        return getTree().getPathForRow(rowIndex).getLastPathComponent();
+        TreePath path = getTree().getPathForRow(rowIndex);
+        return path != null ? path.getLastPathComponent() : null;
     }
 }

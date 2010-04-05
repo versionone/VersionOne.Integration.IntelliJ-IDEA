@@ -4,6 +4,7 @@ package com.versionone.integration.idea;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.Project;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +26,10 @@ public class FilterForm implements Configurable {
     private JPanel panel;
     private JCheckBox showAllTasksCheckBox;
 
+    private final IDataLayer dataLayer;
 
-    public FilterForm(@NotNull List<Project> rootProjects, @NotNull WorkspaceSettings settings) {
+    public FilterForm(@NotNull List<Project> rootProjects, @NotNull WorkspaceSettings settings, @NotNull IDataLayer dataLayer) {
+        this.dataLayer = dataLayer;
         this.settings = settings;
         model = new ProjectsModel(rootProjects);
         projectTree.setModel(model);
@@ -69,6 +72,7 @@ public class FilterForm implements Configurable {
         if (node != null) {
             settings.projectName = node.name;
             settings.projectToken = node.id;
+            dataLayer.setCurrentProjectId(node.id);
         }
         settings.isShowAllTask = showAllTasksCheckBox.isSelected();
 

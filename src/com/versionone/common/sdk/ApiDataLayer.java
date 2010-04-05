@@ -114,7 +114,7 @@ public class ApiDataLayer implements IDataLayer {
 
             memberOid = connector.getServices().getLoggedIn();
             listPropertyValues = getListPropertyValues();
-            updateCurrentProjectId();
+            //updateCurrentProjectId();
         } catch (MetaException ex) {
             throw createAndLogException("Cannot connect to V1 server.", ex);
         } catch (V1Exception ex) {

@@ -19,5 +19,8 @@ public interface IDataLayer {
     void commitChanges() throws DataLayerException, ValidatorException;
     boolean isTrackEffortEnabled();
     void addProperty(String name, EntityType type, boolean isList);
-    public String localizerResolve(String key);
+    String localizerResolve(String key);
+
+    void setCurrentProjectId(String projectId);
+    String getCurrentProjectId();
 }

@@ -45,9 +45,9 @@ public class FilterAction extends AnAction {
         final Object[] res = new Object[1];
         final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
-        final IDataLayer data = ApiDataLayer.getInstance();
+        final IDataLayer dataLayer = ApiDataLayer.getInstance();
 
-        if (data.hasChanges()) {
+        if (dataLayer.hasChanges()) {
             int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten if you change " +
                     "projects.\nDo you wish to continue?.", "Filter Warning",
                     new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
@@ -63,9 +63,9 @@ public class FilterAction extends AnAction {
                 new Runnable() {
                     public void run() {
                         try {
-                            res[0] = data.getProjectTree();
-                        } catch (Exception e) {
-                            res[0] = e;
+                            res[0] = dataLayer.getProjectTree();
+                        } catch (Exception ex) {
+                            res[0] = ex;
                         }
                     }
                 },
@@ -84,7 +84,7 @@ public class FilterAction extends AnAction {
         }
 
         List<com.versionone.common.sdk.Project> projectsRoot = (List<com.versionone.common.sdk.Project>) res[0];
-        final FilterForm form = new FilterForm(projectsRoot, settings);
+        final FilterForm form = new FilterForm(projectsRoot, settings, dataLayer);
 
         return ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form);
     }
