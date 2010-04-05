@@ -648,71 +648,24 @@ public class ApiDataLayer implements IDataLayer {
      *                                  wrong Workitem hierarchy.
      */
     public PrimaryWorkitem createNewPrimaryWorkitem(EntityType type) throws DataLayerException {
-        try {
-            if (!type.isPrimary()) {
-                throw new IllegalArgumentException("Wrong type:" + type);
-            }
-            final Asset asset = createNewAsset(type);
-            final Project project = getCurrentProject();
-            loadAssetAttribute(asset, "Scope.Name", project.getProperty(Entity.NAME_PROPERTY));
-            loadAssetAttribute(asset, "Timebox.Name", project.getProperty("Schedule.EarliestActiveTimebox.Name"));
-            setAssetAttribute(asset, "Scope", currentProjectId);
-            setAssetAttribute(asset, "Timebox", project.getProperty("Schedule.EarliestActiveTimebox"));
-            assetList.add(asset);
-
-            return new PrimaryWorkitem(this, asset);
-        } catch (MetaException e) {
-            throw new DataLayerException("Cannot create workitem: " + type, e);
-        } catch (APIException e) {
-            throw new DataLayerException("Cannot create workitem: " + type, e);
-        }
-    }
-
-    private Asset createNewAsset(EntityType type) throws APIException {
-        final Asset asset = new Asset(types.get(type));
-        for (AttributeInfo attrInfo : attributesToQuery) {
-            if (attrInfo.type == type) {
-                setAssetAttribute(asset, attrInfo.attr, null);
-            }
-        }
-        return asset;
+        WorkitemFactory factory = new WorkitemFactory(this, currentProjectId, attributesToQuery);
+        PrimaryWorkitem item = factory.createNewPrimaryWorkitem(type, types.get(type));
+        assetList.add(item.asset);
+        return item;
     }
 
     public SecondaryWorkitem createNewSecondaryWorkitem(EntityType type, PrimaryWorkitem parent)
             throws DataLayerException {
-        try {
-            if (!type.isSecondary()) {
-                throw new IllegalArgumentException("Wrong type:" + type);
-            }
-            final Asset asset = createNewAsset(type);
-
-            loadAssetAttribute(asset, "Scope.Name", getCurrentProject().getProperty(Entity.NAME_PROPERTY));
-
-            if (parent == null || parent.getType().isSecondary()) {
-                throw new IllegalArgumentException("Cannot create " + asset.getAssetType() + " as children of "
-                        + parent);
-            }
-            setAssetAttribute(asset, "Parent", parent.asset.getOid());
-
-            loadAssetAttribute(asset, "Parent.Name", parent.getProperty(Entity.NAME_PROPERTY));
-            loadAssetAttribute(asset, "Timebox.Name", parent.getProperty("Timebox.Name"));
-
-            final SecondaryWorkitem item = new SecondaryWorkitem(this, asset, parent);
-            parent.children.add(item);
-            parent.asset.getChildren().add(item.asset);
-            return item;
-        } catch (MetaException e) {
-            throw new DataLayerException("Cannot create workitem: " + type, e);
-        } catch (APIException e) {
-            throw new DataLayerException("Cannot create workitem: " + type, e);
-        }
+        WorkitemFactory factory = new WorkitemFactory(this, currentProjectId, attributesToQuery);
+        return factory.createNewSecondaryWorkitem(type, types.get(type), parent);
     }
 
     /**
      * Set or ensure Asset attribute value.
      *
-     * @param value of the attribute; if null or Oid.Null then attribute will be
-     *              just ensured.
+     * @param value of the attribute; if null or Oid.Null then attribute will be just ensured.
+     * @param attrName attribute name
+     * @param asset item which attribute is to be modified
      * @throws MetaException if something wrong with attribute name.
      * @throws APIException  if something wrong with attribute setting/ensuring.
      */
@@ -725,10 +678,5 @@ public class ApiDataLayer implements IDataLayer {
         } else {
             asset.setAttributeValue(def, value);
         }
-    }
-
-    private void loadAssetAttribute(Asset asset, String string, Object property) throws APIException {
-        final IAttributeDefinition def = asset.getAssetType().getAttributeDefinition(string);
-        asset.loadAttributeValue(def, property);
     }
 }

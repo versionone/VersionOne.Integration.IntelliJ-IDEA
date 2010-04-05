@@ -3,9 +3,8 @@ package com.versionone.common.sdk;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.versionone.apiclient.APIException;
-import com.versionone.apiclient.Asset;
-import com.versionone.apiclient.MetaException;
+import com.versionone.Oid;
+import com.versionone.apiclient.*;
 
 public class PrimaryWorkitem extends Workitem {
 
@@ -44,7 +43,6 @@ public class PrimaryWorkitem extends Workitem {
         }
     }
 
-    /** Just call {@link ApiDataLayer.createNewSecondaryWorkitem()} */
     public SecondaryWorkitem createChild(EntityType type) throws DataLayerException {
         return dataLayer.createNewSecondaryWorkitem(type, this);
     }
