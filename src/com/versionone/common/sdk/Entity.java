@@ -1,5 +1,6 @@
 package com.versionone.common.sdk;
 
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -23,7 +24,8 @@ public abstract class Entity {
     public static final NumberFormat numberFormat = NumberFormat.getNumberInstance();
     static {
         numberFormat.setMinimumFractionDigits(2);
-        numberFormat.setMaximumFractionDigits(6);
+        numberFormat.setMaximumFractionDigits(2);
+        numberFormat.setRoundingMode(RoundingMode.HALF_UP);
     }
 
     protected final ApiDataLayer dataLayer;
