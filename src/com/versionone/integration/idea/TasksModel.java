@@ -18,8 +18,6 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class TasksModel extends AbstractTreeTableModel {
-
-    private Configuration.ColumnSetting[] columnSettings;
     protected final Configuration configuration;
 
     private List<PrimaryWorkitem> workitems;
@@ -45,7 +43,7 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     public int getColumnCount() {
-        return getPropertiesCount();
+        return getColumnSettings().length;
     }
 
     public String getColumnName(int columnIndex) {
@@ -83,10 +81,6 @@ public class TasksModel extends AbstractTreeTableModel {
 
     protected Configuration.ColumnSetting getColumnSettings(int columnIndex) {
         return getColumnSettings()[columnIndex];
-    }
-
-    public int getPropertiesCount() {
-        return getColumnSettings().length;
     }
 
 

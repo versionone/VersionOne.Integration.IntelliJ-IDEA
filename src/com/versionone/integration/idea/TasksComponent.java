@@ -61,6 +61,8 @@ public class TasksComponent implements ProjectComponent {
         try {
             dataLayer.connect(cfg.v1Path, cfg.user, cfg.passwd, cfg.isWindowsIntegratedAuthentication);
             dataLayer.setCurrentProjectId(cfg.projectToken);
+            settings.projectToken = dataLayer.getCurrentProjectId();
+            settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(), settings.projectToken);
         } catch (DataLayerException e) {
             e.printStackTrace();
         }
@@ -123,12 +125,15 @@ public class TasksComponent implements ProjectComponent {
         if (content != null) {
             content.setDisplayName(cfg.projectName);
         }
-
-        table.getTree().revalidate();
-        table.getTree().updateUI();
-        table.createDefaultColumnsFromModel();
-        table.revalidate();
-        table.repaint();
+        if (table == null) {
+            table = createTable();
+        } else {
+            table.getTree().revalidate();
+            table.getTree().updateUI();
+            table.createDefaultColumnsFromModel();
+            table.revalidate();
+            table.repaint();
+        }
     }
 
     public void refresh() {

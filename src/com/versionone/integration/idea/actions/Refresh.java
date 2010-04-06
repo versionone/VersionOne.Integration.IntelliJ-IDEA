@@ -73,6 +73,7 @@ public class Refresh extends AnAction {
         if (isError[0] != null) {
             Icon icon = Messages.getErrorIcon();
             Messages.showMessageDialog(isError[0].getMessage(), "Error", icon);
+            return;
         }
 
         tc.refresh();

@@ -86,9 +86,10 @@ public class VersionOneConnector {
                 V1APIConnector dataConnector = new V1APIConnector(path + DATA_SUFFIX, userName, password);
                 services = new Services(metaModel, dataConnector);
 
-                config = new V1Configuration(new V1APIConnector(path + CONFIG_SUFFIX));
                 isConnected = verifyConnection(metaModel, metaConnector);
             }
+
+            config = new V1Configuration(new V1APIConnector(path + CONFIG_SUFFIX));
 
             requiredFieldsValidator = new RequiredFieldsValidator(metaModel, services);
             requiredFieldsValidator.init();
