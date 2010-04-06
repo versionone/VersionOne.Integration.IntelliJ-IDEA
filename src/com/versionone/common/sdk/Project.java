@@ -25,4 +25,19 @@ public class Project extends Entity {
             children.add(new Project(dataLayer, childAsset, this));
         }
     }
+
+    public static String getNameById(List<Project> projects, String id) {
+        String name = "";
+        if (projects == null || projects.size() == 0) {
+            return name;
+        }
+        for(Project project : projects) {
+            if (project.getId().equals(id)) {
+                return project.getProperty(Entity.NAME_PROPERTY).toString();
+            }
+            return getNameById(project.children, id);
+        }
+
+        return name;
+    }
 }

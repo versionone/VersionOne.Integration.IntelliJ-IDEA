@@ -121,7 +121,8 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     private Configuration.ColumnSetting[] getColumnSettings() {
-        if (columnSettings == null) {
+        Configuration.ColumnSetting[] columnSettings;
+        //if (columnSettings == null) {
             final Configuration.ColumnSetting[] columns = configuration.getColumnsForMainTable();
             final List<Configuration.ColumnSetting> settingsData = new ArrayList<Configuration.ColumnSetting>(columns.length);
             for (Configuration.ColumnSetting column : columns) {
@@ -129,8 +130,8 @@ public class TasksModel extends AbstractTreeTableModel {
                     settingsData.add(column);
                 }
             }
-            this.columnSettings = settingsData.toArray(new Configuration.ColumnSetting[settingsData.size()]);
-        }
+            columnSettings = settingsData.toArray(new Configuration.ColumnSetting[settingsData.size()]);
+        //}
         return columnSettings;
     }
 

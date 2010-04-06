@@ -17,6 +17,7 @@ import com.intellij.util.ui.UIUtil;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.DataLayerException;
+import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.integration.idea.actions.FilterAction;
 import com.versionone.integration.idea.actions.Refresh;
 import com.versionone.integration.idea.actions.SaveData;
@@ -30,6 +31,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 public class TasksComponent implements ProjectComponent {
 
@@ -57,6 +60,7 @@ public class TasksComponent implements ProjectComponent {
 
         try {
             dataLayer.connect(cfg.v1Path, cfg.user, cfg.passwd, cfg.isWindowsIntegratedAuthentication);
+            dataLayer.setCurrentProjectId(cfg.projectToken);
         } catch (DataLayerException e) {
             e.printStackTrace();
         }
@@ -154,17 +158,19 @@ public class TasksComponent implements ProjectComponent {
     JPanel createContentPanel() {
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getTreeTextBackground());
-        try {
-            table = createTable();
-        } catch (DataLayerException e) {
-            e.printStackTrace();
-        }
+        table = createTable();
         panel.add(new JScrollPane(table));
         return panel;
     }
 
-    private TasksTable createTable() throws DataLayerException {
-        final TasksTable table = new TasksTable(new TasksModel(dataLayer.getWorkitemTree()), dataLayer);
+    private TasksTable createTable() {
+        List<PrimaryWorkitem> data = new ArrayList<PrimaryWorkitem>();
+        try {
+            data = dataLayer.getWorkitemTree();
+        } catch (DataLayerException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        final TasksTable table = new TasksTable(new TasksModel(data), dataLayer);
         table.setRootVisible(false);
         table.setShowGrid(true);
         table.setIntercellSpacing(new Dimension(1, 1));        

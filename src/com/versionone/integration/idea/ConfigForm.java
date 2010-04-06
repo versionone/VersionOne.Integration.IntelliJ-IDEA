@@ -140,16 +140,20 @@ public class ConfigForm implements UnnamedConfigurable {
                 settings.passwd = password.getText();
             }
 
-            settings.projectToken = "";
-            settings.projectName = "";
+            //settings.projectToken = null;
+            //settings.projectName = "";
 
             try {
                 dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
+                dataLayer.setCurrentProjectId(settings.projectToken);
+                settings.projectToken = dataLayer.getCurrentProjectId();
+                settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(), settings.projectToken);
             } catch (DataLayerException ex) {
                 Icon icon = Messages.getErrorIcon();
                 Messages.showMessageDialog(ex.getMessage(), "Error", icon);
             }
 
+            tc.refresh();
             tc.update();
         }
     }

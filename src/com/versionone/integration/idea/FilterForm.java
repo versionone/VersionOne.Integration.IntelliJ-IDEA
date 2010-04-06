@@ -58,7 +58,7 @@ public class FilterForm implements Configurable {
         }
         final Object selectedPrj = projectTree.getLastSelectedPathComponent();
         if (!(selectedPrj instanceof ProjectsModel.ProjectWrapper)) {
-            LOG.debug("Wrong selected project:" + selectedPrj + "\n  type:" + selectedPrj.getClass());
+            LOG.debug("Wrong selected project:" + selectedPrj);
             return false;
         }
         String newPrj = ((ProjectsModel.ProjectWrapper) selectedPrj).id;
@@ -75,8 +75,7 @@ public class FilterForm implements Configurable {
             dataLayer.setCurrentProjectId(node.id);
         }
         settings.isShowAllTask = showAllTasksCheckBox.isSelected();
-
-        //dataLayer.setSettings(settings);
+        dataLayer.setShowAllTasks(settings.isShowAllTask);
     }
 
     public void reset() {

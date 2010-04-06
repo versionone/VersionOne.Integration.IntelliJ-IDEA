@@ -68,7 +68,6 @@ public class VersionOneConnector {
     }
 
     void connect(String path, String userName, String password, boolean integrated) throws DataLayerException {
-        isConnected = false;
         final boolean credentialsChanged = credentialsChanged(path, userName, integrated);
 
         this.path = path;
@@ -88,12 +87,13 @@ public class VersionOneConnector {
                 services = new Services(metaModel, dataConnector);
 
                 config = new V1Configuration(new V1APIConnector(path + CONFIG_SUFFIX));
+                isConnected = verifyConnection(metaModel, metaConnector);
             }
 
-            isConnected = true;
             requiredFieldsValidator = new RequiredFieldsValidator(metaModel, services);
             requiredFieldsValidator.init();
         } catch (MetaException ex) {
+            isConnected = false;
             throw ApiDataLayer.createAndLogException("Cannot connect to V1 server.", ex);
         }
     }
@@ -113,6 +113,10 @@ public class VersionOneConnector {
             dataConnector = new V1APIConnector(url + DATA_SUFFIX, user, pass);
         }
 
+         return verifyConnection(model, dataConnector);
+    }
+
+    private boolean verifyConnection(IMetaModel model, V1APIConnector dataConnector) {
         Services v1Service = new Services(model, dataConnector);
 
         try {

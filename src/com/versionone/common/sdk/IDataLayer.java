@@ -23,4 +23,5 @@ public interface IDataLayer {
 
     void setCurrentProjectId(String projectId);
     String getCurrentProjectId();
+    void setShowAllTasks(boolean showAllTasks);
 }
