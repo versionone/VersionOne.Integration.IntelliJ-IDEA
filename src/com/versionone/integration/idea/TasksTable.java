@@ -14,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.ArrayList;
@@ -42,6 +45,14 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
 
     public void updateData() throws DataLayerException {
         treeTableModel.update(dataLayer.getWorkitemTree());
+    }
+
+    public void reloadNode(Object itemAtNode) {
+        getTableModel().reload(new DefaultMutableTreeNode(itemAtNode));
+    }
+
+    public void reloadModel() {
+        getTableModel().reload();
     }
 
     @Override

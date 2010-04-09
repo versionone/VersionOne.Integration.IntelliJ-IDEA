@@ -39,6 +39,7 @@ public class ContextMenuActionListener implements ActionListener {
             try {
                 item.signup();
                 view.updateData();
+                view.reloadNode(item);
             } catch(DataLayerException ex) {
                 displayError(ex.getMessage());
             }
@@ -52,6 +53,7 @@ public class ContextMenuActionListener implements ActionListener {
             try {
                 item.quickClose();
                 view.updateData();
+                view.reloadModel();
             } catch(DataLayerException ex) {
                 displayError(ex.getMessage());
             } catch(ValidatorException ex) {
