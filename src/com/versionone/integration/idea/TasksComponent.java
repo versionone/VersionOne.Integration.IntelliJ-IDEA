@@ -68,8 +68,8 @@ public class TasksComponent implements ProjectComponent {
             dataLayer.setCurrentProjectId(cfg.projectToken);
             settings.projectToken = dataLayer.getCurrentProjectId();
             settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(), settings.projectToken);
-        } catch (DataLayerException e) {
-            e.printStackTrace();
+        } catch (DataLayerException ex) {
+            ex.printStackTrace();
         }
         //TODO remove. Actions must get Project from AnActionEvent.DataContext
         if (project != null && !project.isDefault()) {

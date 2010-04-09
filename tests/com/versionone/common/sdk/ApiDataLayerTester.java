@@ -32,25 +32,25 @@ public class ApiDataLayerTester implements IntegrationalTest {
         try {
             defect.close();
             fail();
-        } catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException ex) {
             // Do nothing
         }
         try {
             defect.quickClose();
             fail();
-        } catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException ex) {
             // Do nothing
         }
         try {
             defect.signup();
             fail();
-        } catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException ex) {
             // Do nothing
         }
         try {
             defect.revertChanges();
             fail();
-        } catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException ex) {
             // Do nothing
         }
         assertEquals("NULL", defect.getId());
@@ -85,25 +85,25 @@ public class ApiDataLayerTester implements IntegrationalTest {
         try {
             task.close();
             fail();
-        } catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException ex) {
             // Do nothing
         }
         try {
             task.quickClose();
             fail();
-        } catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException ex) {
             // Do nothing
         }
         try {
             task.signup();
             fail();
-        } catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException ex) {
             // Do nothing
         }
         try {
             task.revertChanges();
             fail();
-        } catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException ex) {
             // Do nothing
         }
         assertEquals("NULL", task.getId());
@@ -149,19 +149,19 @@ public class ApiDataLayerTester implements IntegrationalTest {
         try {
             story.createChild(Story);
             fail("Story allow to create child story");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ex) {
             // Do nothing
         }
         try {
             story.createChild(Defect);
             fail("Story allow to create child defect");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ex) {
             // Do nothing
         }
         try {
             story.createChild(Scope);
             fail("Story allow to create child project");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ex) {
             // Do nothing
         }
     }
