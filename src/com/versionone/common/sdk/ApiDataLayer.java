@@ -74,7 +74,7 @@ public class ApiDataLayer implements IDataLayer {
 
     protected static ApiDataLayer instance;
 
-    public Oid memberOid;
+    Oid memberOid;
 
     private List<Asset> assetList;
     private Map<String, PropertyValues> listPropertyValues;

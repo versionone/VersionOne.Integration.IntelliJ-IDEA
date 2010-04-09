@@ -1,5 +1,7 @@
 package com.versionone.integration.idea;
 
+import com.versionone.common.sdk.ApiDataLayer;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.PropertyValues;
 
 import javax.swing.*;
@@ -9,15 +11,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MultiValueEditor extends AbstractCellEditor implements TableCellEditor {
+    private PropertyValues currentValue;
+    private PropertyValues newValue;
+    // TODO get entity type
 
     public Object getCellEditorValue() {
-        // return cell value
-        return null;
+        return newValue != null ? newValue : currentValue;
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        // return created component
-        return null;
+        currentValue = (PropertyValues) value;
+        return new MultiValueEditorDialog(null, "Edit", currentValue);
     }
 
     private class MultiValueEditorDialog extends JDialog {
@@ -29,10 +33,6 @@ public class MultiValueEditor extends AbstractCellEditor implements TableCellEdi
             setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
 
             createControls();
-        }
-
-        public PropertyValues getValue() {
-            return value;
         }
 
         private void createControls() {
@@ -56,6 +56,11 @@ public class MultiValueEditor extends AbstractCellEditor implements TableCellEdi
                     MultiValueEditorDialog.this.setVisible(false);
                 }
             });
+        }
+
+        private void fillList(JList list) {
+//            IDataLayer dataLayer = ApiDataLayer.getInstance();
+//            PropertyValues allValues = dataLayer.getListPropertyValues(...)
         }
     }
 }

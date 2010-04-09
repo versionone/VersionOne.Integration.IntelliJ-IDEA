@@ -14,6 +14,9 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
+import com.versionone.common.sdk.Workitem;
+import com.versionone.common.sdk.Entity;
+import com.versionone.common.sdk.EntityType;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.DataLayerException;
@@ -32,6 +35,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
 import java.util.*;
+import java.util.Map.*;
 import java.util.List;
 
 public class TasksComponent implements ProjectComponent {
@@ -57,6 +61,7 @@ public class TasksComponent implements ProjectComponent {
         Configuration config = Configuration.getInstance();
         config.fill();
         dataLayer = ApiDataLayer.getInstance();
+        addWorkitemProperties();
 
         try {
             dataLayer.connect(cfg.v1Path, cfg.user, cfg.passwd, cfg.isWindowsIntegratedAuthentication);
@@ -74,6 +79,31 @@ public class TasksComponent implements ProjectComponent {
             ((SaveData) actions.getAction("V1.SaveData")).setProject(project);
             ((Refresh) actions.getAction("V1.toolRefresh")).setProject(project);
             ((FilterAction) actions.getAction("Filter")).setProject(project);
+        }
+    }
+
+    // TODO remove redundant props after item creation is supported
+    private void addWorkitemProperties() {
+        final Map<String, Boolean> properties = new HashMap<String, Boolean>();
+        //properties.put(Entity.ID_PROPERTY, false);
+        //properties.put(Entity.NAME_PROPERTY, false);
+        //properties.put(Workitem.DETAIL_ESTIMATE_PROPERTY, false);
+        //properties.put(Workitem.STATUS_PROPERTY, true);
+        //properties.put(Workitem.EFFORT_PROPERTY, false);
+        //properties.put(Workitem.DONE_PROPERTY, false);
+        //properties.put(Workitem.DESCRIPTION_PROPERTY, false);
+        //properties.put(Workitem.OWNERS_PROPERTY, true);
+        //properties.put(Workitem.TODO_PROPERTY, false);
+        properties.put(Workitem.CHECK_QUICK_CLOSE_PROPERTY, false);
+        properties.put(Workitem.CHECK_SIGNUP_PROPERTY, false);
+        //properties.put(Workitem.SCOPE_NAME_PROPERTY, false);
+
+        for (Entry<String, Boolean> entry : properties.entrySet()) {
+            for (EntityType type : EntityType.values()) {
+                if (type.isWorkitem()) {
+                    dataLayer.addProperty(entry.getKey(), type, entry.getValue());
+                }
+            }
         }
     }
 
@@ -109,7 +139,6 @@ public class TasksComponent implements ProjectComponent {
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         JPanel contentPanel = createContentPanel();
 
-        //Adding ActionToolbar
         ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
         ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
         contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
@@ -172,16 +201,14 @@ public class TasksComponent implements ProjectComponent {
         List<PrimaryWorkitem> data = new ArrayList<PrimaryWorkitem>();
         try {
             data = dataLayer.getWorkitemTree();
-        } catch (DataLayerException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (DataLayerException ex) {
+            ex.printStackTrace();
         }
         final TasksTable table = new TasksTable(new TasksModel(data), dataLayer);
         table.setRootVisible(false);
         table.setShowGrid(true);
         table.setIntercellSpacing(new Dimension(1, 1));        
         table.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        //table.getModel().addTableModelListener(tableChangesListener);
-        //table.getSelectionModel().addListSelectionListener(tableSelectionListener);
         table.getTree().addTreeSelectionListener(tableSelectionListener);
         table.getTree().setShowsRootHandles(true);
         return table;

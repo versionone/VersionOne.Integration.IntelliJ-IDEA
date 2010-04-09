@@ -144,11 +144,11 @@ public abstract class Workitem extends Entity {
     public boolean canSignup() {
         try {
             return isPersistent() && (Boolean) getProperty(CHECK_SIGNUP_PROPERTY);
-        } catch (IllegalArgumentException e) {
-            ApiDataLayer.logException("QuickSignup not supported.", e);
+        } catch (IllegalArgumentException ex) {
+            ApiDataLayer.logException("QuickSignup not supported.", ex);
             return false;
-        } catch (NullPointerException e) {
-            ApiDataLayer.logException("QuickClose not supported.", e);
+        } catch (NullPointerException ex) {
+            ApiDataLayer.logException("QuickClose not supported.", ex);
             return false;
         }
     }
@@ -156,7 +156,7 @@ public abstract class Workitem extends Entity {
     /**
      * Performs 'QuickSignup' operation.
      * 
-     * @throws DataLayerException
+     * @throws DataLayerException when operation execution fails
      */
     public void signup() throws DataLayerException {
         checkPersistance("signup");

@@ -25,9 +25,9 @@ public class ValidatorException extends Exception {
             final Object id;
             try {
                 id = asset.getAttributes().get(type + "." + Entity.ID_PROPERTY).getValue();
-            } catch (APIException e) {
-                throw new IllegalStateException("Asset " + asset + " haven't attribute: " + type + "."
-                        + Entity.ID_PROPERTY, e);
+            } catch (APIException ex) {
+                throw new IllegalStateException("Asset " + asset + " attribute is not defined: " + type + "."
+                        + Entity.ID_PROPERTY, ex);
             }
             final String idString = id != null ? id.toString() : "New Items";
 

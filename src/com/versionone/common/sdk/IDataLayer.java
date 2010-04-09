@@ -1,6 +1,7 @@
 package com.versionone.common.sdk;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IDataLayer {
 
@@ -24,4 +25,6 @@ public interface IDataLayer {
     void setCurrentProjectId(String projectId);
     String getCurrentProjectId();
     void setShowAllTasks(boolean showAllTasks);
+
+    PropertyValues getListPropertyValues(EntityType type, String propertyName);
 }

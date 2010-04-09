@@ -40,7 +40,7 @@ public class Configuration {
                 Unmarshaller um = jc.createUnmarshaller();
                 stream = thisClass.getResourceAsStream(thisClass.getSimpleName() + ".xml");
                 configuration = (Configuration) um.unmarshal(stream);
-            } catch (JAXBException e) {
+            } catch (JAXBException ex) {
                 configuration = new Configuration();
             } finally {
                 if (stream != null) {

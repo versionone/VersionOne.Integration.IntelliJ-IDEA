@@ -5,20 +5,31 @@ import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.treetable.TreeTable;
-import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.DataLayerException;
+import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.sdk.Workitem;
+import com.versionone.integration.idea.actions.ContextMenuActionListener;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class TasksTable extends TreeTable {
+public class TasksTable extends TreeTable implements IContextMenuOwner {
     private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
     private final IDataLayer dataLayer;
     private final TasksModel treeTableModel;
     private final JPopupMenu contextMenu;
+
+    public static final String CONTEXT_MENU_CLOSE = "Close...";
+    public static final String CONTEXT_MENU_QUICK_CLOSE = "Quick close";
+    public static final String CONTEXT_MENU_SIGNUP = "Sign me up";
+
+    private final ContextMenuMouseListener contextMenuMouseListener;
 
     public TasksTable(TasksModel treeTableModel, IDataLayer dataLayer) {
         super(treeTableModel);
@@ -27,16 +38,9 @@ public class TasksTable extends TreeTable {
         this.contextMenu = new JPopupMenu();
         WorkItemTreeTableCellRenderer treeCellRenderer = new WorkItemTreeTableCellRenderer();
         getTree().setCellRenderer(treeCellRenderer);
-        //getTree().setCellEditor(new TreeCellEditor2());
-        //setDefaultEditor(TreeTableModel.class, new TreeTableCellEditor2(createTableRenderer(treeTableModel)));
 
-        //createContextMenu();
-    }
-
-    private void createContextMenu() {
-        JMenuItem copyMenuItem = new JMenuItem("Copy");
-        contextMenu.add(copyMenuItem);
-        this.addMouseListener(new ContextMenuMouseListener(contextMenu));
+        contextMenuMouseListener = new ContextMenuMouseListener(contextMenu, this);
+        addMouseListener(contextMenuMouseListener);
     }
 
     public void updateData() throws DataLayerException {
@@ -84,5 +88,32 @@ public class TasksTable extends TreeTable {
     protected Object getWorkitemAtRow(int rowIndex) {
         TreePath path = getTree().getPathForRow(rowIndex);
         return path != null ? path.getLastPathComponent() : null;
+    }
+
+    @NotNull
+    public List<JMenuItem> getMenuItemsAt(int x, int y) {
+        int rowIndex = rowAtPoint(new Point(x, y));
+        Workitem item = (Workitem) getWorkitemAtRow(rowIndex);
+        ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
+
+        ContextMenuActionListener listener = new ContextMenuActionListener(item, this);
+        JMenuItem closeMenuItem = new JMenuItem(CONTEXT_MENU_CLOSE);
+        JMenuItem quickCloseMenuItem = new JMenuItem(CONTEXT_MENU_QUICK_CLOSE);
+        quickCloseMenuItem.setEnabled(item.canQuickClose());
+        JMenuItem signupMenuItem = new JMenuItem(CONTEXT_MENU_SIGNUP);
+        signupMenuItem.setEnabled(item.canSignup());
+        setMenuItemListener(listener, closeMenuItem, quickCloseMenuItem, signupMenuItem);
+
+        items.add(closeMenuItem);
+        items.add(quickCloseMenuItem);
+        items.add(signupMenuItem);
+
+        return items;
+    }
+
+    private void setMenuItemListener(ContextMenuActionListener listener, JMenuItem... menuItems) {
+        for(JMenuItem menuItem : menuItems) {
+            menuItem.addActionListener(listener);
+        }
     }
 }
