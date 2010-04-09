@@ -78,7 +78,7 @@ public class Refresh extends AnAction {
 
         tc.refresh();
         tc.update();
-        dc.setItem(tc.getItem());
+        dc.setItem(tc.getCurrentItem());
         dc.update();
     }
 

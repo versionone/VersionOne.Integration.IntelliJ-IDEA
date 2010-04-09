@@ -68,8 +68,6 @@ public class TasksModel extends AbstractTreeTableModel {
             String propertyName = getColumnSettings(column).attribute;
             item.setProperty(propertyName, aValue);
 
-            // TODO re-check that this works. Also, the next line is reported to be a solution.
-            // fireTreeNodesChanged(node, new TreePath[]{new TreePath(node)}, null, null);
             fireTreeNodesChanged(node, getPathToRoot(new DefaultMutableTreeNode(node)), null, null);
         }
     }

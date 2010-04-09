@@ -23,23 +23,20 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
     private final IDataLayer dataLayer;
     private final TasksModel treeTableModel;
-    private final JPopupMenu contextMenu;
 
     public static final String CONTEXT_MENU_CLOSE = "Close...";
     public static final String CONTEXT_MENU_QUICK_CLOSE = "Quick close";
     public static final String CONTEXT_MENU_SIGNUP = "Sign me up";
 
-    private final ContextMenuMouseListener contextMenuMouseListener;
-
     public TasksTable(TasksModel treeTableModel, IDataLayer dataLayer) {
         super(treeTableModel);
         this.dataLayer = dataLayer;
         this.treeTableModel = treeTableModel;
-        this.contextMenu = new JPopupMenu();
+        JPopupMenu contextMenu = new JPopupMenu();
         WorkItemTreeTableCellRenderer treeCellRenderer = new WorkItemTreeTableCellRenderer();
         getTree().setCellRenderer(treeCellRenderer);
 
-        contextMenuMouseListener = new ContextMenuMouseListener(contextMenu, this);
+        ContextMenuMouseListener contextMenuMouseListener = new ContextMenuMouseListener(contextMenu, this);
         addMouseListener(contextMenuMouseListener);
     }
 
