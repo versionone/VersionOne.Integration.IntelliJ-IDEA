@@ -104,7 +104,7 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
         Workitem item = (Workitem) getWorkitemAtRow(rowIndex);
         ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
 
-        ContextMenuActionListener listener = new ContextMenuActionListener(item, this);
+        ContextMenuActionListener listener = new ContextMenuActionListener(item, this, dataLayer);
         JMenuItem closeMenuItem = new JMenuItem(CONTEXT_MENU_CLOSE);
         JMenuItem quickCloseMenuItem = new JMenuItem(CONTEXT_MENU_QUICK_CLOSE);
         quickCloseMenuItem.setEnabled(item.canQuickClose());
