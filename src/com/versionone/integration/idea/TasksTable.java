@@ -99,6 +99,8 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     }
 
     @NotNull
+    // TODO use more generic type to be able to pass separators. They are not special JMenuItem's :(
+    // another point is to create wrapper and use it.
     public List<JMenuItem> getMenuItemsAt(int x, int y) {
         int rowIndex = rowAtPoint(new Point(x, y));
         Workitem item = (Workitem) getWorkitemAtRow(rowIndex);
