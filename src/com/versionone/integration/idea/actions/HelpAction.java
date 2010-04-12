@@ -11,7 +11,7 @@ import com.versionone.integration.idea.TasksComponent;
 
 import java.io.File;
 
-public class Help extends AnAction {
+public class HelpAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         final PluginId id = PluginManager.getPluginByClassName(TasksComponent.class.getCanonicalName());
         final File path = PluginManager.getPlugin(id).getPath();

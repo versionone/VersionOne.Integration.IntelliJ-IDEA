@@ -158,6 +158,7 @@ public class ConfigForm implements UnnamedConfigurable {
         }
     }
 
+    // TODO join the following methods and possibly reduce fields
     public boolean isConnectValid() {
         return isConnectionCorrect;
     }
@@ -167,7 +168,6 @@ public class ConfigForm implements UnnamedConfigurable {
     }
 
     public void reset() {
-
         serverUrl.setText(settings.v1Path);
         userName.setText(settings.user);
         password.setText(settings.passwd);

@@ -51,18 +51,18 @@
             <separator/>
 
             <action id="V1.toolRefresh" icon="/actions/sync.png"
-                    class="com.versionone.integration.idea.actions.Refresh"
+                    class="com.versionone.integration.idea.actions.RefreshAction"
                     text="Refresh" description="Refresh tasks data from VersionOne.">
                 <keyboard-shortcut keymap="$default" first-keystroke="F5"/>
             </action>
             <action id="V1.SaveData" icon="/actions/menu-saveall.png"
-                    class="com.versionone.integration.idea.actions.SaveData"
+                    class="com.versionone.integration.idea.actions.SaveDataAction"
                     text="Save" description="Save data to VersionOne."/>
 
             <separator />
 
             <action id="V1.Help" icon="/actions/help.png"
-                    class="com.versionone.integration.idea.actions.Help"
+                    class="com.versionone.integration.idea.actions.HelpAction"
                     text="Help" description="Help"/>
         </group>
     </actions>

@@ -9,18 +9,16 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
-import com.versionone.common.sdk.DataLayerException;
 import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.TasksComponent;
-import com.versionone.integration.idea.V1PluginException;
 
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-public class Refresh extends AnAction {
+public class RefreshAction extends AnAction {
 
-    private static final Logger LOG = Logger.getLogger(Refresh.class);
+    private static final Logger LOG = Logger.getLogger(RefreshAction.class);
 
     private Project project;
 

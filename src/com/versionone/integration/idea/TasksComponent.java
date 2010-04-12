@@ -15,15 +15,14 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
 import com.versionone.common.sdk.Workitem;
-import com.versionone.common.sdk.Entity;
 import com.versionone.common.sdk.EntityType;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.integration.idea.actions.FilterAction;
-import com.versionone.integration.idea.actions.Refresh;
-import com.versionone.integration.idea.actions.SaveData;
+import com.versionone.integration.idea.actions.RefreshAction;
+import com.versionone.integration.idea.actions.SaveDataAction;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -76,8 +75,8 @@ public class TasksComponent implements ProjectComponent {
             ActionManager actions = ActionManager.getInstance();
             ((FilterAction) actions.getAction("Filter")).setSettings(cfg);
             //set projects to the actions
-            ((SaveData) actions.getAction("V1.SaveData")).setProject(project);
-            ((Refresh) actions.getAction("V1.toolRefresh")).setProject(project);
+            ((SaveDataAction) actions.getAction("V1.SaveData")).setProject(project);
+            ((RefreshAction) actions.getAction("V1.toolRefresh")).setProject(project);
             ((FilterAction) actions.getAction("Filter")).setProject(project);
         }
     }

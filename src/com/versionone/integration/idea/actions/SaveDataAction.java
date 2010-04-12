@@ -19,9 +19,9 @@ import javax.swing.*;
 /**
  *
  */
-public class SaveData extends AnAction {
+public class SaveDataAction extends AnAction {
 
-    private static final Logger LOG = Logger.getLogger(SaveData.class);
+    private static final Logger LOG = Logger.getLogger(SaveDataAction.class);
 
     private Project project;
 
@@ -75,7 +75,7 @@ public class SaveData extends AnAction {
         }
 
         //TODO ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
-        Refresh.refreshData(ideaProject, tc, dataLayer, dc, progressManager);
+        RefreshAction.refreshData(ideaProject, tc, dataLayer, dc, progressManager);
     }
 
     public void setProject(Project project) {

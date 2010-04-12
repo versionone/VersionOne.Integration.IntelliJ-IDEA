@@ -14,9 +14,9 @@ public class DetailsComponentRunner {
         config.fill();
         final WorkspaceSettings settings = new WorkspaceSettings();
         DetailsComponent plugin = new DetailsComponent(null, settings);
-        final IDataLayer data = ApiDataLayer.getInstance();
-        data.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
-        JPanel panel = plugin.createContentPanel(data);
+        final IDataLayer dataLayer = ApiDataLayer.getInstance();
+        dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
+        JPanel panel = plugin.createContentPanel(dataLayer);
         JFrame frame = new JFrame("IDEA V1 Plugin - Details");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(200, 500));
