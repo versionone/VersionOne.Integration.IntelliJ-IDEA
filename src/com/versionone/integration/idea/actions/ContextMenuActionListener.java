@@ -51,7 +51,8 @@ public class ContextMenuActionListener implements ActionListener {
     }
 
     private void close() {
-        CloseWorkitemDialog dialog = new CloseWorkitemDialog(item, dataLayer);
+        JFrame parent = (JFrame) SwingUtilities.getRoot(view);
+        CloseWorkitemDialog dialog = new CloseWorkitemDialog(parent, item, dataLayer);
         dialog.setVisible(true);
     }
 
