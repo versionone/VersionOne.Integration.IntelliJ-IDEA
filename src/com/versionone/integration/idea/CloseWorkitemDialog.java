@@ -13,6 +13,9 @@ public class CloseWorkitemDialog extends JDialog {
     private final Workitem item;
     private final IDataLayer dataLayer;
 
+    private final JComboBox statusComboBox;
+    private final JTextField toDoText;
+
     public CloseWorkitemDialog(JFrame parent, @NotNull Workitem item, @NotNull IDataLayer dataLayer) {
         super(parent, "Close " + item.getType().name(), true);
 
@@ -27,13 +30,13 @@ public class CloseWorkitemDialog extends JDialog {
         topPanel.setSize(300, 55);
 
         JLabel toDoLabel = new JLabel("To Do");
-        JTextField toDoText = new JTextField(10);
+        toDoText = new JTextField(10);
         toDoText.setEditable(false);
-        bindToDoTextField(toDoText);
+        bindToDoTextField();
 
         JLabel statusLabel = new JLabel("Status");
-        JComboBox statusComboBox = new JComboBox();
-        bindStatusComboBox(statusComboBox);
+        statusComboBox = new JComboBox();
+        bindStatusComboBox();
 
         addComponentsToParent(topPanel, toDoLabel, toDoText, statusLabel, statusComboBox);
 
@@ -45,7 +48,8 @@ public class CloseWorkitemDialog extends JDialog {
 
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("should close item");
+                executeClose();
+                setVisible(false);
             }
         });
 
@@ -60,23 +64,50 @@ public class CloseWorkitemDialog extends JDialog {
         add(topPanel);
         add(bottomPanel);
 
-        okButton.requestFocusInWindow();
+        centerDialog();
     }
 
-    private void bindStatusComboBox(JComboBox comboBox) {
+    private void centerDialog() {
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+        setLocation((screenSize.width - getSize().width) / 2, (screenSize.height - getSize().height)/ 2);
+    }
+
+    private void executeClose() {
+        try {
+            ValueId currentStatus = (ValueId) item.getProperty(Workitem.STATUS_PROPERTY);
+            ValueId selectedStatus = (ValueId) statusComboBox.getSelectedItem();
+            if(!currentStatus.equals(selectedStatus)) {
+                item.setProperty(Workitem.STATUS_PROPERTY, selectedStatus);
+                item.commitChanges();
+            }
+            item.close();
+        } catch(DataLayerException ex) {
+            showFailureMessage(ex.getMessage());
+        } catch(ValidatorException ex) {
+            showFailureMessage(ex.getMessage());
+        }
+    }
+
+    private void showFailureMessage(String message) {
+        Icon icon = com.intellij.openapi.ui.Messages.getErrorIcon();
+        com.intellij.openapi.ui.Messages.showMessageDialog(message, "Error", icon);
+    }
+
+    private void bindStatusComboBox() {
         PropertyValues statuses = dataLayer.getListPropertyValues(item.getType(), Workitem.STATUS_PROPERTY);
         for(ValueId status : statuses) {
-            comboBox.addItem(status);
+            statusComboBox.addItem(status);
         }
 
         ValueId status = (ValueId) item.getProperty(Workitem.STATUS_PROPERTY);
-        comboBox.setSelectedIndex(statuses.getStringArrayIndex(status));
+        statusComboBox.setSelectedItem(status);
     }
 
-    private void bindToDoTextField(JTextField toDoField) {
+    private void bindToDoTextField() {
         Object toDo = item.getProperty(Workitem.TODO_PROPERTY);
         if(toDo != null) {
-            toDoField.setText((String) toDo);
+            toDoText.setText((String) toDo);
         }
     }
 
