@@ -48,7 +48,9 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     }
 
     public void reloadNode(Object itemAtNode) {
+        int selectedRow = getSelectedRow();
         getTableModel().reload(new DefaultMutableTreeNode(itemAtNode));
+        getTree().setSelectionRow(selectedRow);
     }
 
     public void reloadModel() {
@@ -111,7 +113,7 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
         JMenuItem quickCloseMenuItem = new JMenuItem(CONTEXT_MENU_QUICK_CLOSE);
         quickCloseMenuItem.setEnabled(item.canQuickClose());
         JMenuItem signupMenuItem = new JMenuItem(CONTEXT_MENU_SIGNUP);
-        signupMenuItem.setEnabled(item.canSignup());
+        signupMenuItem.setEnabled(item.canSignup() && !item.isMine());
         setMenuItemListener(listener, closeMenuItem, quickCloseMenuItem, signupMenuItem);
 
         items.add(closeMenuItem);
