@@ -1,11 +1,13 @@
 package com.versionone.integration.idea;
 
 import com.versionone.common.sdk.ApiDataLayer;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.PropertyValues;
 import com.versionone.common.sdk.Workitem;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,6 +46,10 @@ public class EditorFactory {
         comboEditor.setSelectedItem(currentValue);
         comboEditor.setBorder(null);
         return new DefaultCellEditor(comboEditor);
+    }
+
+    public static TableCellEditor createMultivalueEditor(Workitem item, IDataLayer dataLayer, String attribute) {
+        return new MultiValueEditor(dataLayer, item, attribute);
     }
 
     private static PropertyValues getAvailableValues(String attribute, Workitem item) {
