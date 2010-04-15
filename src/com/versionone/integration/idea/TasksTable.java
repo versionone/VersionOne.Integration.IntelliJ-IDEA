@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.treetable.TreeTable;
+import com.intellij.util.ui.treetable.TreeTableModel;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.Workitem;
@@ -31,6 +32,12 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     public static final String CONTEXT_MENU_QUICK_CLOSE = "Quick close";
     public static final String CONTEXT_MENU_SIGNUP = "Sign me up";
 
+    public TasksTable(TreeTableModel emptyModel) {
+        super(emptyModel);
+        dataLayer = null;
+        treeTableModel = null;
+    }
+
     public TasksTable(TasksModel treeTableModel, IDataLayer dataLayer) {
         super(treeTableModel);
         this.dataLayer = dataLayer;
@@ -44,7 +51,9 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     }
 
     public void updateData() throws DataLayerException {
-        treeTableModel.update(dataLayer.getWorkitemTree());
+        if(treeTableModel != null) {
+            treeTableModel.update(dataLayer.getWorkitemTree());
+        }
     }
 
     public void reloadNode(Object itemAtNode) {

@@ -81,21 +81,10 @@ public class TasksComponent implements ProjectComponent {
         }
     }
 
-    // TODO remove redundant props after item creation is supported
     private void addWorkitemProperties() {
         final Map<String, Boolean> properties = new HashMap<String, Boolean>();
-        //properties.put(Entity.ID_PROPERTY, false);
-        //properties.put(Entity.NAME_PROPERTY, false);
-        //properties.put(Workitem.DETAIL_ESTIMATE_PROPERTY, false);
-        //properties.put(Workitem.STATUS_PROPERTY, true);
-        //properties.put(Workitem.EFFORT_PROPERTY, false);
-        //properties.put(Workitem.DONE_PROPERTY, false);
-        //properties.put(Workitem.DESCRIPTION_PROPERTY, false);
-        //properties.put(Workitem.OWNERS_PROPERTY, true);
-        //properties.put(Workitem.TODO_PROPERTY, false);
         properties.put(Workitem.CHECK_QUICK_CLOSE_PROPERTY, false);
         properties.put(Workitem.CHECK_SIGNUP_PROPERTY, false);
-        //properties.put(Workitem.SCOPE_NAME_PROPERTY, false);
 
         for (Entry<String, Boolean> entry : properties.entrySet()) {
             for (EntityType type : EntityType.values()) {
@@ -197,13 +186,16 @@ public class TasksComponent implements ProjectComponent {
     }
 
     private TasksTable createTable() {
-        List<PrimaryWorkitem> data = new ArrayList<PrimaryWorkitem>();
+        TasksTable table;
+
         try {
-            data = dataLayer.getWorkitemTree();
+            List<PrimaryWorkitem> data = dataLayer.getWorkitemTree();
+            table = new TasksTable(new TasksModel(data), dataLayer);
         } catch (DataLayerException ex) {
-            ex.printStackTrace();
+            Messages.showErrorDialog(ex.getMessage(), "Error");
+            table = new TasksTable(TasksModel.getEmptyModel());
         }
-        final TasksTable table = new TasksTable(new TasksModel(data), dataLayer);
+
         table.setRootVisible(false);
         table.setShowGrid(true);
         table.setIntercellSpacing(new Dimension(1, 1));        

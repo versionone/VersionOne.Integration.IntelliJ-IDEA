@@ -159,4 +159,20 @@ public class TasksModel extends AbstractTreeTableModel {
                                         settings.type.equals(Configuration.AssetDetailSettings.LIST_TYPE);
         return !settings.readOnly && !item.isPropertyReadOnly(settings.attribute) && propertyTypeSupported;
     }
+
+    public static TreeTableModel getEmptyModel() {
+        return new AbstractTreeTableModel(null) {
+            public int getColumnCount() {
+                return 0;
+            }
+
+            public String getColumnName(int i) {
+                return null;
+            }
+
+            public Object getValueAt(Object o, int i) {
+                return null;
+            }
+        };
+    }
 }
