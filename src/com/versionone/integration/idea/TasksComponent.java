@@ -145,11 +145,7 @@ public class TasksComponent implements ProjectComponent {
         if (table == null) {
             table = createTable();
         } else {
-            table.getTree().revalidate();
-            table.getTree().updateUI();
-            table.createDefaultColumnsFromModel();
-            table.revalidate();
-            table.repaint();
+            table.updateUI(true);
         }
     }
 

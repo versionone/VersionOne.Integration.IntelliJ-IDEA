@@ -56,14 +56,43 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
         }
     }
 
-    public void reloadNode(Object itemAtNode) {
+    /**
+     * Redraw table and tree
+     * @param recreateColumns force recreating columns from model if true, skip this step if not
+     */
+    public void updateUI(boolean recreateColumns) {
+        getTree().revalidate();
+        getTree().updateUI();
+
+        if(recreateColumns) {
+            createDefaultColumnsFromModel();
+        }
+        
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Reload node, assuming that the underlying object is changed and we want to force displaying these changes
+     * @param itemAtNode corresponding workitem
+     */
+    public void reloadNode(Workitem itemAtNode) {
         JTree tree = getTree();
         TreePath path = tree.getSelectionPath();
         getTableModel().reload(new DefaultMutableTreeNode(itemAtNode));
-        tree.expandPath(path);
+
+        if(itemAtNode.getType().isSecondary()) {
+            tree.expandPath(path);
+        }
+
+        tree.scrollPathToVisible(path);
         tree.setSelectionPath(path);
+        updateUI(false);
     }
 
+    /**
+     * Reload model, causing data source changes to be displayed in UI
+     */
     public void reloadModel() {
         getTableModel().reload();
     }

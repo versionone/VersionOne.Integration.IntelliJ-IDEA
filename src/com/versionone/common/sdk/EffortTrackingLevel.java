@@ -14,9 +14,6 @@ public final class EffortTrackingLevel {
      */
     private final Set<String> tokens = new HashSet<String>(6);
 
-    public EffortTrackingLevel() {
-    }
-
     public boolean isTracking(Entity item) {
         String token = item.getType().name();
         if (item instanceof SecondaryWorkitem) {
