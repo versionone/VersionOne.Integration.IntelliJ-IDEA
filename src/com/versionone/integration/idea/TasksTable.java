@@ -57,9 +57,11 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     }
 
     public void reloadNode(Object itemAtNode) {
-        int selectedRow = getSelectedRow();
+        JTree tree = getTree();
+        TreePath path = tree.getSelectionPath();
         getTableModel().reload(new DefaultMutableTreeNode(itemAtNode));
-        getTree().setSelectionRow(selectedRow);
+        tree.expandPath(path);
+        tree.setSelectionPath(path);
     }
 
     public void reloadModel() {
