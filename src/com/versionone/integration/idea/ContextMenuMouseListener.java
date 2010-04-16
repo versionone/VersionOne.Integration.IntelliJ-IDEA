@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ContextMenuMouseListener extends MouseAdapter {
     private JPopupMenu menu;
-    private IContextMenuOwner menuOwner = null;
+    private IContextMenuOwner menuOwner;
 
     public ContextMenuMouseListener(JPopupMenu menu, IContextMenuOwner menuOwner) {
         this(menu);
@@ -32,13 +32,20 @@ public class ContextMenuMouseListener extends MouseAdapter {
         showPopupMenu(e);
     }
 
+    /**
+     * Display popup menu. If menu owner is registered,
+     * @param e received MouseEvent
+     */
     private void showPopupMenu(MouseEvent e) {
         if (e.isPopupTrigger()) {
-            List<JMenuItem> items = menuOwner.getMenuItemsAt(e.getX(), e.getY());
-            menu.removeAll();
-            for(JMenuItem item : items) {
-                menu.add(item);
+            if(menuOwner != null) {
+                List<JMenuItem> items = menuOwner.getMenuItemsAt(e.getX(), e.getY());
+                menu.removeAll();
+                for(JMenuItem item : items) {
+                    menu.add(item);
+                }
             }
+            
             menu.show(e.getComponent(), e.getX(), e.getY());
         }
     }
