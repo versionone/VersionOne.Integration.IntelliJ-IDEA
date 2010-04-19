@@ -33,7 +33,7 @@ public class ContextMenuMouseListener extends MouseAdapter {
     }
 
     /**
-     * Display popup menu. If menu owner is registered,
+     * Display popup menu. If menu owner is registered, acquire menu items from owner. Otherwise, just show.
      * @param e received MouseEvent
      */
     private void showPopupMenu(MouseEvent e) {
