@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.TasksComponent;
@@ -57,8 +58,8 @@ public class RefreshAction extends AnAction {
                         progressManager.getProgressIndicator().setText("Updating VersionOne Task List");
                         try {
                             dataLayer.reconnect();
-                        } catch (Exception ex) {
-                            LOG.error("Failed to refresh workitems.", ex);
+                        } catch (DataLayerException ex) {
+                            LOG.warn("Failed to refresh workitems.", ex);
                             isError[0] = ex;
                         }
                     }
