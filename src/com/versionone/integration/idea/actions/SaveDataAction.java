@@ -10,7 +10,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.sdk.ValidatorException;
 import com.versionone.integration.idea.DetailsComponent;
+import com.versionone.integration.idea.ValidationResultDialog;
 import com.versionone.integration.idea.TasksComponent;
 import org.apache.log4j.Logger;
 
@@ -41,7 +43,9 @@ public class SaveDataAction extends AnAction {
         final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
         final IDataLayer dataLayer = tc.getDataLayer();
         final ProgressManager progressManager = ProgressManager.getInstance();
-        final Object[] isError = {false, "", false};
+
+        // is exception, text of exception, error or warning, display in standard or in custom dialog
+        final Object[] isError = {false, "", false, false};
         tc.removeEdition();
         dc.removeEdition();
 
@@ -55,7 +59,13 @@ public class SaveDataAction extends AnAction {
                     isError[1] = ex.getMessage();
                     isError[2] = true; //ex.isError();
                     LOG.warn(isError[1], ex);
-                } catch (Exception ex) {
+                } catch(ValidatorException ex) {
+                    isError[0] = true;
+                    isError[1] = ex.getMessage();
+                    isError[2] = true;
+                    isError[3] = true;
+                    LOG.warn(isError[1], ex);
+                } catch (Exception ex) {//TODO should we handle this exception?
                     isError[0] = true;
                     isError[1] = "Error connecting to VersionOne";
                     isError[2] = true;
@@ -67,6 +77,12 @@ public class SaveDataAction extends AnAction {
                 false,
                 ideaProject
         );
+
+        if ((Boolean) isError[3]) {
+            ValidationResultDialog dialogForRequiredFields = new ValidationResultDialog((String) isError[1]);
+            dialogForRequiredFields.setVisible(true);
+            return;
+        }
 
         if ((Boolean) isError[0]) {
             Icon icon = (Boolean) isError[2] ? Messages.getErrorIcon() : Messages.getWarningIcon();
