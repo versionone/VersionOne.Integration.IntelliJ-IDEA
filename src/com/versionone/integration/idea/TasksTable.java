@@ -31,6 +31,9 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     public static final String CONTEXT_MENU_CLOSE = "Close...";
     public static final String CONTEXT_MENU_QUICK_CLOSE = "Quick close";
     public static final String CONTEXT_MENU_SIGNUP = "Sign me up";
+    public static final String CONTEXT_MENU_CREATE_DEFECT = "Add new Defect";
+    public static final String CONTEXT_MENU_CREATE_TASK = "Add new Task";
+    public static final String CONTEXT_MENU_CREATE_TEST = "Add new Test";
 
     public TasksTable(TreeTableModel emptyModel) {
         super(emptyModel);
@@ -141,24 +144,39 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     }
 
     @NotNull
-    // TODO use more generic type to be able to pass separators. They are not special JMenuItem's :(
-    // another point is to create wrapper and use it.
-    public List<JMenuItem> getMenuItemsAt(int x, int y) {
+    public List<ContextMenuItemWrapper> getMenuItemsAt(int x, int y) {
         int rowIndex = rowAtPoint(new Point(x, y));
         Workitem item = (Workitem) getWorkitemAtRow(rowIndex);
-        ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
+        List<ContextMenuItemWrapper> items = new ArrayList<ContextMenuItemWrapper>();
+
+        if(item == null) {
+            throw new UnsupportedOperationException("Cannot get menu items for non existing workitem row");
+        }
 
         ContextMenuActionListener listener = new ContextMenuActionListener(item, this, dataLayer);
         JMenuItem closeMenuItem = new JMenuItem(CONTEXT_MENU_CLOSE);
+        closeMenuItem.setEnabled(item.isPersistent());
         JMenuItem quickCloseMenuItem = new JMenuItem(CONTEXT_MENU_QUICK_CLOSE);
-        quickCloseMenuItem.setEnabled(item.canQuickClose());
+        quickCloseMenuItem.setEnabled(item.canQuickClose() && item.isPersistent());
         JMenuItem signupMenuItem = new JMenuItem(CONTEXT_MENU_SIGNUP);
-        signupMenuItem.setEnabled(item.canSignup() && !item.isMine());
-        setMenuItemListener(listener, closeMenuItem, quickCloseMenuItem, signupMenuItem);
+        signupMenuItem.setEnabled(item.canSignup() && !item.isMine() && item.isPersistent());
+        JMenuItem createDefectMenuItem = new JMenuItem(CONTEXT_MENU_CREATE_DEFECT);
+        JMenuItem createTaskMenuItem = new JMenuItem(CONTEXT_MENU_CREATE_TASK);
+        createTaskMenuItem.setEnabled(item.getType().isPrimary());
+        JMenuItem createTestMenuItem = new JMenuItem(CONTEXT_MENU_CREATE_TEST);
+        createTestMenuItem.setEnabled(item.getType().isPrimary());
 
-        items.add(closeMenuItem);
-        items.add(quickCloseMenuItem);
-        items.add(signupMenuItem);
+        setMenuItemListener(listener, closeMenuItem, quickCloseMenuItem, signupMenuItem,
+                createDefectMenuItem, createTaskMenuItem, createTestMenuItem);
+
+        items.add(ContextMenuItemWrapper.createFromMenuItem(closeMenuItem));
+        items.add(ContextMenuItemWrapper.createFromMenuItem(quickCloseMenuItem));
+        items.add(ContextMenuItemWrapper.createSeparator());
+        items.add(ContextMenuItemWrapper.createFromMenuItem(signupMenuItem));
+        items.add(ContextMenuItemWrapper.createSeparator());
+        items.add(ContextMenuItemWrapper.createFromMenuItem(createDefectMenuItem));
+        items.add(ContextMenuItemWrapper.createFromMenuItem(createTaskMenuItem));
+        items.add(ContextMenuItemWrapper.createFromMenuItem(createTestMenuItem));
 
         return items;
     }
