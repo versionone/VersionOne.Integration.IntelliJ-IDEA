@@ -95,7 +95,7 @@ public class VersionOneConnector {
             requiredFieldsValidator.init();
         } catch (MetaException ex) {
             isConnected = false;
-            throw ApiDataLayer.createAndLogException("Cannot connect to V1 server.", ex);
+            throw ApiDataLayer.createAndLogException("Cannot connect to VersionOne server.", ex);
         }
     }
 
