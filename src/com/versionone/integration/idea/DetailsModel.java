@@ -12,21 +12,20 @@ import java.util.List;
 public class DetailsModel extends AbstractModel {
 
     private static String[] columnsNames = {"Property", "Value"};
-    /*
-     * Info about data for workitem (lazy)
-     */
-    private Configuration.ColumnSetting[] workitemData;
+    private Configuration.ColumnSetting[] workitemSettings;
     private Workitem workitem;
 
     public DetailsModel(IDataLayer data) {
         super(data);
     }
 
+    /**
+     * Set current workitem. Note that internal ColumnSetting[] is always reset, so rows are always up to date
+     * @param obj New workitem
+     */
     public void setWorkitem(Object obj) {
         Workitem workitem = (Workitem) obj;
-        if (this.workitem == null || workitem == null || !workitem.getType().equals(this.workitem.getType())) {
-            workitemData = null;
-        }
+        workitemSettings = null;
         this.workitem = workitem;
     }
 
@@ -92,15 +91,15 @@ public class DetailsModel extends AbstractModel {
     }
 
     protected Configuration.ColumnSetting getRowSettings(int rowIndex) {
-        return getWorkitemData()[rowIndex];
+        return getWorkitemSettings()[rowIndex];
     }
 
     public int getPropertiesCount() {
-        return getWorkitemData().length;
+        return getWorkitemSettings().length;
     }
 
-    private Configuration.ColumnSetting[] getWorkitemData() {
-        if (workitemData == null) {
+    private Configuration.ColumnSetting[] getWorkitemSettings() {
+        if (workitemSettings == null) {
             final Configuration.ColumnSetting[] columns = configuration.getColumns(getWorkitem().getType());
             final List<Configuration.ColumnSetting> workitemData = new ArrayList<Configuration.ColumnSetting>(columns.length);
             for (Configuration.ColumnSetting column : columns) {
@@ -108,8 +107,9 @@ public class DetailsModel extends AbstractModel {
                     workitemData.add(column);
                 }
             }
-            this.workitemData = workitemData.toArray(new Configuration.ColumnSetting[workitemData.size()]); 
+            this.workitemSettings = workitemData.toArray(new Configuration.ColumnSetting[workitemData.size()]);
         }
-        return workitemData;
+        
+        return workitemSettings;
     }
 }
