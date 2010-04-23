@@ -8,6 +8,7 @@ import com.intellij.util.ui.treetable.TreeTable;
 import com.intellij.util.ui.treetable.TreeTableModel;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
+import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.common.sdk.Workitem;
 import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.common.sdk.SecondaryWorkitem;
@@ -37,16 +38,11 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     public static final String CONTEXT_MENU_CREATE_TASK = "Add new Task";
     public static final String CONTEXT_MENU_CREATE_TEST = "Add new Test";
 
-    public TasksTable(TreeTableModel emptyModel) {
-        super(emptyModel);
-        dataLayer = null;
-        treeTableModel = null;
-    }
-
-    public TasksTable(TasksModel treeTableModel, IDataLayer dataLayer) {
-        super(treeTableModel);
+    public TasksTable(@NotNull TasksModel model, IDataLayer dataLayer) {
+        super(model);
         this.dataLayer = dataLayer;
-        this.treeTableModel = treeTableModel;
+        this.treeTableModel = model;
+
         JPopupMenu contextMenu = new JPopupMenu();
         WorkItemTreeTableCellRenderer treeCellRenderer = new WorkItemTreeTableCellRenderer();
         getTree().setCellRenderer(treeCellRenderer);
@@ -55,15 +51,19 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
         addMouseListener(contextMenuMouseListener);
     }
 
+    /**
+     * Re-read data from Data Layer and update everything.
+     * @throws DataLayerException
+     */
     public void updateData() throws DataLayerException {
-        if(treeTableModel != null) {
-            treeTableModel.update(dataLayer.getWorkitemTree());
-        }
+        List<PrimaryWorkitem> data = dataLayer.getWorkitemTree();
+        treeTableModel.setHideColumns(false);
+        treeTableModel.update(data);
     }
 
     /**
-     * Redraw table and tree
-     * @param recreateColumns force recreating columns from model if true, skip this step if not
+     * Redraw table and tree.
+     * @param recreateColumns force recreating columns from model if true, skip this step if not.
      */
     public void updateUI(boolean recreateColumns) {
         getTree().revalidate();

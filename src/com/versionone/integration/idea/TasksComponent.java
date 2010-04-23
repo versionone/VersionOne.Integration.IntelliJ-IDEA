@@ -189,14 +189,17 @@ public class TasksComponent implements ProjectComponent {
 
     private TasksTable createTable() {
         TasksTable table;
+        TasksModel model;
 
         try {
             List<PrimaryWorkitem> data = dataLayer.getWorkitemTree();
-            table = new TasksTable(new TasksModel(data), dataLayer);
+            model = new TasksModel(data);
+            table = new TasksTable(model, dataLayer);
         } catch (DataLayerException ex) {
             Messages.showErrorDialog(ex.getMessage(), "Error");
-            table = new TasksTable(TasksModel.getEmptyModel());
-            
+            model = new TasksModel(new ArrayList<PrimaryWorkitem>(0));
+            model.setHideColumns(true);
+            table = new TasksTable(model, dataLayer);
         }
 
         table.setRootVisible(false);

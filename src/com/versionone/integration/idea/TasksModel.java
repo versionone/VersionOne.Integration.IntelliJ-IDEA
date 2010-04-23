@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 public class TasksModel extends AbstractTreeTableModel {
     protected final Configuration configuration;
+    private boolean hideColumns;
 
     private List<PrimaryWorkitem> workitems;
 
@@ -35,6 +36,14 @@ public class TasksModel extends AbstractTreeTableModel {
         cTypes.put(Configuration.AssetDetailSettings.RICH_TEXT_TYPE, String.class);
     }
 
+    public boolean getHideColumns() {
+        return hideColumns;
+    }
+
+    public void setHideColumns(boolean value) {
+        hideColumns = value;
+    }
+
     public Class getColumnClass(int columnIndex) {
         if (columnIndex == 0) {
             return TreeTableModel.class;
@@ -43,7 +52,7 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     public int getColumnCount() {
-        return getColumnSettings().length;
+        return hideColumns ? 0 : getColumnSettings().length;
     }
 
     public String getColumnName(int columnIndex) {
@@ -73,14 +82,17 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     public boolean isChanged(Object workitem) {
-        Workitem item = (Workitem) workitem;
-        return item.hasChanges();
+        if(workitem instanceof Workitem) {
+            Workitem item = (Workitem) workitem;
+            return item.hasChanges();
+        }
+
+        return false;
     }
 
     protected Configuration.ColumnSetting getColumnSettings(int columnIndex) {
         return getColumnSettings()[columnIndex];
     }
-
 
     protected Object[] getChildren(Object parent) {
         if (parent == null || parent.equals("root")) {
@@ -113,18 +125,15 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     private Configuration.ColumnSetting[] getColumnSettings() {
-        Configuration.ColumnSetting[] columnSettings;
-        //if (columnSettings == null) {
-            final Configuration.ColumnSetting[] columns = configuration.getColumnsForMainTable();
-            final List<Configuration.ColumnSetting> settingsData = new ArrayList<Configuration.ColumnSetting>(columns.length);
-            for (Configuration.ColumnSetting column : columns) {
-                if (!column.effortTracking || ApiDataLayer.getInstance().isTrackEffortEnabled()) {
-                    settingsData.add(column);
-                }
+        final Configuration.ColumnSetting[] columns = configuration.getColumnsForMainTable();
+        final List<Configuration.ColumnSetting> settingsData = new ArrayList<Configuration.ColumnSetting>(columns.length);
+
+        for (Configuration.ColumnSetting column : columns) {
+            if (!column.effortTracking || ApiDataLayer.getInstance().isTrackEffortEnabled()) {
+                settingsData.add(column);
             }
-            columnSettings = settingsData.toArray(new Configuration.ColumnSetting[settingsData.size()]);
-        //}
-        return columnSettings;
+        }
+        return settingsData.toArray(new Configuration.ColumnSetting[settingsData.size()]);
     }
 
     public TableCellEditor getCellEditor(int row, int col, Object workitem) {
@@ -157,22 +166,7 @@ public class TasksModel extends AbstractTreeTableModel {
                                         settings.type.equals(Configuration.AssetDetailSettings.EFFORT_TYPE) ||
                                         settings.type.equals(Configuration.AssetDetailSettings.RICH_TEXT_TYPE) ||
                                         settings.type.equals(Configuration.AssetDetailSettings.LIST_TYPE);
+
         return !settings.readOnly && !item.isPropertyReadOnly(settings.attribute) && propertyTypeSupported;
-    }
-
-    public static TreeTableModel getEmptyModel() {
-        return new AbstractTreeTableModel(null) {
-            public int getColumnCount() {
-                return 0;
-            }
-
-            public String getColumnName(int i) {
-                return null;
-            }
-
-            public Object getValueAt(Object o, int i) {
-                return null;
-            }
-        };
     }
 }
