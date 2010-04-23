@@ -158,6 +158,12 @@ public class TasksComponent implements ProjectComponent {
         }
     }
 
+    public void selectNode(Workitem itemAtNode) {
+        if (table != null) {
+            table.selectNode(itemAtNode);
+        }
+    }
+
     public void removeEdition() {
         if (table != null && table.isEditing()) {
             //table.removeEditor(); cancel editing (without data saving)
@@ -190,6 +196,7 @@ public class TasksComponent implements ProjectComponent {
         } catch (DataLayerException ex) {
             Messages.showErrorDialog(ex.getMessage(), "Error");
             table = new TasksTable(TasksModel.getEmptyModel());
+            
         }
 
         table.setRootVisible(false);

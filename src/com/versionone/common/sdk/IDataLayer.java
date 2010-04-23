@@ -27,4 +27,7 @@ public interface IDataLayer {
     void setShowAllTasks(boolean showAllTasks);
 
     PropertyValues getListPropertyValues(EntityType type, String propertyName);
+
+    boolean isConnected();
+    PrimaryWorkitem createNewPrimaryWorkitem(EntityType type) throws DataLayerException;
 }

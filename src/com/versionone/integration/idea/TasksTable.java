@@ -9,6 +9,8 @@ import com.intellij.util.ui.treetable.TreeTableModel;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.Workitem;
+import com.versionone.common.sdk.PrimaryWorkitem;
+import com.versionone.common.sdk.SecondaryWorkitem;
 import com.versionone.integration.idea.actions.ContextMenuActionListener;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,8 +78,8 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     }
 
     /**
-     * Reload node, assuming that the underlying object is changed and we want to force displaying these changes
-     * @param itemAtNode corresponding workitem
+     * Reload node, assuming that the underlying object is changed and we want to force displaying these changes.
+     * @param itemAtNode corresponding workitem.
      */
     public void reloadNode(Workitem itemAtNode) {
         JTree tree = getTree();
@@ -90,6 +92,28 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
 
         tree.scrollPathToVisible(path);
         tree.setSelectionPath(path);
+        updateUI(false);
+    }
+
+    /**
+     * Select node in the workitem list.
+     * @param itemAtNode Workitem itemAtNode.
+     */
+    public void selectNode(Workitem itemAtNode) {
+        if (itemAtNode == null) {
+            return;
+        }
+        TreePath path;
+        if (itemAtNode.getType().isPrimary()) {
+            path = new TreePath(new Object[]{"root", itemAtNode});
+        } else {
+            path = new TreePath(new Object[]{"root", ((SecondaryWorkitem)itemAtNode).parent, itemAtNode});
+            getTree().expandPath(path);
+        }
+        getTableModel().reload(new DefaultMutableTreeNode(itemAtNode));
+
+        addSelectedPath(path);        
+        scrollRectToVisible(getCellRect(getSelectedRow(), 0, false));
         updateUI(false);
     }
 

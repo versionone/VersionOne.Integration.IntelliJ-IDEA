@@ -206,6 +206,10 @@ public class ApiDataLayer implements IDataLayer {
         return res;
     }
 
+    public boolean isConnected() {
+        return connector.isConnected();
+    }
+
      void checkConnection() throws DataLayerException {
         if (!connector.isConnected()) {
             reconnect();

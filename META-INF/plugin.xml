@@ -42,7 +42,23 @@
     </project-components>
 
     <actions>
+
         <group id="V1.ToolWindow">
+            <action id="V1.AddDefect" icon="/AddDefect.gif"
+                    class="com.versionone.integration.idea.actions.AddDefectAction"
+                    text="Add new defect"
+                    description="Add new defect to VersionOne."/>
+            <action id="V1.AddTask" icon="/AddTask.gif"
+                    class="com.versionone.integration.idea.actions.AddTaskAction"
+                    text="Add new task"
+                    description="Add new task to VersionOne."/>
+            <action id="V1.AddTest" icon="/AddTest.gif"
+                    class="com.versionone.integration.idea.actions.AddTestAction"
+                    text="Add new test"
+                    description="Add new test to VersionOne."/>
+
+
+            <separator/>
             <action id="Filter" icon="/debugger/class_filter.png"
                     class="com.versionone.integration.idea.actions.FilterAction"
                     text="Filter tasks"
