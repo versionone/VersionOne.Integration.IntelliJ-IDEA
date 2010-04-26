@@ -32,7 +32,6 @@ public class FilterAction extends AnAction {
         if (ideaProject == null && project != null) {
             ideaProject = project;
         }
-
         if (ideaProject != null) {
             if (filterDialog(ideaProject)) {
                 ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
@@ -55,7 +54,6 @@ public class FilterAction extends AnAction {
                 return false;
             }
         }
-
         tc.removeEdition();
         dc.removeEdition();
 
@@ -71,21 +69,17 @@ public class FilterAction extends AnAction {
                 },
                 "Loading VersionOne Projects", true, ideaProject
         );
-
         if (!isCanceled) {
             return false;
         }
-
         if (res[0] instanceof Exception) {
             final Exception ex = (Exception) res[0];
             LOG.warn("Failed to get list of projects.", ex);
             Messages.showMessageDialog(ideaProject, ex.getMessage(), "Error", Messages.getErrorIcon());
             return false;
         }
-
         List<com.versionone.common.sdk.Project> projectsRoot = (List<com.versionone.common.sdk.Project>) res[0];
         final FilterForm form = new FilterForm(projectsRoot, settings, dataLayer);
-
         return ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form);
     }
 

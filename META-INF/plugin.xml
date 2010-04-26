@@ -59,10 +59,14 @@
 
 
             <separator/>
-            <action id="Filter" icon="/debugger/class_filter.png"
+            <action id="showAllTaskFilter" icon="/member.gif"
+                    class="com.versionone.integration.idea.actions.ShowAllItemFilterAction"
+                    text="Show all workitems."
+                    description="Show all workitems." />
+            <action id="SelectProject" icon="/debugger/class_filter.png"
                     class="com.versionone.integration.idea.actions.FilterAction"
-                    text="Filter tasks"
-                    description="Filter tasks assigned for current user"/>
+                    text="Select project"
+                    description="Switch to another project"/>
 
             <separator/>
 

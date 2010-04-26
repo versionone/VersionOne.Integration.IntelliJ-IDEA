@@ -49,7 +49,6 @@ public class ContextMenuMouseListener extends MouseAdapter {
                     }
                 }
             }
-            
             menu.show(e.getComponent(), e.getX(), e.getY());
         }
     }

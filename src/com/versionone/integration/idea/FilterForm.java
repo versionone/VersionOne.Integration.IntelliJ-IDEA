@@ -24,7 +24,6 @@ public class FilterForm implements Configurable {
 
     private JTree projectTree;
     private JPanel panel;
-    private JCheckBox showAllTasksCheckBox;
 
     private final IDataLayer dataLayer;
 
@@ -53,9 +52,6 @@ public class FilterForm implements Configurable {
     }
 
     public boolean isModified() {
-        if (settings.isShowAllTask != showAllTasksCheckBox.isSelected()) {
-            return true;
-        }
         final Object selectedPrj = projectTree.getLastSelectedPathComponent();
         if (!(selectedPrj instanceof ProjectsModel.ProjectWrapper)) {
             LOG.debug("Wrong selected project:" + selectedPrj);
@@ -74,13 +70,9 @@ public class FilterForm implements Configurable {
             settings.projectToken = node.id;
             dataLayer.setCurrentProjectId(node.id);
         }
-        settings.isShowAllTask = showAllTasksCheckBox.isSelected();
-        dataLayer.setShowAllTasks(settings.isShowAllTask);
     }
 
     public void reset() {
-        showAllTasksCheckBox.setSelected(settings.isShowAllTask);
-//        projectTree.setModel(model);
         projectTree.clearSelection();
         projectTree.expandRow(0);
         final TreePath path = model.getPathById(settings.projectToken);
