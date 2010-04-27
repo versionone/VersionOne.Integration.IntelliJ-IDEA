@@ -30,4 +30,5 @@ public interface IDataLayer {
 
     boolean isConnected();
     PrimaryWorkitem createNewPrimaryWorkitem(EntityType type) throws DataLayerException;
+    SecondaryWorkitem createNewSecondaryWorkitem(EntityType type, PrimaryWorkitem parent) throws DataLayerException;
 }

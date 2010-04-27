@@ -56,7 +56,7 @@ public abstract class Entity {
             }
         }
 
-        return asset.hasChanged() || effort != 0;
+        return asset.getOid().isNull() || asset.hasChanged() || effort != 0;
     }
 
     public boolean isPropertyReadOnly(String propertyName) {

@@ -25,6 +25,7 @@ import com.versionone.integration.idea.actions.RefreshAction;
 import com.versionone.integration.idea.actions.SaveDataAction;
 import com.versionone.integration.idea.actions.ShowAllItemFilterAction;
 import com.versionone.integration.idea.actions.AddDefectAction;
+import com.versionone.integration.idea.actions.AddTaskAction;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -83,6 +84,8 @@ public class TasksComponent implements ProjectComponent {
             ((ShowAllItemFilterAction) actions.getAction("showAllTaskFilter")).setSettings(cfg);
             ((ShowAllItemFilterAction) actions.getAction("showAllTaskFilter")).setDataLayer(dataLayer);
             ((AddDefectAction) actions.getAction("V1.AddDefect")).setDataLayer(dataLayer);
+            ((AddTaskAction) actions.getAction("V1.AddTask")).setDataLayer(dataLayer);
+
         }
     }
 
@@ -213,6 +216,7 @@ public class TasksComponent implements ProjectComponent {
         table.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         table.getTree().addTreeSelectionListener(tableSelectionListener);
         table.getTree().setShowsRootHandles(true);
+        table.getTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         return table;
     }
 

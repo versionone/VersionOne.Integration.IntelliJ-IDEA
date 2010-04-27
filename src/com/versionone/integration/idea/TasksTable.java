@@ -104,15 +104,25 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
             return;
         }
         TreePath path;
+        DefaultMutableTreeNode newNode;
         if (itemAtNode.getType().isPrimary()) {
             path = new TreePath(new Object[]{"root", itemAtNode});
+            newNode = new DefaultMutableTreeNode(itemAtNode);
         } else {
-            path = new TreePath(new Object[]{"root", ((SecondaryWorkitem)itemAtNode).parent, itemAtNode});
-            getTree().expandPath(path);
+            PrimaryWorkitem parent = ((SecondaryWorkitem)itemAtNode).parent;
+            path = new TreePath(new Object[]{"root", parent, itemAtNode});
+            TreePath pathToLeaf = new TreePath(new Object[]{"root", parent});
+            newNode = new DefaultMutableTreeNode(itemAtNode);
+            newNode.setParent(new DefaultMutableTreeNode(parent));
+            getTree().expandPath(pathToLeaf);
         }
-        getTableModel().reload(new DefaultMutableTreeNode(itemAtNode));
+        getTableModel().reload(newNode);
 
-        addSelectedPath(path);        
+        //addSelectedPath(path);
+        int row = getTree().getRowForPath(path);
+        getTree().setSelectionRow(row);
+        getSelectionModel().setSelectionInterval(row, row);
+
         scrollRectToVisible(getCellRect(getSelectedRow(), 0, false));
         updateUI(false);
     }
