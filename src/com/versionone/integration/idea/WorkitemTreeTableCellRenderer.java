@@ -17,12 +17,12 @@ import java.util.HashMap;
 /**
  * Renderer for workitems in tree.
  */
-public class WorkItemTreeTableCellRenderer extends DefaultTreeCellRenderer {
+public class WorkitemTreeTableCellRenderer extends DefaultTreeCellRenderer {
     private final Map<EntityType, Icon> icons;
     private final EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
     private final Color defaultForeColor = getForeground();
 
-    public WorkItemTreeTableCellRenderer() {
+    public WorkitemTreeTableCellRenderer() {
         icons = new HashMap<EntityType, Icon>();
 
         icons.put(EntityType.Defect, IconLoader.getIcon("/defect.gif"));
