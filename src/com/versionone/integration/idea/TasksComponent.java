@@ -20,13 +20,7 @@ import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.PrimaryWorkitem;
-import com.versionone.integration.idea.actions.FilterAction;
-import com.versionone.integration.idea.actions.RefreshAction;
-import com.versionone.integration.idea.actions.SaveDataAction;
-import com.versionone.integration.idea.actions.ShowAllItemFilterAction;
-import com.versionone.integration.idea.actions.AddDefectAction;
-import com.versionone.integration.idea.actions.AddTaskAction;
-import com.versionone.integration.idea.actions.AddTestAction;
+import com.versionone.integration.idea.actions.*;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -77,19 +71,24 @@ public class TasksComponent implements ProjectComponent {
         }
         //TODO remove. Actions must get Project from AnActionEvent.DataContext
         if (project != null && !project.isDefault()) {
-            ActionManager actions = ActionManager.getInstance();
-            //set settings to the actions
-            ((FilterAction) actions.getAction("SelectProject")).setSettings(cfg);
-            ((ShowAllItemFilterAction) actions.getAction("showAllTaskFilter")).setSettings(cfg);
-            //set projects to the actions
-            ((SaveDataAction) actions.getAction("V1.SaveData")).setProject(project);
-            ((RefreshAction) actions.getAction("V1.toolRefresh")).setProject(project);
-            ((FilterAction) actions.getAction("SelectProject")).setProject(project);
-            //set data layer to the actions
-            ((ShowAllItemFilterAction) actions.getAction("showAllTaskFilter")).setDataLayer(dataLayer);
-            ((AddDefectAction) actions.getAction("V1.AddDefect")).setDataLayer(dataLayer);
-            ((AddTaskAction) actions.getAction("V1.AddTask")).setDataLayer(dataLayer);
-            ((AddTestAction) actions.getAction("V1.AddTest")).setDataLayer(dataLayer);
+            ActionManager actionManager = ActionManager.getInstance();
+
+            // set settings to the actions
+            ((FilterAction) actionManager.getAction("SelectProject")).setSettings(cfg);
+            ((ShowAllItemFilterAction) actionManager.getAction("showAllTaskFilter")).setSettings(cfg);
+
+            // set projects to the actions
+            ((SaveDataAction) actionManager.getAction("V1.SaveData")).setProject(project);
+            ((RefreshAction) actionManager.getAction("V1.toolRefresh")).setProject(project);
+            ((FilterAction) actionManager.getAction("SelectProject")).setProject(project);
+
+            // set Data Layer to actions
+            ((ShowAllItemFilterAction) actionManager.getAction("showAllTaskFilter")).setDataLayer(dataLayer);
+            ((AddDefectAction) actionManager.getAction("V1.AddDefect")).setDataLayer(dataLayer);
+            ((AddDefectAction) actionManager.getAction("V1.ContextMenu.AddDefect")).setDataLayer(dataLayer);
+            ((AddTaskAction) actionManager.getAction("V1.AddTask")).setDataLayer(dataLayer);
+            ((AddTestAction) actionManager.getAction("V1.AddTest")).setDataLayer(dataLayer);
+            ((CloseWorkitemAction) actionManager.getAction("V1.Workitem.Close")).setDataLayer(dataLayer);
         }
     }
 
@@ -234,6 +233,12 @@ public class TasksComponent implements ProjectComponent {
             throw new IllegalStateException("method call before creating object");
         }
         return dataLayer;
+    }
+
+    @NotNull
+    public TasksTable getTable() {
+        // TODO possibly get rid of this
+        return table;
     }
 
     public void registerTableChangeListener(TableModelListener listener) {

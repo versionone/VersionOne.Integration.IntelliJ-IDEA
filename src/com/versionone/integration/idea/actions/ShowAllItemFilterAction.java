@@ -10,6 +10,7 @@ import com.versionone.integration.idea.WorkspaceSettings;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.common.sdk.IDataLayer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Filter to show only workitems which was assigned to current user or show all workitems
@@ -43,7 +44,7 @@ public class ShowAllItemFilterAction extends ToggleAction {
         this.settings = settings;
     }
 
-    public void setDataLayer(IDataLayer dataLayer) {
+    public void setDataLayer(@NotNull IDataLayer dataLayer) {
         this.dataLayer = dataLayer;
     }
 }

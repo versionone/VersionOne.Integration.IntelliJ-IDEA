@@ -15,8 +15,8 @@ public class ContextMenuMouseListener extends MouseAdapter {
     private JPopupMenu menu;
     private IContextMenuOwner menuOwner;
 
-    public ContextMenuMouseListener(JPopupMenu menu, IContextMenuOwner menuOwner) {
-        this(menu);
+    public ContextMenuMouseListener(IContextMenuOwner menuOwner) {
+        this((JPopupMenu) null);
         this.menuOwner = menuOwner;
     }
 
@@ -38,23 +38,17 @@ public class ContextMenuMouseListener extends MouseAdapter {
      */
     private void showPopupMenu(MouseEvent e) {
         if (e.isPopupTrigger()) {
+            JPopupMenu menuToDisplay = menu;
+            
             if(menuOwner != null) {
-                List<ContextMenuItemWrapper> items = menuOwner.getMenuItemsAt(e.getX(), e.getY());
-                menu.removeAll();
-                for(ContextMenuItemWrapper item : items) {
-                    if(item.isSeparator()) {
-                        menu.addSeparator();
-                    } else {
-                        menu.add(item.getMenuItem());
-                    }
-                }
+                menuToDisplay = menuOwner.getPopupMenu();
             }
-            menu.show(e.getComponent(), e.getX(), e.getY());
+            menuToDisplay.show(e.getComponent(), e.getX(), e.getY());
         }
     }
 }
 
 interface IContextMenuOwner {
     @NotNull
-    List<ContextMenuItemWrapper> getMenuItemsAt(int x, int y);
+    JPopupMenu getPopupMenu();
 }

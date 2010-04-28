@@ -42,12 +42,11 @@
     </project-components>
 
     <actions>
-
         <group id="V1.ToolWindow">
             <action id="V1.AddDefect" icon="/AddDefect.gif"
                     class="com.versionone.integration.idea.actions.AddDefectAction"
-                    text="Add new defect"
-                    description="Add new defect to VersionOne."/>
+                    text="Add new Defect"
+                    description="Add new Defect"/>
             <action id="V1.AddTask" icon="/AddTask.gif"
                     class="com.versionone.integration.idea.actions.AddTaskAction"
                     text="Add new task"
@@ -84,6 +83,35 @@
             <action id="V1.Help" icon="/actions/help.png"
                     class="com.versionone.integration.idea.actions.HelpAction"
                     text="Help" description="Help"/>
+        </group>
+
+        <group id="V1.ToolWindow.ContextMenu" popup="true">
+            <action id="V1.Workitem.Close"
+                    class="com.versionone.integration.idea.actions.CloseWorkitemAction"
+                    text="Close..."
+                    description="Close current Workitem" />
+            <action id="V1.Workitem.QuickClose"
+                    class="com.versionone.integration.idea.actions.QuickCloseWorkitemAction"
+                    text="Quick close"
+                    description="Quick close current Workitem" />
+            <separator />
+            <action id="V1.Workitem.Signup"
+                    class="com.versionone.integration.idea.actions.SignupAction"
+                    text="Sign me up"
+                    description="Execute Signup operation for the current Workitem" />
+            <separator />
+            <action id="V1.ContextMenu.AddDefect" icon="/AddDefect.gif"
+                    class="com.versionone.integration.idea.actions.AddDefectAction"
+                    text="Add new Defect"
+                    description="Add new Defect"/>
+            <action id="V1.ContextMenu.AddTask" icon="/AddTask.gif"
+                    class="com.versionone.integration.idea.actions.AddTaskAction"
+                    text="Add new Task"
+                    description="Add new Task"/>
+            <action id="V1.ContextMenu.AddTest" icon="/AddTest.gif"
+                    class="com.versionone.integration.idea.actions.AddTestAction"
+                    text="Add new Test"
+                    description="Add new Test"/>
         </group>
     </actions>
 </idea-plugin>

@@ -1,6 +1,9 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -10,7 +13,6 @@ import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.common.sdk.Workitem;
 import com.versionone.common.sdk.SecondaryWorkitem;
-import com.versionone.integration.idea.actions.ContextMenuActionListener;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,7 +21,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TasksTable extends TreeTable implements IContextMenuOwner {
@@ -27,29 +28,21 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     private final IDataLayer dataLayer;
     private final TasksModel treeTableModel;
 
-    public static final String CONTEXT_MENU_CLOSE = "Close...";
-    public static final String CONTEXT_MENU_QUICK_CLOSE = "Quick close";
-    public static final String CONTEXT_MENU_SIGNUP = "Sign me up";
-    public static final String CONTEXT_MENU_CREATE_DEFECT = "Add new Defect";
-    public static final String CONTEXT_MENU_CREATE_TASK = "Add new Task";
-    public static final String CONTEXT_MENU_CREATE_TEST = "Add new Test";
-
     public TasksTable(@NotNull TasksModel model, IDataLayer dataLayer) {
         super(model);
         this.dataLayer = dataLayer;
         this.treeTableModel = model;
 
-        JPopupMenu contextMenu = new JPopupMenu();
-        WorkItemTreeTableCellRenderer treeCellRenderer = new WorkItemTreeTableCellRenderer();
+        WorkitemTreeTableCellRenderer treeCellRenderer = new WorkitemTreeTableCellRenderer();
         getTree().setCellRenderer(treeCellRenderer);
 
-        ContextMenuMouseListener contextMenuMouseListener = new ContextMenuMouseListener(contextMenu, this);
+        ContextMenuMouseListener contextMenuMouseListener = new ContextMenuMouseListener(this);
         addMouseListener(contextMenuMouseListener);
     }
 
     /**
      * Re-read data from Data Layer and update everything.
-     * @throws DataLayerException - problem with gettings workitem list
+     * @throws DataLayerException if enlisting workitems is failed.
      */
     public void updateData() throws DataLayerException {
         List<PrimaryWorkitem> data = dataLayer.getWorkitemTree();
@@ -99,8 +92,10 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
         if (itemAtNode == null) {
             return;
         }
+
         TreePath path;
         DefaultMutableTreeNode newNode;
+
         if (itemAtNode.getType().isPrimary()) {
             path = new TreePath(new Object[]{"root", itemAtNode});
             newNode = new DefaultMutableTreeNode(itemAtNode);
@@ -112,6 +107,7 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
             newNode.setParent(new DefaultMutableTreeNode(parent));
             getTree().expandPath(pathToLeaf);
         }
+
         getTableModel().reload(newNode);
 
         setSelectedPath(path);
@@ -176,46 +172,10 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
     }
 
     @NotNull
-    public List<ContextMenuItemWrapper> getMenuItemsAt(int x, int y) {
-        int rowIndex = rowAtPoint(new Point(x, y));
-        Workitem item = (Workitem) getWorkitemAtRow(rowIndex);
-        List<ContextMenuItemWrapper> items = new ArrayList<ContextMenuItemWrapper>();
-
-        if(item == null) {
-            throw new UnsupportedOperationException("Cannot get menu items for non existing workitem row");
-        }
-
-        ContextMenuActionListener listener = new ContextMenuActionListener(item, this, dataLayer);
-        JMenuItem closeMenuItem = new JMenuItem(CONTEXT_MENU_CLOSE);
-        closeMenuItem.setEnabled(item.isPersistent());
-        JMenuItem quickCloseMenuItem = new JMenuItem(CONTEXT_MENU_QUICK_CLOSE);
-        quickCloseMenuItem.setEnabled(item.canQuickClose() && item.isPersistent());
-        JMenuItem signupMenuItem = new JMenuItem(CONTEXT_MENU_SIGNUP);
-        signupMenuItem.setEnabled(item.canSignup() && !item.isMine() && item.isPersistent());
-        JMenuItem createDefectMenuItem = new JMenuItem(CONTEXT_MENU_CREATE_DEFECT);
-        JMenuItem createTaskMenuItem = new JMenuItem(CONTEXT_MENU_CREATE_TASK);
-        createTaskMenuItem.setEnabled(item.getType().isPrimary());
-        JMenuItem createTestMenuItem = new JMenuItem(CONTEXT_MENU_CREATE_TEST);
-        createTestMenuItem.setEnabled(item.getType().isPrimary());
-
-        setMenuItemListener(listener, closeMenuItem, quickCloseMenuItem, signupMenuItem,
-                createDefectMenuItem, createTaskMenuItem, createTestMenuItem);
-
-        items.add(ContextMenuItemWrapper.createFromMenuItem(closeMenuItem));
-        items.add(ContextMenuItemWrapper.createFromMenuItem(quickCloseMenuItem));
-        items.add(ContextMenuItemWrapper.createSeparator());
-        items.add(ContextMenuItemWrapper.createFromMenuItem(signupMenuItem));
-        items.add(ContextMenuItemWrapper.createSeparator());
-        items.add(ContextMenuItemWrapper.createFromMenuItem(createDefectMenuItem));
-        items.add(ContextMenuItemWrapper.createFromMenuItem(createTaskMenuItem));
-        items.add(ContextMenuItemWrapper.createFromMenuItem(createTestMenuItem));
-
-        return items;
-    }
-
-    private void setMenuItemListener(ContextMenuActionListener listener, JMenuItem... menuItems) {
-        for(JMenuItem menuItem : menuItems) {
-            menuItem.addActionListener(listener);
-        }
+    public JPopupMenu getPopupMenu() {
+        ActionManager actionManager = ActionManager.getInstance();
+        ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow.ContextMenu");
+        ActionPopupMenu menu = actionManager.createActionPopupMenu("V1.ToolWindow.ContextMenu", actions);
+        return menu.getComponent();
     }
 }

@@ -7,17 +7,21 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.PrimaryWorkitem;
-import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.EntityType;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.TasksComponent;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
 
 /**
- * Add defect to the VersionOne.
+ * Create in-memory Defect. New entity will be persisted when user triggers Save action.
  */
 public class AddDefectAction extends AnAction {
+
     private IDataLayer dataLayer;
 
     public void actionPerformed(AnActionEvent e) {
@@ -28,7 +32,10 @@ public class AddDefectAction extends AnAction {
             PrimaryWorkitem newItem = null;
             try {
                 newItem = dataLayer.createNewPrimaryWorkitem(EntityType.Defect);
-            } catch (DataLayerException ex) {}
+            } catch (DataLayerException ex) {
+                Icon icon = Messages.getErrorIcon();
+                Messages.showMessageDialog("Failed to create new " + EntityType.Defect.name(), "Error", icon);
+            }
 
             tc.refresh();
             tc.update();
@@ -41,7 +48,7 @@ public class AddDefectAction extends AnAction {
         presentation.setEnabled(dataLayer.isConnected());
     }
 
-    public void setDataLayer(IDataLayer dataLayer) {
+    public void setDataLayer(@NotNull IDataLayer dataLayer) {
         this.dataLayer = dataLayer;
     }
 }
