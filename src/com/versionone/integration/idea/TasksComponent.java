@@ -26,6 +26,7 @@ import com.versionone.integration.idea.actions.SaveDataAction;
 import com.versionone.integration.idea.actions.ShowAllItemFilterAction;
 import com.versionone.integration.idea.actions.AddDefectAction;
 import com.versionone.integration.idea.actions.AddTaskAction;
+import com.versionone.integration.idea.actions.AddTestAction;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -68,6 +69,7 @@ public class TasksComponent implements ProjectComponent {
         try {
             dataLayer.connect(cfg.v1Path, cfg.user, cfg.passwd, cfg.isWindowsIntegratedAuthentication);
             dataLayer.setCurrentProjectId(cfg.projectToken);
+            dataLayer.setShowAllTasks(cfg.isShowAllTask);
             settings.projectToken = dataLayer.getCurrentProjectId();
             settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(), settings.projectToken);
         } catch (DataLayerException ex) {
@@ -76,16 +78,18 @@ public class TasksComponent implements ProjectComponent {
         //TODO remove. Actions must get Project from AnActionEvent.DataContext
         if (project != null && !project.isDefault()) {
             ActionManager actions = ActionManager.getInstance();
+            //set settings to the actions
             ((FilterAction) actions.getAction("SelectProject")).setSettings(cfg);
+            ((ShowAllItemFilterAction) actions.getAction("showAllTaskFilter")).setSettings(cfg);
             //set projects to the actions
             ((SaveDataAction) actions.getAction("V1.SaveData")).setProject(project);
             ((RefreshAction) actions.getAction("V1.toolRefresh")).setProject(project);
             ((FilterAction) actions.getAction("SelectProject")).setProject(project);
-            ((ShowAllItemFilterAction) actions.getAction("showAllTaskFilter")).setSettings(cfg);
+            //set data layer to the actions
             ((ShowAllItemFilterAction) actions.getAction("showAllTaskFilter")).setDataLayer(dataLayer);
             ((AddDefectAction) actions.getAction("V1.AddDefect")).setDataLayer(dataLayer);
             ((AddTaskAction) actions.getAction("V1.AddTask")).setDataLayer(dataLayer);
-
+            ((AddTestAction) actions.getAction("V1.AddTest")).setDataLayer(dataLayer);
         }
     }
 

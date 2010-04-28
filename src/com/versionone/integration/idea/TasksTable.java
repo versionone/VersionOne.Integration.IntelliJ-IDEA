@@ -5,12 +5,10 @@ import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.treetable.TreeTable;
-import com.intellij.util.ui.treetable.TreeTableModel;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.common.sdk.Workitem;
-import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.common.sdk.SecondaryWorkitem;
 import com.versionone.integration.idea.actions.ContextMenuActionListener;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +17,6 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.ArrayList;
@@ -53,7 +49,7 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
 
     /**
      * Re-read data from Data Layer and update everything.
-     * @throws DataLayerException
+     * @throws DataLayerException - problem with gettings workitem list
      */
     public void updateData() throws DataLayerException {
         List<PrimaryWorkitem> data = dataLayer.getWorkitemTree();
@@ -118,13 +114,15 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
         }
         getTableModel().reload(newNode);
 
-        //addSelectedPath(path);
+        setSelectedPath(path);
+        scrollRectToVisible(getCellRect(getSelectedRow(), 0, false));
+        updateUI(false);
+    }
+
+    public void setSelectedPath(TreePath path) {
         int row = getTree().getRowForPath(path);
         getTree().setSelectionRow(row);
         getSelectionModel().setSelectionInterval(row, row);
-
-        scrollRectToVisible(getCellRect(getSelectedRow(), 0, false));
-        updateUI(false);
     }
 
     /**

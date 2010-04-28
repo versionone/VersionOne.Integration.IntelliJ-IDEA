@@ -13,18 +13,20 @@ import com.versionone.common.sdk.IDataLayer;
 
 /**
  * Filter to show only workitems which was assigned to current user or show all workitems
+ * enable - show only current user workitems
+ * disable - show all workitems
  */
 public class ShowAllItemFilterAction extends ToggleAction {
     private WorkspaceSettings settings;
     private IDataLayer dataLayer;
 
     public boolean isSelected(AnActionEvent e) {
-        return settings.isShowAllTask;
+        return !settings.isShowAllTask;
     }
 
     public void setSelected(AnActionEvent e, boolean state) {
-        settings.isShowAllTask = state;
-        dataLayer.setShowAllTasks(state);
+        settings.isShowAllTask = !state;
+        dataLayer.setShowAllTasks(!state);
         final DataContext dataContext = e.getDataContext();
         Project ideaProject = PlatformDataKeys.PROJECT.getData(dataContext);
         if (ideaProject != null ) {

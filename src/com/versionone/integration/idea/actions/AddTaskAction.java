@@ -25,17 +25,21 @@ public class AddTaskAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         final DataContext dataContext = e.getDataContext();
         Project ideaProject = PlatformDataKeys.PROJECT.getData(dataContext);
-        if (ideaProject != null && dataLayer.isConnected()) {
+        if (ideaProject != null) {
             TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
 
             Workitem currentItem = (Workitem)tc.getCurrentItem();
             if (currentItem != null) {
-                createTask(currentItem, tc);
+                SecondaryWorkitem newItem = createTask(currentItem);
+
+                tc.refresh();
+                tc.update();
+                tc.selectNode(newItem);
             }
         }
     }
 
-    private void createTask(Workitem currentItem, TasksComponent tc) {
+    private SecondaryWorkitem createTask(Workitem currentItem) {
         PrimaryWorkitem parent;
         if (currentItem.getType().isPrimary()) {
             parent = (PrimaryWorkitem)currentItem;
@@ -45,11 +49,9 @@ public class AddTaskAction extends AnAction {
         SecondaryWorkitem newItem = null;
         try {
             newItem = dataLayer.createNewSecondaryWorkitem(EntityType.Task, parent);
-        } catch (DataLayerException ex) {}
+        } catch (DataLayerException ignored) {}
 
-        tc.refresh();
-        tc.update();
-        tc.selectNode(newItem);
+        return newItem;
     }
 
     public void update(AnActionEvent event) {        

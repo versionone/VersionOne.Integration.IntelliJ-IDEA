@@ -61,8 +61,8 @@
             <separator/>
             <action id="showAllTaskFilter" icon="/member.gif"
                     class="com.versionone.integration.idea.actions.ShowAllItemFilterAction"
-                    text="Show all workitems."
-                    description="Show all workitems." />
+                    text="Show only my workitems."
+                    description="Show only my workitems" />
             <action id="SelectProject" icon="/debugger/class_filter.png"
                     class="com.versionone.integration.idea.actions.FilterAction"
                     text="Select project"
