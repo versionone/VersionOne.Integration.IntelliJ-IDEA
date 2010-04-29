@@ -21,6 +21,7 @@ import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.integration.idea.actions.*;
+import com.versionone.integration.idea.actions.AbstractAction;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -74,21 +75,19 @@ public class TasksComponent implements ProjectComponent {
             ActionManager actionManager = ActionManager.getInstance();
 
             // set settings to the actions
-            ((FilterAction) actionManager.getAction("SelectProject")).setSettings(cfg);
-            ((ShowAllItemFilterAction) actionManager.getAction("showAllTaskFilter")).setSettings(cfg);
+            ((FilterAction) actionManager.getAction("V1.SelectProject")).setSettings(cfg);
+            ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setSettings(cfg);
 
-            // set projects to the actions
-            ((SaveDataAction) actionManager.getAction("V1.SaveData")).setProject(project);
-            ((RefreshAction) actionManager.getAction("V1.toolRefresh")).setProject(project);
-            ((FilterAction) actionManager.getAction("SelectProject")).setProject(project);
-
+            String[] actionsList = new String[]{"V1.AddDefect", "V1.ContextMenu.AddDefect", "V1.AddTask",
+                                                "V1.AddTest", "V1.Workitem.Close", "V1.Workitem.QuickClose",
+                                                "V1.Workitem.Signup", "V1.Workitem.Signup", "V1.SaveData",
+                                                "V1.ContextMenu.AddDefect", "V1.ContextMenu.AddTest",
+                                                "V1.ContextMenu.AddTask"};
             // set Data Layer to actions
-            ((ShowAllItemFilterAction) actionManager.getAction("showAllTaskFilter")).setDataLayer(dataLayer);
-            ((AddDefectAction) actionManager.getAction("V1.AddDefect")).setDataLayer(dataLayer);
-            ((AddDefectAction) actionManager.getAction("V1.ContextMenu.AddDefect")).setDataLayer(dataLayer);
-            ((AddTaskAction) actionManager.getAction("V1.AddTask")).setDataLayer(dataLayer);
-            ((AddTestAction) actionManager.getAction("V1.AddTest")).setDataLayer(dataLayer);
-            ((CloseWorkitemAction) actionManager.getAction("V1.Workitem.Close")).setDataLayer(dataLayer);
+            ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setDataLayer(dataLayer);
+            for (String actionName : actionsList) {
+                ((AbstractAction) actionManager.getAction(actionName)).setDataLayer(dataLayer);
+            }
         }
     }
 

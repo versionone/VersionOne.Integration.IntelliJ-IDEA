@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -21,27 +22,20 @@ import javax.swing.*;
 /**
  *
  */
-public class SaveDataAction extends AnAction {
+public class SaveDataAction extends AbstractAction {
 
     private static final Logger LOG = Logger.getLogger(SaveDataAction.class);
 
-    private Project project;
-
+    @Override
     public void actionPerformed(AnActionEvent e) {
-        System.out.println("Save.actionPerformed()");
+        Project ideaProject = resolveProject(e);
 
-        final DataContext dataContext = e.getDataContext();
-        Project ideaProject = PlatformDataKeys.PROJECT.getData(dataContext);
-
-        if (ideaProject == null && project == null) {
+        if (ideaProject == null) {            
             return;
-        } else if (ideaProject == null) {
-            ideaProject = project;
         }
-
-        final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
-        final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
-        final IDataLayer dataLayer = tc.getDataLayer();
+        final TasksComponent tc = resolveTasksComponent(ideaProject);
+        final DetailsComponent dc = resolveDetailsComponent(ideaProject);
+        final IDataLayer dataLayer = this.dataLayer;
         final ProgressManager progressManager = ProgressManager.getInstance();
 
         // is exception, text of exception, error or warning, display in standard or in custom dialog
@@ -90,11 +84,7 @@ public class SaveDataAction extends AnAction {
             return;
         }
 
-        //TODO ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
-        RefreshAction.refreshData(ideaProject, tc, dataLayer, dc, progressManager);
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
+        ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
+        //RefreshAction.refreshData(ideaProject, tc, dataLayer, dc, progressManager);
     }
 }

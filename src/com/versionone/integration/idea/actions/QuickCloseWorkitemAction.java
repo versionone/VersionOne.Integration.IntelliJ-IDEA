@@ -16,7 +16,7 @@ public class QuickCloseWorkitemAction extends AbstractAction {
         Project ideaProject = resolveProject(e);
 
         if (ideaProject != null && dataLayer.isConnected()) {
-            TasksComponent tc = resolveTasksComponent(e);
+            TasksComponent tc = resolveTasksComponent(ideaProject);
             TasksTable table = tc.getTable();
             Workitem item = (Workitem) tc.getCurrentItem();
 

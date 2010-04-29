@@ -1,10 +1,7 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea.actions;
 
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -17,22 +14,18 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-public class RefreshAction extends AnAction {
+public class RefreshAction extends AbstractAction {
 
     private static final Logger LOG = Logger.getLogger(RefreshAction.class);
 
-    private Project project;
-
+    @Override
     public void actionPerformed(AnActionEvent e) {
-        final DataContext dataContext = e.getDataContext();
-        Project ideaProject = PlatformDataKeys.PROJECT.getData(dataContext);
+        Project ideaProject = resolveProject(e);
 
-        if (ideaProject == null && project == null) {
+        if (ideaProject == null) {
             return;
-        } else if (ideaProject == null) {
-            ideaProject = project;
         }
-        final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
+        final TasksComponent tc = resolveTasksComponent(ideaProject);
         final IDataLayer dataLayer = tc.getDataLayer();
         
         if (dataLayer.hasChanges()) {
@@ -41,8 +34,7 @@ public class RefreshAction extends AnAction {
                 return;
             }
         }
-
-        final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
+        final DetailsComponent dc = resolveDetailsComponent(ideaProject);
         final ProgressManager progressManager = ProgressManager.getInstance();
         refreshData(ideaProject, tc, dataLayer, dc, progressManager);
     }
@@ -79,9 +71,5 @@ public class RefreshAction extends AnAction {
         tc.update();
         dc.setItem(tc.getCurrentItem());
         dc.update();
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
     }
 }

@@ -21,10 +21,12 @@ public class ShowAllItemFilterAction extends ToggleAction {
     private WorkspaceSettings settings;
     private IDataLayer dataLayer;
 
+    @Override
     public boolean isSelected(AnActionEvent e) {
         return !settings.isShowAllTask;
     }
 
+    @Override
     public void setSelected(AnActionEvent e, boolean state) {
         settings.isShowAllTask = !state;
         dataLayer.setShowAllTasks(!state);

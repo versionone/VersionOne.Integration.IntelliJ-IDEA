@@ -2,10 +2,7 @@
 package com.versionone.integration.idea.actions;
 
 import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -20,18 +17,24 @@ import org.apache.log4j.Logger;
 
 import java.util.List;
 
-public class FilterAction extends AnAction {
+
+/**
+ * Filter action to filter workitems by project.
+ */
+public class FilterAction extends AbstractAction {
 
     private static final Logger LOG = Logger.getLogger(FilterAction.class);
     private WorkspaceSettings settings;
-    private Project project;
+    //private Project project;
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
-        final DataContext dataContext = e.getDataContext();
-        Project ideaProject = PlatformDataKeys.PROJECT.getData(dataContext);
+        Project ideaProject = resolveProject(e);
+        /*
         if (ideaProject == null && project != null) {
             ideaProject = project;
         }
+        */
         if (ideaProject != null) {
             if (filterDialog(ideaProject)) {
                 ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
@@ -42,8 +45,8 @@ public class FilterAction extends AnAction {
     private boolean filterDialog(final Project ideaProject) {
         final ProgressManager progressManager = ProgressManager.getInstance();
         final Object[] res = new Object[1];
-        final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
-        final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
+        final TasksComponent tc = resolveTasksComponent(ideaProject);
+        final DetailsComponent dc = resolveDetailsComponent(ideaProject);
         final IDataLayer dataLayer = ApiDataLayer.getInstance();
 
         if (dataLayer.hasChanges()) {
@@ -87,7 +90,9 @@ public class FilterAction extends AnAction {
         this.settings = settings;
     }
 
+    /*
     public void setProject(Project project) {
         this.project = project;
     }
+    */
 }

@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.TasksComponent;
+import com.versionone.integration.idea.DetailsComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -25,17 +26,31 @@ public abstract class AbstractAction extends AnAction {
         this.dataLayer = dataLayer;
     }
 
-    protected TasksComponent resolveTasksComponent(AnActionEvent e) {
+    protected TasksComponent resolveTasksComponent(@NotNull AnActionEvent e) {
         Project ideaProject = resolveProject(e);
+        return resolveTasksComponent(ideaProject);
+    }
 
+    protected DetailsComponent resolveDetailsComponent(@NotNull AnActionEvent e) {
+        Project ideaProject = resolveProject(e);
+        return resolveDetailsComponent(ideaProject);
+    }
+
+    protected TasksComponent resolveTasksComponent(Project ideaProject) {
         if (ideaProject != null) {
             return ideaProject.getComponent(TasksComponent.class);
         }
-
         return null;
     }
 
-    protected Project resolveProject(AnActionEvent e) {
+    protected DetailsComponent resolveDetailsComponent(Project ideaProject) {
+        if (ideaProject != null) {
+            return ideaProject.getComponent(DetailsComponent.class);
+        }
+        return null;
+    }
+
+    protected Project resolveProject(@NotNull AnActionEvent e) {
         final DataContext dataContext = e.getDataContext();
         return PlatformDataKeys.PROJECT.getData(dataContext);
     }
