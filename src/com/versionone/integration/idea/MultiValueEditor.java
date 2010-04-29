@@ -34,10 +34,6 @@ public class MultiValueEditor extends AbstractCellEditor implements TableCellEdi
         button = new JButton();
         button.setActionCommand("edit");
         button.addActionListener(this);
-        button.setBorderPainted(true);
-        button.setSize(5,5);
-        button.setVerticalAlignment(11);
-        button.repaint(1,1,5,5);
         JFrame parent = (JFrame) SwingUtilities.getRoot(table);
         dialog = new MultiValueEditorDialog(parent, "Edit", table);
     }
