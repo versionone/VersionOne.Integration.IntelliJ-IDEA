@@ -204,11 +204,11 @@ public class TasksComponent implements ProjectComponent {
 
         try {
             List<PrimaryWorkitem> data = dataLayer.getWorkitemTree();
-            model = new TasksModel(data);
+            model = new TasksModel(data, dataLayer);
             table = new TasksTable(model, dataLayer);
         } catch (DataLayerException ex) {
             Messages.showErrorDialog(ex.getMessage(), "Error");
-            model = new TasksModel(new ArrayList<PrimaryWorkitem>(0));
+            model = new TasksModel(new ArrayList<PrimaryWorkitem>(0), dataLayer);
             model.setHideColumns(true);
             table = new TasksTable(model, dataLayer);
         }

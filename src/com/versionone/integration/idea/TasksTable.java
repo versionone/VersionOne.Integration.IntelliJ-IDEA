@@ -152,7 +152,7 @@ public class TasksTable extends TreeTable implements IContextMenuOwner {
 
     @Override
     public TableCellEditor getCellEditor(int row, int col) {
-        TableCellEditor editor = getTableModel().getCellEditor(row, col, getWorkitemAtRow(row));
+        TableCellEditor editor = getTableModel().getCellEditor(row, col, getWorkitemAtRow(row), this);
 
         if(editor == null) {
             editor = super.getCellEditor(row, col);

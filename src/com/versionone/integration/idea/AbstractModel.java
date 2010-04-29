@@ -5,6 +5,7 @@ import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.Workitem;
 import com.versionone.common.sdk.PropertyValues;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 
@@ -31,7 +32,7 @@ public abstract class AbstractModel extends AbstractTableModel {
 
     public abstract boolean isRowChanged(int row);
 
-    public TableCellEditor getCellEditor(int row, int col) {
+    public TableCellEditor getCellEditor(int row, int col, JTable parent) {
         Workitem item = getWorkitem();
         Configuration.ColumnSetting rowSettings = getRowSettings(row);
 
@@ -40,6 +41,8 @@ public abstract class AbstractModel extends AbstractTableModel {
             return EditorFactory.createTextFieldEditor(!isReadOnly);
         } else if (rowTypeMatches(rowSettings, Configuration.AssetDetailSettings.LIST_TYPE)) {
             return EditorFactory.createComboBoxEditor(item, rowSettings.attribute, getValueAt(row, col));
+        } else if (rowTypeMatches(rowSettings, Configuration.AssetDetailSettings.MULTI_VALUE_TYPE)) {
+            return EditorFactory.createMultivalueEditor(item, dataLayer, rowSettings.attribute, parent);
         }
 
         return EditorFactory.createTextFieldEditor(false);

@@ -48,8 +48,8 @@ public class EditorFactory {
         return new DefaultCellEditor(comboEditor);
     }
 
-    public static TableCellEditor createMultivalueEditor(Workitem item, IDataLayer dataLayer, String attribute) {
-        return new MultiValueEditor(dataLayer, item, attribute);
+    public static TableCellEditor createMultivalueEditor(Workitem item, IDataLayer dataLayer, String attribute, JTable table) {
+        return new MultiValueEditor(dataLayer, item, attribute, table);
     }
 
     private static PropertyValues getAvailableValues(String attribute, Workitem item) {

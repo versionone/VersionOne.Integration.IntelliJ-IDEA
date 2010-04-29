@@ -1,8 +1,7 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea;
 
-
-import com.versionone.common.sdk.ApiDataLayer;
+import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.common.sdk.Workitem;
 
@@ -22,12 +21,16 @@ public class TasksModel extends AbstractTreeTableModel {
     private boolean hideColumns;
 
     private List<PrimaryWorkitem> workitems;
+    private final IDataLayer dataLayer;
 
     protected static final Map<String, Class> cTypes = new HashMap<String, Class>();
 
-    public TasksModel(List<PrimaryWorkitem> data) {
+    public TasksModel(List<PrimaryWorkitem> data, IDataLayer dataLayer) {
         super("root");
         update(data);
+
+        this.dataLayer = dataLayer;
+
         configuration = Configuration.getInstance();
         cTypes.put(Configuration.AssetDetailSettings.STRING_TYPE, String.class);
         cTypes.put(Configuration.AssetDetailSettings.LIST_TYPE, JComboBox.class);
@@ -56,7 +59,7 @@ public class TasksModel extends AbstractTreeTableModel {
     }
 
     public String getColumnName(int columnIndex) {
-        return ApiDataLayer.getInstance().localizerResolve(getColumnSettings(columnIndex).name);
+        return dataLayer.localizerResolve(getColumnSettings(columnIndex).name);
     }
 
     public Object getValueAt(Object node, int columnIndex) {
@@ -129,14 +132,14 @@ public class TasksModel extends AbstractTreeTableModel {
         final List<Configuration.ColumnSetting> settingsData = new ArrayList<Configuration.ColumnSetting>(columns.length);
 
         for (Configuration.ColumnSetting column : columns) {
-            if (!column.effortTracking || ApiDataLayer.getInstance().isTrackEffortEnabled()) {
+            if (!column.effortTracking || dataLayer.isTrackEffortEnabled()) {
                 settingsData.add(column);
             }
         }
         return settingsData.toArray(new Configuration.ColumnSetting[settingsData.size()]);
     }
 
-    public TableCellEditor getCellEditor(int row, int col, Object workitem) {
+    public TableCellEditor getCellEditor(int row, int col, Object workitem, JTable parent) {
         Workitem item = (Workitem) workitem;
         Configuration.ColumnSetting settings = getColumnSettings(col);
 
@@ -145,6 +148,8 @@ public class TasksModel extends AbstractTreeTableModel {
             return EditorFactory.createTextFieldEditor(!isReadOnly);
         } else if (getColumnSettings(col).type.equals(Configuration.AssetDetailSettings.LIST_TYPE)) {
             return EditorFactory.createComboBoxEditor(item, settings.attribute, getValueAt(row, col));
+        } else if (getColumnSettings(col).type.equals(Configuration.AssetDetailSettings.MULTI_VALUE_TYPE)) {
+            return EditorFactory.createMultivalueEditor(item, dataLayer, settings.attribute, parent);
         }
 
         return EditorFactory.createTextFieldEditor(false);
@@ -165,7 +170,8 @@ public class TasksModel extends AbstractTreeTableModel {
         boolean propertyTypeSupported = settings.type.equals(Configuration.AssetDetailSettings.STRING_TYPE) ||
                                         settings.type.equals(Configuration.AssetDetailSettings.EFFORT_TYPE) ||
                                         settings.type.equals(Configuration.AssetDetailSettings.RICH_TEXT_TYPE) ||
-                                        settings.type.equals(Configuration.AssetDetailSettings.LIST_TYPE);
+                                        settings.type.equals(Configuration.AssetDetailSettings.LIST_TYPE) ||
+                                        settings.type.equals(Configuration.AssetDetailSettings.MULTI_VALUE_TYPE);
 
         return !settings.readOnly && !item.isPropertyReadOnly(settings.attribute) && propertyTypeSupported;
     }

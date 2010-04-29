@@ -4,7 +4,6 @@ package com.versionone.integration.idea;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.Workitem;
 import com.versionone.common.sdk.PropertyValues;
-import com.versionone.common.sdk.ApiDataLayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +42,11 @@ public class DetailsModel extends AbstractModel {
     public int getColumnCount() {
         return 2;
     }
-
+    
     protected PropertyValues getAvailableValuesAt(int rowIndex, int columnIndex) {
         Configuration.ColumnSetting column = getRowSettings(rowIndex);
         if (columnIndex == 1 && isWorkitemSet()) {
-            return ApiDataLayer.getInstance().getListPropertyValues(getWorkitem().getType(), column.attribute);
+            return dataLayer.getListPropertyValues(getWorkitem().getType(), column.attribute);
         }
         return null;
     }
@@ -103,7 +102,7 @@ public class DetailsModel extends AbstractModel {
             final Configuration.ColumnSetting[] columns = configuration.getColumns(getWorkitem().getType());
             final List<Configuration.ColumnSetting> workitemData = new ArrayList<Configuration.ColumnSetting>(columns.length);
             for (Configuration.ColumnSetting column : columns) {
-                if (!column.effortTracking || ApiDataLayer.getInstance().isTrackEffortEnabled()) {
+                if (!column.effortTracking || dataLayer.isTrackEffortEnabled()) {
                     workitemData.add(column);
                 }
             }

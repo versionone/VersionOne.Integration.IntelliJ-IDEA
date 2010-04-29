@@ -9,11 +9,12 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MultiValueEditor extends AbstractCellEditor implements TableCellEditor {
+public class MultiValueEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 
     private PropertyValues currentValue;
 
@@ -21,10 +22,33 @@ public class MultiValueEditor extends AbstractCellEditor implements TableCellEdi
     private final Workitem item;
     private final String propertyName;
 
-    public MultiValueEditor(@NotNull IDataLayer dataLayer, @NotNull Workitem item, @NotNull String propertyName) {
+    private JButton button;
+    private MultiValueEditorDialog dialog;
+
+
+    public MultiValueEditor(@NotNull IDataLayer dataLayer, @NotNull Workitem item, @NotNull String propertyName, @NotNull JTable table) {
         this.dataLayer = dataLayer;
         this.item = item;
         this.propertyName = propertyName;
+
+        button = new JButton();
+        button.setActionCommand("edit");
+        button.addActionListener(this);
+        button.setBorderPainted(true);
+        button.setSize(5,5);
+        button.setVerticalAlignment(11);
+        button.repaint(1,1,5,5);
+        JFrame parent = (JFrame) SwingUtilities.getRoot(table);
+        dialog = new MultiValueEditorDialog(parent, "Edit", table);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if ("edit".equals(e.getActionCommand())) {
+            button.setSize(10, 10);
+            dialog.setVisible(true);
+
+            fireEditingStopped(); 
+        }
     }
 
     public Object getCellEditorValue() {
@@ -33,10 +57,7 @@ public class MultiValueEditor extends AbstractCellEditor implements TableCellEdi
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         currentValue = (PropertyValues) value;
-        JFrame parent = (JFrame) SwingUtilities.getRoot(table);
-        MultiValueEditorDialog dialog = new MultiValueEditorDialog(parent, "Edit", table);
-        dialog.setVisible(true);
-        return dialog;
+        return button;
     }
 
     private class MultiValueEditorDialog extends JDialog {

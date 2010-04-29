@@ -26,7 +26,8 @@ public class DetailsTable extends Table {
     }
 
     public TableCellEditor getCellEditor(final int row, final int col) {
-        TableCellEditor editor = getModel().getCellEditor(row, col);
+        TableCellEditor editor = getModel().getCellEditor(row, col, this);
+
         if (editor == null) {
             editor = super.getCellEditor(row, col);
         }
