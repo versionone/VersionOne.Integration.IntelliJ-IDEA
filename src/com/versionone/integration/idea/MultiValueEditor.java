@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,7 +52,29 @@ public class MultiValueEditor extends AbstractCellEditor implements TableCellEdi
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         currentValue = (PropertyValues) value;
-        return button;
+        JComponent pane = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
+        JTextField txtField = new JTextField();
+        txtField.setText(currentValue.toString());
+        txtField.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1;
+        c.gridx = 0;
+        c.gridy = 0;
+        pane.add(txtField, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0;
+        c.gridx = 1;
+        c.gridy = 0;
+
+        button.setMinimumSize(new Dimension(25, 25));
+        button.setMaximumSize(new Dimension(25, 25));
+        button.setText("...");
+        pane.add(button, c);
+
+        return pane;
     }
 
     private class MultiValueEditorDialog extends JDialog {
