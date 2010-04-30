@@ -2,6 +2,7 @@
 package com.versionone.integration.idea.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -25,15 +26,16 @@ public class RefreshAction extends AbstractAction {
         if (ideaProject == null) {
             return;
         }
-        final TasksComponent tc = resolveTasksComponent(ideaProject);
-        final IDataLayer dataLayer = tc.getDataLayer();
-        
-        if (dataLayer.hasChanges()) {
+        final IDataLayer dataLayer = this.dataLayer;
+        //TODO need to find way to recognize who was triggered this action 
+        String text = e.getActionManager().getAction("V1.toolRefresh").getTemplatePresentation().getText();
+        if (dataLayer.hasChanges() && e.getPresentation().getText().equals(text)) {
             int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten.\nDo you want to continue?", "Refresh Warning", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
             if (confirmRespond == 1) {
                 return;
             }
         }
+        final TasksComponent tc = resolveTasksComponent(ideaProject);
         final DetailsComponent dc = resolveDetailsComponent(ideaProject);
         final ProgressManager progressManager = ProgressManager.getInstance();
         refreshData(ideaProject, tc, dataLayer, dc, progressManager);

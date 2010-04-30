@@ -55,34 +55,14 @@ public class DetailsComponent implements ProjectComponent {
             }
         };
 
-        /*
-        ListSelectionListener selectListener = new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-                int index = lsm.getMinSelectionIndex();
-
-                //model.setWorkitem(dataLayer.getWorkitemTree().get(0));
-
-                update();
-            }
-        };*/
-
         TreeSelectionListener selectListener = new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e){
                 removeEdition();
                 if (!e.isAddedPath()) {
                     model.setWorkitem(null);
                 } else {
-                    model.setWorkitem((Workitem)e.getNewLeadSelectionPath().getLastPathComponent());
+                    model.setWorkitem(e.getNewLeadSelectionPath().getLastPathComponent());
                 }
-                /*
-                if (e.getNewLeadSelectionPath() != null && e.getNewLeadSelectionPath().getLastPathComponent() instanceof Workitem && 
-                        (!model.isWorkitemSet() || !model.getWorkitem().equals(e.getNewLeadSelectionPath().getLastPathComponent()))) {
-
-                } else if (e.getNewLeadSelectionPath() == null || !(e.getNewLeadSelectionPath().getLastPathComponent() instanceof Workitem)){
-
-                }
-                */
                 update();
             }
         };

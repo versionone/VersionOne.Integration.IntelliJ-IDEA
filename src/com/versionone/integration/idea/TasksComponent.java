@@ -41,6 +41,8 @@ public class TasksComponent implements ProjectComponent {
     private static final Logger LOG = Logger.getLogger(TasksComponent.class);
     @NonNls
     public static final String TOOL_WINDOW_ID = "V1Integration";
+    @NonNls
+    private static final String COMPONENT_NAME = "V1.ToolWindow";
 
     private TasksTable table;
 
@@ -70,24 +72,26 @@ public class TasksComponent implements ProjectComponent {
         } catch (DataLayerException ex) {
             ex.printStackTrace();
         }
-        //TODO remove. Actions must get Project from AnActionEvent.DataContext
-        if (project != null && !project.isDefault()) {
-            ActionManager actionManager = ActionManager.getInstance();
 
-            // set settings to the actions
-            ((FilterAction) actionManager.getAction("V1.SelectProject")).setSettings(cfg);
-            ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setSettings(cfg);
+        initActions(settings, dataLayer);
+    }
 
-            String[] actionsList = new String[]{"V1.AddDefect", "V1.ContextMenu.AddDefect", "V1.AddTask",
-                                                "V1.AddTest", "V1.Workitem.Close", "V1.Workitem.QuickClose",
-                                                "V1.Workitem.Signup", "V1.Workitem.Signup", "V1.SaveData",
-                                                "V1.ContextMenu.AddDefect", "V1.ContextMenu.AddTest",
-                                                "V1.ContextMenu.AddTask"};
-            // set Data Layer to actions
-            ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setDataLayer(dataLayer);
-            for (String actionName : actionsList) {
-                ((AbstractAction) actionManager.getAction(actionName)).setDataLayer(dataLayer);
-            }
+    private void initActions(WorkspaceSettings settings, IDataLayer dataLayer) {
+        ActionManager actionManager = ActionManager.getInstance();
+
+        // set settings to the actions
+        ((FilterAction) actionManager.getAction("V1.SelectProject")).setSettings(settings);
+        ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setSettings(settings);
+
+        // set Data Layer to actions
+        String[] actionsList = new String[]{"V1.AddDefect", "V1.AddTask",
+                                            "V1.AddTest", "V1.Workitem.Close", "V1.Workitem.QuickClose",
+                                            "V1.Workitem.Signup", "V1.SaveData", "V1.toolRefresh",
+                                            "V1.ContextMenu.AddDefect", "V1.ContextMenu.AddTest",
+                                            "V1.ContextMenu.AddTask", "V1.ContextMenu.AddDefect"};
+        ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setDataLayer(dataLayer);
+        for (String actionName : actionsList) {
+            ((AbstractAction) actionManager.getAction(actionName)).setDataLayer(dataLayer);
         }
     }
 
@@ -130,7 +134,7 @@ public class TasksComponent implements ProjectComponent {
     @NotNull
     @NonNls
     public String getComponentName() {
-        return "V1.ToolWindow";
+        return COMPONENT_NAME;
     }
 
     private void initToolWindow() {
