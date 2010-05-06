@@ -150,6 +150,8 @@ public class TasksModel extends AbstractTreeTableModel {
             return EditorFactory.createComboBoxEditor(item, settings.attribute, getValueAt(row, col));
         } else if (getColumnSettings(col).type.equals(Configuration.AssetDetailSettings.MULTI_VALUE_TYPE)) {
             return EditorFactory.createMultivalueEditor(item, dataLayer, settings.attribute, parent);
+        } else if (getColumnSettings(col).type.equals(Configuration.AssetDetailSettings.RICH_TEXT_TYPE)) {
+            return EditorFactory.createRichEditor(item, dataLayer, settings.attribute, parent);
         }
 
         return EditorFactory.createTextFieldEditor(false);

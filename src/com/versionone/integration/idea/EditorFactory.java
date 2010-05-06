@@ -52,6 +52,10 @@ public class EditorFactory {
         return new MultiValueEditor(dataLayer, item, attribute, table);
     }
 
+    public static RichCellEditor createRichEditor(Workitem item, IDataLayer dataLayer, String attribute, JTable table) {
+        return new RichCellEditor(item, table);
+    }
+
     private static PropertyValues getAvailableValues(String attribute, Workitem item) {
         return ApiDataLayer.getInstance().getListPropertyValues(item.getType(), attribute);
     }

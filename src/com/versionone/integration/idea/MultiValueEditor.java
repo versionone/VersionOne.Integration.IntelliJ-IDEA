@@ -13,7 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MultiValueEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+public class MultiValueEditor extends DialogCellEditor {
 
     private PropertyValues currentValue;
 
@@ -21,25 +21,21 @@ public class MultiValueEditor extends AbstractCellEditor implements TableCellEdi
     private final Workitem item;
     private final String propertyName;
 
-    private JButton button;
     private MultiValueEditorDialog dialog;
 
 
     public MultiValueEditor(@NotNull IDataLayer dataLayer, @NotNull Workitem item, @NotNull String propertyName, @NotNull JTable table) {
+        super("edit");
         this.dataLayer = dataLayer;
         this.item = item;
         this.propertyName = propertyName;
 
-        button = new JButton();
-        button.setActionCommand("edit");
-        button.addActionListener(this);
         JFrame parent = (JFrame) SwingUtilities.getRoot(table);
         dialog = new MultiValueEditorDialog(parent, "Edit", table);
     }
 
     public void actionPerformed(ActionEvent e) {
         if ("edit".equals(e.getActionCommand())) {
-            button.setSize(10, 10);
             dialog.setVisible(true);
 
             fireEditingStopped(); 
@@ -48,33 +44,6 @@ public class MultiValueEditor extends AbstractCellEditor implements TableCellEdi
 
     public Object getCellEditorValue() {
         return currentValue == null ? item.getProperty(propertyName) : currentValue;
-    }
-
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        currentValue = (PropertyValues) value;
-        JComponent pane = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-
-        JTextField txtField = new JTextField();
-        txtField.setText(currentValue.toString());
-        txtField.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 1;
-        c.gridx = 0;
-        c.gridy = 0;
-        pane.add(txtField, c);
-
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0;
-        c.gridx = 1;
-        c.gridy = 0;
-
-        button.setMinimumSize(new Dimension(25, 25));
-        button.setMaximumSize(new Dimension(25, 25));
-        button.setText("...");
-        pane.add(button, c);
-
-        return pane;
     }
 
     private class MultiValueEditorDialog extends JDialog {
