@@ -143,6 +143,12 @@
         <copy file="${distr.dir}/${jar.filename}" todir="${publish.lib.dir}"/>
         <copy file="${lib.dir}/VersionOne.APIClient.jar"
             tofile="${publish.lib.dir}/VersionOne.APIClient.jar"/>
+        <copy file="${lib.dir}/jtidy-8.0.jar"
+            tofile="${publish.lib.dir}/jtidy-8.0.jar"/>
+        <copy file="${lib.dir}/sam.jar"
+            tofile="${publish.lib.dir}/sam.jar"/>
+        <copy file="${lib.dir}/novaworx-syntax-0.0.7.jar"
+            tofile="${publish.lib.dir}/novaworx-syntax-0.0.7.jar"/>
         <!--
         <copy file="${lib.dir}/jaxb-api.jar"
             tofile="${publish.lib.dir}/jaxb-api.jar"/>
