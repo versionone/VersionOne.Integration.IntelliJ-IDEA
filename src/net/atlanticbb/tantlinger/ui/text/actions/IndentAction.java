@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JEditorPane;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
@@ -26,6 +26,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import net.atlanticbb.tantlinger.ui.text.CompoundUndoManager;
 import net.atlanticbb.tantlinger.ui.text.HTMLUtils;
+import net.atlanticbb.tantlinger.ui.UIUtils;
 
 
 /**
@@ -47,11 +48,13 @@ public class IndentAction extends HTMLTextEditAction
     public IndentAction(int direction) throws IllegalArgumentException
     {
         super("");
-        if(direction == INDENT)
+        if(direction == INDENT) {
             putValue(NAME, "Indent");
-        else if(direction == OUTDENT)
+            putValue(Action.SMALL_ICON, UIUtils.getIcon(UIUtils.X16, "indent.gif"));
+        } else if(direction == OUTDENT) {
             putValue(NAME, "Outdent");
-        else 
+            putValue(Action.SMALL_ICON, UIUtils.getIcon(UIUtils.X16, "outdent.gif"));
+        } else
             throw new IllegalArgumentException("Invalid indentation direction");
         this.direction = direction;
         

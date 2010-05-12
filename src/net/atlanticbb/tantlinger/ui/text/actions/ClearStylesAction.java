@@ -17,6 +17,7 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.bushe.swing.action.ShouldBeEnabledDelegate;
+import net.atlanticbb.tantlinger.ui.UIUtils;
 
 /**
  * Action which clears inline text styles
@@ -34,6 +35,7 @@ public class ClearStylesAction extends HTMLTextEditAction
     public ClearStylesAction()
     {
         super(i18n.str("clear_styles"));
+        putValue(Action.SMALL_ICON, UIUtils.getIcon(UIUtils.X16, "cleanup.gif"));
         putValue(MNEMONIC_KEY, new Integer(i18n.mnem("clear_styles")));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("shift ctrl Y"));
         

@@ -27,7 +27,6 @@ import javax.swing.SwingUtilities;
 import org.bushe.swing.action.ActionUIFactory;
 
 
-
 /**
  * A collection of static UI helper methods.
  * 
@@ -40,28 +39,28 @@ public class UIUtils
     /**
      * The 16 x 16 icon package
      */
-    public static final String X16 = "resources/images/x16/";
+    public static final String X16 = "/images/x16/";
     
     /**
      * The 24 x 24 icon package
      */
-    public static final String X24 = "resources/images/x24/";
+    public static final String X24 = "/images/x16/";
     
     /**
      * The 32 x 32 icon package
      */    
-    public static final String X32 = "resources/images/x32/";
+    public static final String X32 = "/images/x16/";
     
     /**
      * The 48 x 48 icon package
      */
-    public static final String X48 = "resources/images/x32/";
+    public static final String X48 = "/images/x16/";
     
     
     /**
      * Misc icons that are unsized
      */
-    public static final String MISC = "resources/images/misc/";
+    public static final String MISC = "/images/misc/";
     
     /**
      * Gets the icon in the specified package with the specified name.
@@ -97,8 +96,8 @@ public class UIUtils
      */
     public static ImageIcon createImageIcon(String path)
     {
-        
-        URL u = Thread.currentThread().getContextClassLoader().getResource(path);
+        URL u = UIUtils.class.getResource(path);
+        //URL u = Thread.currentThread().getContextClassLoader().getResource(path);
         //URL u = ClassLoader.getSystemResource(path);//UIUtils.class.getResource(path);
         if(u == null)
             return null;

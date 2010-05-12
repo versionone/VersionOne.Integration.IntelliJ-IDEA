@@ -31,9 +31,9 @@ public class Demo {
 
         JFrame frame = new JFrame();
         JMenuBar menuBar = new JMenuBar();
-        menuBar.add(editor.getEditMenu());
-        menuBar.add(editor.getFormatMenu());
-        menuBar.add(editor.getInsertMenu());
+        //menuBar.add(editor.getEditMenu());
+        //menuBar.add(editor.getFormatMenu());
+        //menuBar.add(editor.getInsertMenu());
         frame.setJMenuBar(menuBar);
 
         frame.setTitle("HTML Editor Demo");

@@ -4,7 +4,7 @@
 package net.atlanticbb.tantlinger.ui.text.actions;
 
 import javax.swing.Action;
-import javax.swing.text.TextAction;;
+import javax.swing.text.TextAction;
 
 
 /**

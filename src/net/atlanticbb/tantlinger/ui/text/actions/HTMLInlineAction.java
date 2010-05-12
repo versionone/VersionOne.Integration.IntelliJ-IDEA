@@ -113,6 +113,11 @@ public class HTMLInlineAction extends HTMLTextEditAction
             ico = UIUtils.getIcon(UIUtils.X16, "underline.png");
             ks = KeyStroke.getKeyStroke(KeyEvent.VK_U, Event.CTRL_MASK);
         }
+        else if(type == STRIKE)
+        {
+            ico = UIUtils.getIcon(UIUtils.X16, "strikethrough.gif");
+            ks = KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK);
+        }
         putValue(SMALL_ICON, ico);
         putValue(ACCELERATOR_KEY, ks);
         putValue(ActionManager.BUTTON_TYPE, ActionManager.BUTTON_TYPE_VALUE_CHECKBOX);
