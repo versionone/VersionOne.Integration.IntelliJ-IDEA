@@ -7,9 +7,9 @@ import com.intellij.openapi.components.Storage;
 
 @State(name = "v1ideaplugin.settings", storages = @Storage(id = "ws", file = "$WORKSPACE_FILE$"))
 public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSettings> {
-    public String v1Path = "http://localhost/VersionOne/";//http://jsdksrv01/VersionOne/
-    public String user = "";
-    public String passwd = "";
+    public String v1Path = "http://localhost/VersionOne/";//http://integsrv01/VersionOne/
+    public String user = "admin";
+    public String passwd = "admin";
     public String projectName = "";//V1EclipseTestPrj
     public String projectToken = "";//Scope:2689
     public boolean isShowAllTask = true;

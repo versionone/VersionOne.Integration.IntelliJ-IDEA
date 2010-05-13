@@ -37,7 +37,7 @@ public abstract class HTMLTextEditAction extends DefaultAction
         addShouldBeEnabledDelegate(new ShouldBeEnabledDelegate()
         {
             public boolean shouldBeEnabled(Action a)
-            {                          
+            {
                 return getEditMode() != DISABLED;
             }
         });

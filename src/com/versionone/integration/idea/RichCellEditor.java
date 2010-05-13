@@ -15,22 +15,24 @@ import org.jetbrains.annotations.NotNull;
 public class RichCellEditor extends DialogCellEditor {
     private final Workitem currentItem;
     private static String action = "edit";
-    private final RichDialogEditor editor;
+    private final JFrame parent;
+    private final JTable table;
 
     public RichCellEditor(@NotNull Workitem item, @NotNull JTable table) {
         super(action);
         currentItem = item;
+        this.table = table;
 
-        JFrame parent = (JFrame) SwingUtilities.getRoot(table);
-        editor = new RichDialogEditor(parent, "HTML editor");
+        parent = (JFrame) SwingUtilities.getRoot(table);
     }
 
     public Object getCellEditorValue() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return currentItem.getProperty(Workitem.DESCRIPTION_PROPERTY) == null ? "" : currentItem.getProperty(Workitem.DESCRIPTION_PROPERTY);
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals(action)) {
+            RichDialogEditor editor = new RichDialogEditor(parent, table, "HTML editor", currentItem);
             editor.setVisible(true);
         }
     }

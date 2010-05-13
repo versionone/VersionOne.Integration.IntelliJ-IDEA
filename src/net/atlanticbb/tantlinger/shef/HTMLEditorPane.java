@@ -8,6 +8,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,7 +45,6 @@ import net.atlanticbb.tantlinger.i18n.I18n;
 import net.atlanticbb.tantlinger.ui.text.actions.HTMLLineBreakAction;
 import net.atlanticbb.tantlinger.ui.DefaultAction;
 import net.atlanticbb.tantlinger.ui.text.Entities;
-import net.atlanticbb.tantlinger.ui.text.SourceCodeEditor;
 import net.atlanticbb.tantlinger.ui.text.actions.HTMLElementPropertiesAction;
 import net.atlanticbb.tantlinger.ui.text.actions.HTMLFontAction;
 import net.atlanticbb.tantlinger.ui.text.actions.HTMLFontColorAction;
@@ -181,7 +182,15 @@ public class HTMLEditorPane extends JPanel
         formatToolBar.addSeparator();
         act = new ClearStylesAction();
         actionList.add(act);
-        addToToolBar(formatToolBar, act);        
+        addToToolBar(formatToolBar, act);
+
+        actionList.addActionListenerToAll(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                updateState();
+            }
+        });
     }
     
     private void addToToolBar(JToolBar toolbar, Action act)
@@ -323,6 +332,7 @@ public class HTMLEditorPane extends JPanel
         }
         return sb.toString();
     }
+
     /* ************************************* */
     
     private void updateState()
