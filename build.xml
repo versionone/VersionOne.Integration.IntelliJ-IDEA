@@ -147,8 +147,6 @@
             tofile="${publish.lib.dir}/jtidy-8.0.jar"/>
         <copy file="${lib.dir}/sam.jar"
             tofile="${publish.lib.dir}/sam.jar"/>
-        <copy file="${lib.dir}/novaworx-syntax-0.0.7.jar"
-            tofile="${publish.lib.dir}/novaworx-syntax-0.0.7.jar"/>
         <!--
         <copy file="${lib.dir}/jaxb-api.jar"
             tofile="${publish.lib.dir}/jaxb-api.jar"/>
