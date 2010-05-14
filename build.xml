@@ -1,4 +1,4 @@
-c<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 
 <project name="VersionOneIdeaPlugin" default="ccnet.build">
 
@@ -199,7 +199,6 @@ c<?xml version="1.0" encoding="ISO-8859-1"?>
         <cobertura-instrument todir="${coverage.classes}" datafile="${coverage.file}">
             <fileset dir="${bin.product.dir}">
                 <include name="**/*.class"/>
-                <include name="**/*.properties"/>                
                 <exclude name="**/*Tester.class"/>
             </fileset>
         </cobertura-instrument>
