@@ -32,7 +32,7 @@ public class RichCellEditor extends DialogCellEditor {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals(action)) {
-            RichDialogEditor editor = new RichDialogEditor(parent, table, "HTML editor", currentItem);
+            RichDialogEditor editor = new RichDialogEditor(parent, table, "Edit description", currentItem);
             editor.setVisible(true);
         }
     }

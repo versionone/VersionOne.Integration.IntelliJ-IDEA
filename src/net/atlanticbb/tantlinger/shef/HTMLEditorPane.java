@@ -147,6 +147,10 @@ public class HTMLEditorPane extends JPanel
         act.putValue(ActionManager.BUTTON_TYPE, ActionManager.BUTTON_TYPE_VALUE_TOGGLE);
         actionList.add(act);
         addToToolBar(formatToolBar, act);
+
+        act = new ClearStylesAction();
+        actionList.add(act);
+        addToToolBar(formatToolBar, act);
         formatToolBar.addSeparator();
         
         List alst = HTMLEditorActionFactory.createListElementActionList();
@@ -181,18 +185,6 @@ public class HTMLEditorPane extends JPanel
         actionList.add(CompoundUndoManager.UNDO);
         addToToolBar(formatToolBar, CompoundUndoManager.REDO);
         actionList.add(CompoundUndoManager.REDO);
-
-        formatToolBar.addSeparator();
-        act = new ClearStylesAction();
-        actionList.add(act);
-        addToToolBar(formatToolBar, act);
-
-        actionList.addActionListenerToAll(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                //updateState();
-            }
-        });
     }
     
     private void addToToolBar(JToolBar toolbar, Action act)
