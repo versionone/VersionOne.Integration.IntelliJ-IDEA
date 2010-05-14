@@ -30,6 +30,7 @@ public class RichDialogEditor extends JDialog {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         //setModal(true);
         setSize(500, 500);
+        setMinimumSize(new Dimension(500, 500));
         setLayout(new BorderLayout());
 
         createConmponets();

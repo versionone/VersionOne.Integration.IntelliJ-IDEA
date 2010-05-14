@@ -59,6 +59,7 @@ import net.atlanticbb.tantlinger.ui.UIUtils;
 import org.bushe.swing.action.ActionList;
 import org.bushe.swing.action.ActionManager;
 import org.bushe.swing.action.ActionUIFactory;
+import org.bushe.swing.action.EnabledUpdater;
 
 /**
  *
@@ -75,7 +76,7 @@ public class HTMLEditorPane extends JPanel
 
     private JEditorPane wysEditor;
     private JEditorPane focusedEditor;
-    private JTabbedPane tabs;
+    //private JTabbedPane tabs;
     private JToolBar formatToolBar;
 
     private JPopupMenu wysPopupMenu;
@@ -104,7 +105,9 @@ public class HTMLEditorPane extends JPanel
         createEditorActions();
         setLayout(new BorderLayout());
         add(formatToolBar, BorderLayout.NORTH);
-        add(tabs, BorderLayout.CENTER);    
+        add(new JScrollPane(wysEditor), BorderLayout.CENTER);
+        wysEditor.requestFocusInWindow();
+        //add(tabs, BorderLayout.CENTER);    
         
     }
 
@@ -187,8 +190,7 @@ public class HTMLEditorPane extends JPanel
         actionList.addActionListenerToAll(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-
-                updateState();
+                //updateState();
             }
         });
     }
@@ -237,10 +239,10 @@ public class HTMLEditorPane extends JPanel
     
     private void createEditorTabs()
     {
-        tabs = new JTabbedPane(SwingConstants.BOTTOM);
+        //tabs = new JTabbedPane(SwingConstants.BOTTOM);
         wysEditor = createWysiwygEditor();
         
-        tabs.addTab("Edit", new JScrollPane(wysEditor));
+        //tabs.addTab("Edit", new JScrollPane(wysEditor));
     }
     
     private JEditorPane createWysiwygEditor()
@@ -254,8 +256,7 @@ public class HTMLEditorPane extends JPanel
                 
         ed.addCaretListener(caretHandler);
         ed.addFocusListener(focusHandler);
-        ed.addMouseListener(popupHandler);
-        
+        ed.addMouseListener(popupHandler);        
         
         HTMLDocument document = (HTMLDocument)ed.getDocument();
         CompoundUndoManager cuh = new CompoundUndoManager(document, new UndoManager());
@@ -283,25 +284,15 @@ public class HTMLEditorPane extends JPanel
     public void setText(String text)
     {
     	String topText = removeInvalidTags(text);  
-        
-        if(tabs.getSelectedIndex() == 0)
-        {           
-                      
-            wysEditor.setText("");
-            insertHTML(wysEditor, topText, 0);            
-            CompoundUndoManager.discardAllEdits(wysEditor.getDocument());
-            
-        }
+
+        wysEditor.setText("");
+        insertHTML(wysEditor, topText, 0);
+        CompoundUndoManager.discardAllEdits(wysEditor.getDocument());
     }
     
     public String getText()
     {
-    	String topText = "";
-    	if(tabs.getSelectedIndex() == 0)
-        {           
-           topText = removeInvalidTags(wysEditor.getText());          
-            
-        }
+        String topText = removeInvalidTags(wysEditor.getText());
     	
     	return topText;
     }
@@ -340,11 +331,6 @@ public class HTMLEditorPane extends JPanel
         actionList.putContextValueForAll(HTMLTextEditAction.EDITOR, focusedEditor);
         actionList.updateEnabledForAll();
     }
-    
-    
-    
-    
-    
     
     private class CaretHandler implements CaretListener
     {
