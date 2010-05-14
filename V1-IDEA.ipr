@@ -279,7 +279,8 @@
     <library name="V1SDK">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/VersionOne.APIClient.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/VersionOne.ObjectModel.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/sam.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jtidy-8.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
