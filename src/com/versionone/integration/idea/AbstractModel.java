@@ -44,7 +44,7 @@ public abstract class AbstractModel extends AbstractTableModel {
         } else if (rowTypeMatches(rowSettings, Configuration.AssetDetailSettings.MULTI_VALUE_TYPE)) {
             return EditorFactory.createMultivalueEditor(item, dataLayer, rowSettings.attribute, parent);
         } else if (rowTypeMatches(rowSettings, Configuration.AssetDetailSettings.RICH_TEXT_TYPE)) {
-            return EditorFactory.createRichEditor(item, dataLayer, rowSettings.attribute, parent);
+            return EditorFactory.createRichEditor(item, rowSettings.attribute, parent);
         }
 
         return EditorFactory.createTextFieldEditor(false);

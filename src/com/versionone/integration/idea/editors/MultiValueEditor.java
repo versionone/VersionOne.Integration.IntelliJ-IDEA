@@ -1,14 +1,14 @@
-package com.versionone.integration.idea;
+package com.versionone.integration.idea.editors;
 
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.PropertyValues;
 import com.versionone.common.sdk.ValueId;
 import com.versionone.common.sdk.Workitem;
+import com.versionone.integration.idea.editors.DialogCellEditor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
-import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

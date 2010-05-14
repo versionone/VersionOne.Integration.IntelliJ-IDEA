@@ -1,4 +1,4 @@
-package com.versionone.integration.idea;
+package com.versionone.integration.idea.editors;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.*;
 
 /**
- * Create cell editor with dialog supporting
+ * Create cell editor with dialog support
  */
 abstract class DialogCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
     private JButton button;

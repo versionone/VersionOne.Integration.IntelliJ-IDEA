@@ -4,6 +4,8 @@ import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.PropertyValues;
 import com.versionone.common.sdk.Workitem;
+import com.versionone.integration.idea.editors.MultiValueEditor;
+import com.versionone.integration.idea.editors.RichCellEditor;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -52,8 +54,8 @@ public class EditorFactory {
         return new MultiValueEditor(dataLayer, item, attribute, table);
     }
 
-    public static RichCellEditor createRichEditor(Workitem item, IDataLayer dataLayer, String attribute, JTable table) {
-        return new RichCellEditor(item, table);
+    public static RichCellEditor createRichEditor(Workitem item, String attribute, JTable table) {
+        return new RichCellEditor(item, attribute, table);
     }
 
     private static PropertyValues getAvailableValues(String attribute, Workitem item) {
