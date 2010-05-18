@@ -24,6 +24,7 @@ public class ConfigForm implements UnnamedConfigurable {
     private JButton validateConnectionButton;
     private JPanel generalPanel;
     private JCheckBox windowsIntegratedAuthentication;
+    private JCheckBox enableCheckBox;
     private WorkspaceSettings settings;
     private final IDataLayer dataLayer;
     private final TasksComponent tc;
@@ -32,6 +33,7 @@ public class ConfigForm implements UnnamedConfigurable {
 
     public ConfigForm(WorkspaceSettings settings, Project project) {
         validateConnectionButton.setEnabled(false);
+        disableConfiguration(false);
 
         this.settings = settings;
         tc = project.getComponent(TasksComponent.class);
@@ -65,36 +67,21 @@ public class ConfigForm implements UnnamedConfigurable {
           }
         };
 
+        ItemListener enableItemListener = new ItemListener() {
+          public void itemStateChanged(ItemEvent itemEvent) {
+            int state = itemEvent.getStateChange();
+            disableConfiguration(state == ItemEvent.SELECTED);
+            verifyChanges();
+          }
+        };
+
+        enableCheckBox.addItemListener(enableItemListener);
         windowsIntegratedAuthentication.addItemListener(itemListener);
         serverUrl.addKeyListener(keyListener);
         userName.addKeyListener(keyListener);
         password.addKeyListener(keyListener);
 
-
         reset();
-    }
-
-    private void verifyConnection() {
-        String pathVersionOne = serverUrl.getText();
-        if (!pathVersionOne.endsWith("/")) {
-            serverUrl.setText(pathVersionOne + "/");
-        }
-        
-        isConnectionCorrect = dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText(),
-                windowsIntegratedAuthentication.isSelected());
-        if (isConnectionCorrect) {
-            Messages.showInfoMessage("Connection is valid", "Connection Status");
-            isConnectionCorrect = true;
-            validateConnectionButton.setEnabled(false);
-        } else {
-            Messages.showWarningDialog("Connection is invalid", "Connection Status");
-            isConnectionCorrect = false;
-        }
-        isConnectionVerified = true;
-    }
-
-    public Component getContentPanel() {
-        return generalPanel;
     }
 
     public JComponent createComponent() {
@@ -105,7 +92,8 @@ public class ConfigForm implements UnnamedConfigurable {
     public boolean isModified() {
         boolean result;
 
-        result = windowsIntegratedAuthentication.isSelected() != settings.isWindowsIntegratedAuthentication; 
+        result = enableCheckBox.isSelected() != settings.isEnable;
+        result = result ||  windowsIntegratedAuthentication.isSelected() != settings.isWindowsIntegratedAuthentication;
         result = result || !serverUrl.getText().equals(settings.v1Path);
         result = result || !userName.getText().equals(settings.user);
         result = result || !password.getText().equals(settings.passwd);
@@ -113,23 +101,10 @@ public class ConfigForm implements UnnamedConfigurable {
         return result;
     }
 
-    public void verifyChanges() {
-
-        if (isModified()) {
-            isConnectionVerified = false;
-            validateConnectionButton.setEnabled(true);
-        }
-    }
-
-//    public boolean isProjectViewStyleChanged() {
-////        final RApplicationSettings settings = RApplicationSettings.getInstance();
-////        return settings.useRubySpecificProjectView != useRubyProjectViewBox.isSelected();
-//        return true;
-//    }
-
     public void apply() throws ConfigurationException {
 
         if (isModified()) {
+            settings.isEnable = enableCheckBox.isSelected();
             settings.v1Path = serverUrl.getText();
             settings.isWindowsIntegratedAuthentication = windowsIntegratedAuthentication.isSelected();
             if (settings.isWindowsIntegratedAuthentication) {
@@ -158,27 +133,71 @@ public class ConfigForm implements UnnamedConfigurable {
         }
     }
 
-    // TODO join the following methods and possibly reduce fields
-    public boolean isConnectValid() {
-        return isConnectionCorrect;
-    }
-
-    public boolean isConnectVerified() {
-        return isConnectionVerified;
-    }
-
     public void reset() {
         serverUrl.setText(settings.v1Path);
         userName.setText(settings.user);
         password.setText(settings.passwd);
         windowsIntegratedAuthentication.setSelected(settings.isWindowsIntegratedAuthentication);
+        enableCheckBox.setSelected(settings.isEnable);
     }
 
     public void disposeUIResources() {
         //Do nothing
     }
 
-    public JPanel getPanel() {
+    protected JPanel getPanel() {
         return generalPanel;
+    }
+
+    // TODO join the following methods and possibly reduce fields
+    protected boolean isConnectValid() {
+        return isConnectionCorrect;
+    }
+
+    protected boolean isConnectVerified() {
+        return isConnectionVerified;
+    }
+
+    private void verifyConnection() {
+        String pathVersionOne = serverUrl.getText();
+        if (pathVersionOne.length() != 0 && !pathVersionOne.endsWith("/")) {
+            serverUrl.setText(pathVersionOne + "/");
+        }
+
+        isConnectionCorrect = dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText(),
+                windowsIntegratedAuthentication.isSelected());
+        if (isConnectionCorrect) {
+            Messages.showInfoMessage("Connection is valid", "Connection Status");
+            isConnectionCorrect = true;
+            validateConnectionButton.setEnabled(false);
+        } else {
+            Messages.showWarningDialog("Connection is invalid", "Connection Status");
+            isConnectionCorrect = false;
+        }
+        isConnectionVerified = true;
+    }
+
+    private void verifyChanges() {
+
+        if (isModified() && enableCheckBox.isSelected()) {
+            isConnectionVerified = false;
+            validateConnectionButton.setEnabled(true);
+        }
+    }
+
+    private void disableConfiguration(boolean isEnable) {
+        if (isEnable) {
+            windowsIntegratedAuthentication.setEnabled(true);
+            serverUrl.setEditable(true);
+            userName.setEditable(true);
+            password.setEditable(true);
+            validateConnectionButton.setEnabled(true);
+        } else {
+            windowsIntegratedAuthentication.setEnabled(false);
+            serverUrl.setEditable(false);
+            userName.setEditable(false);
+            password.setEditable(false);
+            validateConnectionButton.setEnabled(false);
+        }
     }
 }

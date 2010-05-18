@@ -14,6 +14,7 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
     public String projectToken = "";//Scope:2689
     public boolean isShowAllTask = true;
     public boolean isWindowsIntegratedAuthentication = false;
+    public boolean isEnable = false;
 
     public WorkspaceSettings getState() {
         return this;
