@@ -20,14 +20,8 @@ public class Demo {
 
 
         HTMLEditorPane editor = new HTMLEditorPane();
-        InputStream in = Demo.class.getResourceAsStream("/net/atlanticbb/tantlinger/shef/htmlsnip.txt");
-        try{
-            editor.setText(IOUtils.read(in));
-        }catch(IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            IOUtils.close(in);
-        }
+        //InputStream in = Demo.class.getResourceAsStream("/net/atlanticbb/tantlinger/shef/htmlsnip.txt");
+        editor.setText("<ol>       <li>                </li>     </ol>");
 
         JFrame frame = new JFrame();
         JMenuBar menuBar = new JMenuBar();

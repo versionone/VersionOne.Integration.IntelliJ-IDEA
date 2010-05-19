@@ -41,6 +41,9 @@ public class RichDialogEditor extends JDialog {
     void createConmponets() {
         final HTMLEditorPane editor = new HTMLEditorPane();
         String text = (String)item.getProperty(Workitem.DESCRIPTION_PROPERTY);
+        if (text != null && !text.endsWith("<br>")) {
+            text += "<br>";
+        }
         editor.setText((text == null ? "" : text));
 
         JPanel buttonPanel = new JPanel();
