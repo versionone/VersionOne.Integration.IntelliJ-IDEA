@@ -52,7 +52,8 @@ public class AddTaskAction extends AbstractAction {
     @Override
     public void update(AnActionEvent event) {        
         Presentation presentation = event.getPresentation();
-        presentation.setEnabled(ApiDataLayer.getInstance().isConnected() && !isActionDisabled(event));
+        presentation.setEnabled(ApiDataLayer.getInstance().isConnected()
+                && !isActionDisabled(event)  && getSettings().isEnable);
     }
 
     private boolean isActionDisabled(AnActionEvent event) {

@@ -3,6 +3,7 @@ package com.versionone.integration.idea.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -73,5 +74,11 @@ public class RefreshAction extends AbstractAction {
         tc.update();
         dc.setItem(tc.getCurrentItem());
         dc.update();
+    }
+
+    @Override
+    public void update(AnActionEvent e) {
+        Presentation presentation = e.getPresentation();
+        presentation.setEnabled(getSettings().isEnable);
     }
 }

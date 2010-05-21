@@ -40,7 +40,7 @@ public class SignupAction extends AbstractAction {
             enabled = isEnabledForWorkitem(item);
         }
 
-        presentation.setEnabled(enabled);
+        presentation.setEnabled(enabled && getSettings().isEnable);
     }
 
     private boolean isEnabledForWorkitem(Workitem item) {

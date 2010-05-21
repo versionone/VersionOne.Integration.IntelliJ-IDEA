@@ -45,6 +45,6 @@ public class CloseWorkitemAction extends AbstractAction {
             enabled = dataLayer.isConnected() && item != null && item.isPersistent();
         }
 
-        presentation.setEnabled(enabled);
+        presentation.setEnabled(enabled && getSettings().isEnable);
     }
 }

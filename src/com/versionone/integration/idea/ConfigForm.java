@@ -102,7 +102,6 @@ public class ConfigForm implements UnnamedConfigurable {
     }
 
     public void apply() throws ConfigurationException {
-
         if (isModified()) {
             settings.isEnable = enableCheckBox.isSelected();
             settings.v1Path = serverUrl.getText();
@@ -128,6 +127,7 @@ public class ConfigForm implements UnnamedConfigurable {
                 Messages.showMessageDialog(ex.getMessage(), "Error", icon);
             }
 
+            tc.showTable(settings.isEnable);
             tc.refresh();
             tc.update();
         }

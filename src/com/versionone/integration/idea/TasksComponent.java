@@ -51,7 +51,6 @@ public class TasksComponent implements ProjectComponent {
     private Content content;
     private final WorkspaceSettings cfg;
     private final IDataLayer dataLayer;
-    private TableModelListener tableChangesListener;
     private TreeSelectionListener tableSelectionListener;
 
 
@@ -92,6 +91,7 @@ public class TasksComponent implements ProjectComponent {
         ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setDataLayer(dataLayer);
         for (String actionName : actionsList) {
             ((AbstractAction) actionManager.getAction(actionName)).setDataLayer(dataLayer);
+            ((AbstractAction) actionManager.getAction(actionName)).setSettings(settings);
         }
     }
 
@@ -163,12 +163,21 @@ public class TasksComponent implements ProjectComponent {
         }
     }
 
+    public boolean showTable(boolean isShow) {
+        table.setVisible(isShow);
+        return isShow;
+    }
+
     public void refresh() {
-        try {
-            table.updateData();
-        } catch (DataLayerException ex) {
-            Icon icon = Messages.getErrorIcon();
-            Messages.showMessageDialog(ex.getMessage(), "Error", icon);
+        if (showTable(cfg.isEnable)) {
+            try {
+                if (table != null) {
+                    table.updateData();
+                }
+            } catch (DataLayerException ex) {
+                Icon icon = Messages.getErrorIcon();
+                Messages.showMessageDialog(ex.getMessage(), "Error", icon);
+            }
         }
     }
 
@@ -198,6 +207,7 @@ public class TasksComponent implements ProjectComponent {
         panel.setBackground(UIUtil.getTreeTextBackground());
         table = createTable();
         panel.add(new JScrollPane(table));
+        showTable(cfg.isEnable);
         return panel;
     }
 
@@ -245,9 +255,8 @@ public class TasksComponent implements ProjectComponent {
     }
 
     public void registerTableChangeListener(TableModelListener listener) {
-        tableChangesListener = listener;
         if (table != null) {
-            table.getModel().addTableModelListener(tableChangesListener);
+            table.getModel().addTableModelListener(listener);
         }
     }
 
@@ -260,6 +269,6 @@ public class TasksComponent implements ProjectComponent {
     }
 
     public Object getCurrentItem() {
-        return table.getWorkitemAtRow(table.getSelectedRow());
+        return table == null ? null : table.getWorkitemAtRow(table.getSelectedRow());
     }
 }

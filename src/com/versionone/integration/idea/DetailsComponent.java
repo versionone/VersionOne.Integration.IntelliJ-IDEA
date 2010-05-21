@@ -118,7 +118,13 @@ public class DetailsComponent implements ProjectComponent {
         toolWindow.getContentManager().addContent(content);
     }
 
+    public boolean showDetails(boolean isShow) {
+        table.setVisible(isShow);
+        return isShow;
+    }
+
     public void update() {
+        showDetails(settings.isEnable);
         table.revalidate();
         table.repaint();
     }

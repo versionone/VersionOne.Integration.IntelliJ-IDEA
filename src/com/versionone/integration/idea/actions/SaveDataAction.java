@@ -1,11 +1,7 @@
 /*(c) Copyright 2008, VersionOne, Inc. All rights reserved. (c)*/
 package com.versionone.integration.idea.actions;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -86,5 +82,11 @@ public class SaveDataAction extends AbstractAction {
 
         ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
         //RefreshAction.refreshData(ideaProject, tc, dataLayer, dc, progressManager);
+    }
+
+    @Override
+    public void update(AnActionEvent e) {
+        Presentation presentation = e.getPresentation();
+        presentation.setEnabled(getSettings().isEnable);
     }
 }

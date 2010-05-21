@@ -44,6 +44,6 @@ public class QuickCloseWorkitemAction extends AbstractAction {
             enabled = dataLayer.isConnected() && item != null && item.canQuickClose() && item.isPersistent();
         }
 
-        presentation.setEnabled(enabled);
+        presentation.setEnabled(enabled && getSettings().isEnable);
     }
 }

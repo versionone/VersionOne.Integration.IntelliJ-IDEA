@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.DetailsComponent;
+import com.versionone.integration.idea.WorkspaceSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ import javax.swing.*;
 public abstract class AbstractAction extends AnAction {
 
     protected IDataLayer dataLayer;
+    protected WorkspaceSettings settings;
 
     protected void displayError(String message) {
         Icon icon = Messages.getErrorIcon();
@@ -53,5 +55,13 @@ public abstract class AbstractAction extends AnAction {
     protected Project resolveProject(@NotNull AnActionEvent e) {
         final DataContext dataContext = e.getDataContext();
         return PlatformDataKeys.PROJECT.getData(dataContext);
+    }
+
+    public void setSettings(WorkspaceSettings settings) {
+        this.settings = settings;
+    }
+
+    public WorkspaceSettings getSettings() {
+        return settings;
     }
 }

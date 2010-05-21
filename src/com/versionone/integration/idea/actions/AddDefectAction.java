@@ -39,6 +39,6 @@ public class AddDefectAction extends AbstractAction {
     @Override
     public void update(AnActionEvent event) {
         Presentation presentation = event.getPresentation();
-        presentation.setEnabled(dataLayer.isConnected());
+        presentation.setEnabled(dataLayer.isConnected() && getSettings().isEnable);
     }
 }

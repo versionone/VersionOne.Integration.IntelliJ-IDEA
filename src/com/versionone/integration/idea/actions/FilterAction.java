@@ -3,6 +3,7 @@ package com.versionone.integration.idea.actions;
 
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -24,7 +25,7 @@ import java.util.List;
 public class FilterAction extends AbstractAction {
 
     private static final Logger LOG = Logger.getLogger(FilterAction.class);
-    private WorkspaceSettings settings;
+    //private WorkspaceSettings settings;
     //private Project project;
 
     @Override
@@ -86,8 +87,10 @@ public class FilterAction extends AbstractAction {
         return ShowSettingsUtil.getInstance().editConfigurable(ideaProject, form);
     }
 
-    public void setSettings(WorkspaceSettings settings) {
-        this.settings = settings;
+    @Override
+    public void update(AnActionEvent e) {
+        Presentation presentation = e.getPresentation();
+        presentation.setEnabled(getSettings().isEnable);
     }
 
     /*
