@@ -27,5 +27,6 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
         projectName = state.projectName;
         isShowAllTask = state.isShowAllTask;
         projectToken = state.projectToken;
+        isEnable = state.isEnable;
     }
 }

@@ -22,7 +22,6 @@ import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.integration.idea.actions.*;
 import com.versionone.integration.idea.actions.AbstractAction;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,20 +37,20 @@ import java.util.List;
 
 public class TasksComponent implements ProjectComponent {
 
-    private static final Logger LOG = Logger.getLogger(TasksComponent.class);
+    //private static final Logger LOG = Logger.getLogger(TasksComponent.class);
     @NonNls
     public static final String TOOL_WINDOW_ID = "V1Integration";
     @NonNls
     private static final String COMPONENT_NAME = "V1.ToolWindow";
 
-    private TasksTable table;
-
     public final Project project;
 
     private Content content;
+    private TasksTable table;
     private final WorkspaceSettings cfg;
     private final IDataLayer dataLayer;
     private TreeSelectionListener tableSelectionListener;
+    private boolean initToolWindow = false;
 
 
     public TasksComponent(Project project, WorkspaceSettings settings) {
@@ -67,12 +66,150 @@ public class TasksComponent implements ProjectComponent {
             dataLayer.setCurrentProjectId(cfg.projectToken);
             dataLayer.setShowAllTasks(cfg.isShowAllTask);
             settings.projectToken = dataLayer.getCurrentProjectId();
-            settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(), settings.projectToken);
+            settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(),
+                                                                                 settings.projectToken);
         } catch (DataLayerException ex) {
             ex.printStackTrace();
         }
 
         initActions(settings, dataLayer);
+    }
+
+    public void projectOpened() {
+        if (cfg.isEnable) {
+            registerToolWindow();
+        }
+    }
+    
+    public void projectClosed() {
+        unregisterToolWindow();
+    }
+
+    public void initComponent() {
+        ColorKey.createColorKey("V1_CHANGED_ROW", new Color(255, 243, 200));
+    }
+
+    public void disposeComponent() {
+        // empty
+    }
+
+    @NotNull
+    @NonNls
+    public String getComponentName() {
+        return COMPONENT_NAME;
+    }
+
+    public void registerToolWindow() {
+        if (!initToolWindow) {
+            ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+            JPanel contentPanel = createContentPanel();
+
+            ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
+            ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
+            contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
+
+            ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
+            ContentFactory contentFactory;
+            contentFactory = ContentFactory.SERVICE.getInstance();
+            content = contentFactory.createContent(contentPanel, cfg.projectName, false);
+            toolWindow.getContentManager().addContent(content);
+
+            TableModelListener listener = new TableModelListener() {
+                public void tableChanged(TableModelEvent e) {
+                    update();
+                }
+            };
+            this.project.getComponent(DetailsComponent.class).registerTableListener(listener);
+            initToolWindow = true;
+        }
+    }
+
+    public void unregisterToolWindow() {
+        ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_ID);
+        initToolWindow = false;
+    }
+
+    public void update() {
+        if (content != null) {
+            content.setDisplayName(cfg.projectName);
+        }
+        if (table == null) {
+            table = createTable();
+        } else {
+            table.updateUI(true);
+        }
+    }
+
+    public void refresh() {
+        if (table != null) {
+            try {
+                table.updateData();
+            } catch (DataLayerException ex) {
+                Icon icon = Messages.getErrorIcon();
+                Messages.showMessageDialog(ex.getMessage(), "Error", icon);
+            }
+        }
+    }
+
+    public void selectNode(Workitem itemAtNode) {
+        if (table != null) {
+            table.selectNode(itemAtNode);
+        }
+    }
+
+    public void removeEdition() {
+        if (table != null && table.isEditing()) {
+            //table.removeEditor(); cancel editing (without data saving)
+            if (SwingUtilities.isEventDispatchThread()) {
+                table.getCellEditor().stopCellEditing();
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        table.getCellEditor().stopCellEditing();
+                    }
+                });
+            }
+        }
+    }
+
+    @NotNull
+    public IDataLayer getDataLayer() {
+        if (dataLayer == null) {
+            throw new IllegalStateException("method call before creating object");
+        }
+        return dataLayer;
+    }
+
+    @NotNull
+    public TasksTable getTable() {
+        // TODO possibly get rid of this
+        return table;
+    }
+
+    public void registerTableChangeListener(TableModelListener listener) {
+        if (table != null) {
+            table.getModel().addTableModelListener(listener);
+        }
+    }
+
+    public void registerTableSelectListener(TreeSelectionListener selectionListener) {
+        if (table != null) {
+            table.getTree().removeTreeSelectionListener(tableSelectionListener);
+            table.getTree().addTreeSelectionListener(selectionListener);
+        }
+        tableSelectionListener = selectionListener;
+    }
+
+    public Object getCurrentItem() {
+        return table == null ? null : table.getWorkitemAtRow(table.getSelectedRow());
+    }
+
+    JPanel createContentPanel() {
+        final JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(UIUtil.getTreeTextBackground());
+        table = createTable();
+        panel.add(new JScrollPane(table));
+        return panel;
     }
 
     private void initActions(WorkspaceSettings settings, IDataLayer dataLayer) {
@@ -109,108 +246,6 @@ public class TasksComponent implements ProjectComponent {
         }
     }
 
-    public void projectOpened() {
-        initToolWindow();
-        TableModelListener listener = new TableModelListener() {
-            public void tableChanged(TableModelEvent e) {
-                update();
-            }
-        };
-        this.project.getComponent(DetailsComponent.class).registerTableListener(listener);
-    }
-
-    public void projectClosed() {
-        unregisterToolWindow();
-    }
-
-    public void initComponent() {
-        ColorKey.createColorKey("V1_CHANGED_ROW", new Color(255, 243, 200));
-    }
-
-    public void disposeComponent() {
-        // empty
-    }
-
-    @NotNull
-    @NonNls
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
-    private void initToolWindow() {
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        JPanel contentPanel = createContentPanel();
-
-        ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
-        ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
-        contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
-
-        ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
-        ContentFactory contentFactory;
-        contentFactory = ContentFactory.SERVICE.getInstance();
-        content = contentFactory.createContent(contentPanel, cfg.projectName, false);
-        toolWindow.getContentManager().addContent(content);
-    }
-
-    public void update() {
-        if (content != null) {
-            content.setDisplayName(cfg.projectName);
-        }
-        if (table == null) {
-            table = createTable();
-        } else {
-            table.updateUI(true);
-        }
-    }
-
-    public boolean showTable(boolean isShow) {
-        table.setVisible(isShow);
-        return isShow;
-    }
-
-    public void refresh() {
-        if (showTable(cfg.isEnable)) {
-            try {
-                if (table != null) {
-                    table.updateData();
-                }
-            } catch (DataLayerException ex) {
-                Icon icon = Messages.getErrorIcon();
-                Messages.showMessageDialog(ex.getMessage(), "Error", icon);
-            }
-        }
-    }
-
-    public void selectNode(Workitem itemAtNode) {
-        if (table != null) {
-            table.selectNode(itemAtNode);
-        }
-    }
-
-    public void removeEdition() {
-        if (table != null && table.isEditing()) {
-            //table.removeEditor(); cancel editing (without data saving)
-            if (SwingUtilities.isEventDispatchThread()) {
-                table.getCellEditor().stopCellEditing();
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        table.getCellEditor().stopCellEditing();
-                    }
-                });
-            }
-        }
-    }
-
-    JPanel createContentPanel() {
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(UIUtil.getTreeTextBackground());
-        table = createTable();
-        panel.add(new JScrollPane(table));
-        showTable(cfg.isEnable);
-        return panel;
-    }
-
     private TasksTable createTable() {
         TasksTable table;
         TasksModel model;
@@ -228,47 +263,11 @@ public class TasksComponent implements ProjectComponent {
 
         table.setRootVisible(false);
         table.setShowGrid(true);
-        table.setIntercellSpacing(new Dimension(1, 1));        
+        table.setIntercellSpacing(new Dimension(1, 1));
         table.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         table.getTree().addTreeSelectionListener(tableSelectionListener);
         table.getTree().setShowsRootHandles(true);
         table.getTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         return table;
-    }
-
-    private void unregisterToolWindow() {
-        ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_ID);
-    }
-
-    @NotNull
-    public IDataLayer getDataLayer() {
-        if (dataLayer == null) {
-            throw new IllegalStateException("method call before creating object");
-        }
-        return dataLayer;
-    }
-
-    @NotNull
-    public TasksTable getTable() {
-        // TODO possibly get rid of this
-        return table;
-    }
-
-    public void registerTableChangeListener(TableModelListener listener) {
-        if (table != null) {
-            table.getModel().addTableModelListener(listener);
-        }
-    }
-
-    public void registerTableSelectListener(TreeSelectionListener selectionListener) {
-        if (table != null) {
-            table.getTree().removeTreeSelectionListener(tableSelectionListener);
-            table.getTree().addTreeSelectionListener(selectionListener);
-        }
-        tableSelectionListener = selectionListener;
-    }
-
-    public Object getCurrentItem() {
-        return table == null ? null : table.getWorkitemAtRow(table.getSelectedRow());
     }
 }

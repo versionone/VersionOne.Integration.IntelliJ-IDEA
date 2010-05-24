@@ -12,10 +12,6 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.Table;
 import com.intellij.util.ui.UIUtil;
 import com.versionone.common.sdk.IDataLayer;
-import com.versionone.common.sdk.ApiDataLayer;
-import com.versionone.common.sdk.DataLayerException;
-import com.versionone.common.sdk.Workitem;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +24,7 @@ import java.awt.*;
 
 public class DetailsComponent implements ProjectComponent {
 
-    private static final Logger LOG = Logger.getLogger(DetailsComponent.class);
+    //private static final Logger LOG = Logger.getLogger(DetailsComponent.class);
     @NonNls
     private static final String COMPONENT_NAME = "V1.Details";
     public static final String TOOL_WINDOW_NAME = "V1Details";
@@ -37,8 +33,9 @@ public class DetailsComponent implements ProjectComponent {
 
     private Table table;
     private DetailsModel model;
-    private TableModelListener tableChangesListener;
     private WorkspaceSettings settings;
+    private TableModelListener tableChangesListener;
+    private boolean initToolWindow = false;
 
 
     public DetailsComponent(Project project, WorkspaceSettings settings) {
@@ -47,28 +44,7 @@ public class DetailsComponent implements ProjectComponent {
     }
 
     public void projectOpened() {
-        initToolWindow();
-
-        TableModelListener changeListener = new TableModelListener() {
-            public void tableChanged(TableModelEvent e) {
-                update();
-            }
-        };
-
-        TreeSelectionListener selectListener = new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e){
-                removeEdition();
-                if (!e.isAddedPath()) {
-                    model.setWorkitem(null);
-                } else {
-                    model.setWorkitem(e.getNewLeadSelectionPath().getLastPathComponent());
-                }
-                update();
-            }
-        };
-
-        this.project.getComponent(TasksComponent.class).registerTableChangeListener(changeListener);
-        this.project.getComponent(TasksComponent.class).registerTableSelectListener(selectListener);
+        registerToolWindow();
     }
 
     public void projectClosed() {
@@ -89,36 +65,7 @@ public class DetailsComponent implements ProjectComponent {
         return COMPONENT_NAME;
     }
 
-    public void registerTableListener(TableModelListener listener) {
-        tableChangesListener = listener;
-        if (table != null) {
-            table.getModel().addTableModelListener(tableChangesListener);
-        }
-    }
-
-    private void initToolWindow() {
-        final TasksComponent tasksComponent = project.getComponent(TasksComponent.class);
-        if (tasksComponent == null) {
-            throw new IllegalStateException("Cannot access " + TasksComponent.TOOL_WINDOW_ID + " component." +
-                    " Maybe you are using wrong version of VersionOne plugin.");
-        }
-        IDataLayer dataLayer = tasksComponent.getDataLayer();
-        JPanel contentPanel = createContentPanel(dataLayer);
-
-//        ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction(COMPONENT_NAME);
-//        ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(COMPONENT_NAME, actions, false);
-//        contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
-
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_NAME, false, ToolWindowAnchor.RIGHT);
-        ContentFactory contentFactory;
-        contentFactory = ContentFactory.SERVICE.getInstance();
-//        contentFactory = PeerFactory.getInstance().getContentFactory();
-        Content content = contentFactory.createContent(contentPanel, null, false);
-        toolWindow.getContentManager().addContent(content);
-    }
-
-    public boolean showDetails(boolean isShow) {
+        public boolean showDetails(boolean isShow) {
         table.setVisible(isShow);
         return isShow;
     }
@@ -131,21 +78,6 @@ public class DetailsComponent implements ProjectComponent {
 
     public void setItem(Object obj) {
         model.setWorkitem(obj);
-    }
-
-    JPanel createContentPanel(IDataLayer dataLayer) {
-        model = new DetailsModel(dataLayer);
-        table = new DetailsTable(model);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(UIUtil.getTreeTextBackground());
-        panel.add(new JScrollPane(table));
-        table.getModel().addTableModelListener(tableChangesListener);
-        return panel;
-    }
-
-    private void unregisterToolWindow() {
-        ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_NAME);
     }
 
     public void removeEdition() {
@@ -161,4 +93,69 @@ public class DetailsComponent implements ProjectComponent {
             }
         }
     }
+
+    public void registerTableListener(TableModelListener listener) {
+        tableChangesListener = listener;
+        if (table != null) {
+            table.getModel().addTableModelListener(tableChangesListener);
+        }
+    }
+
+    JPanel createContentPanel(IDataLayer dataLayer) {
+        final JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(UIUtil.getTreeTextBackground());
+        model = new DetailsModel(dataLayer);
+        table = new DetailsTable(model);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        panel.add(new JScrollPane(table));
+        table.getModel().addTableModelListener(tableChangesListener);
+        return panel;
+    }
+
+    private void registerToolWindow() {
+        if (!initToolWindow) {
+            final TasksComponent tasksComponent = project.getComponent(TasksComponent.class);
+            if (tasksComponent == null) {
+                throw new IllegalStateException("Cannot access " + TasksComponent.TOOL_WINDOW_ID + " component." +
+                        " Maybe you are using wrong version of VersionOne plugin.");
+            }
+            IDataLayer dataLayer = tasksComponent.getDataLayer();
+            JPanel contentPanel = createContentPanel(dataLayer);
+
+            ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+            ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_NAME, false, ToolWindowAnchor.RIGHT);
+            ContentFactory contentFactory;
+            contentFactory = ContentFactory.SERVICE.getInstance();
+            Content content = contentFactory.createContent(contentPanel, null, false);
+            toolWindow.getContentManager().addContent(content);
+
+            TableModelListener changeListener = new TableModelListener() {
+                public void tableChanged(TableModelEvent e) {
+                    update();
+                }
+            };
+
+            TreeSelectionListener selectListener = new TreeSelectionListener() {
+                public void valueChanged(TreeSelectionEvent e){
+                    removeEdition();
+                    if (!e.isAddedPath()) {
+                        model.setWorkitem(null);
+                    } else {
+                        model.setWorkitem(e.getNewLeadSelectionPath().getLastPathComponent());
+                    }
+                    update();
+                }
+            };
+
+            this.project.getComponent(TasksComponent.class).registerTableChangeListener(changeListener);
+            this.project.getComponent(TasksComponent.class).registerTableSelectListener(selectListener);
+            initToolWindow = true;
+        }
+    }
+
+    private void unregisterToolWindow() {
+        ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_NAME);
+        initToolWindow = false;
+    }
+
 }

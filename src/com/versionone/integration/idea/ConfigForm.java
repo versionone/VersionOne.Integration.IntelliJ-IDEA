@@ -9,7 +9,6 @@ import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.IDataLayer;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -33,7 +32,7 @@ public class ConfigForm implements UnnamedConfigurable {
 
     public ConfigForm(WorkspaceSettings settings, Project project) {
         validateConnectionButton.setEnabled(false);
-        disableConfiguration(false);
+        enableConfiguration(settings.isEnable);
 
         this.settings = settings;
         tc = project.getComponent(TasksComponent.class);
@@ -54,15 +53,7 @@ public class ConfigForm implements UnnamedConfigurable {
         ItemListener itemListener = new ItemListener() {
           public void itemStateChanged(ItemEvent itemEvent) {
             int state = itemEvent.getStateChange();
-            if (state == ItemEvent.SELECTED) {
-                userName.setText("");
-                password.setText("");
-                userName.setEditable(false);
-                password.setEditable(false);
-            } else {
-                userName.setEditable(true);
-                password.setEditable(true);
-            }
+            enableWindowsIntegratedAuthentication(state == ItemEvent.SELECTED);
             verifyChanges();
           }
         };
@@ -70,7 +61,7 @@ public class ConfigForm implements UnnamedConfigurable {
         ItemListener enableItemListener = new ItemListener() {
           public void itemStateChanged(ItemEvent itemEvent) {
             int state = itemEvent.getStateChange();
-            disableConfiguration(state == ItemEvent.SELECTED);
+            enableConfiguration(state == ItemEvent.SELECTED);
             verifyChanges();
           }
         };
@@ -114,22 +105,24 @@ public class ConfigForm implements UnnamedConfigurable {
                 settings.passwd = password.getText();
             }
 
-            //settings.projectToken = null;
-            //settings.projectName = "";
-
-            try {
-                dataLayer.connect(settings.v1Path, settings.user, settings.passwd, settings.isWindowsIntegratedAuthentication);
-                dataLayer.setCurrentProjectId(settings.projectToken);
-                settings.projectToken = dataLayer.getCurrentProjectId();
-                settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(), settings.projectToken);
-            } catch (DataLayerException ex) {
-                Icon icon = Messages.getErrorIcon();
-                Messages.showMessageDialog(ex.getMessage(), "Error", icon);
-            }
-
-            tc.showTable(settings.isEnable);
-            tc.refresh();
-            tc.update();
+            if (settings.isEnable) {
+                tc.registerToolWindow();
+                try {
+                    dataLayer.connect(settings.v1Path, settings.user, settings.passwd,
+                                      settings.isWindowsIntegratedAuthentication);
+                    dataLayer.setCurrentProjectId(settings.projectToken);
+                    settings.projectToken = dataLayer.getCurrentProjectId();
+                    settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(),
+                                                                                         settings.projectToken);
+                } catch (DataLayerException ex) {
+                    Icon icon = Messages.getErrorIcon();
+                    Messages.showMessageDialog(ex.getMessage(), "Error", icon);
+                }
+                tc.refresh();
+                tc.update();
+            } else {
+                tc.unregisterToolWindow();
+            }            
         }
     }
 
@@ -178,19 +171,17 @@ public class ConfigForm implements UnnamedConfigurable {
     }
 
     private void verifyChanges() {
-
         if (isModified() && enableCheckBox.isSelected()) {
             isConnectionVerified = false;
             validateConnectionButton.setEnabled(true);
         }
     }
 
-    private void disableConfiguration(boolean isEnable) {
+    private void enableConfiguration(boolean isEnable) {
         if (isEnable) {
             windowsIntegratedAuthentication.setEnabled(true);
+            enableWindowsIntegratedAuthentication(windowsIntegratedAuthentication.isSelected());
             serverUrl.setEditable(true);
-            userName.setEditable(true);
-            password.setEditable(true);
             validateConnectionButton.setEnabled(true);
         } else {
             windowsIntegratedAuthentication.setEnabled(false);
@@ -198,6 +189,18 @@ public class ConfigForm implements UnnamedConfigurable {
             userName.setEditable(false);
             password.setEditable(false);
             validateConnectionButton.setEnabled(false);
+        }
+    }
+
+    private void enableWindowsIntegratedAuthentication(boolean isIntegratedAuth) {
+        if (isIntegratedAuth) {
+            userName.setText("");
+            password.setText("");
+            userName.setEditable(false);
+            password.setEditable(false);
+        } else {
+            userName.setEditable(true);
+            password.setEditable(true);
         }
     }
 }
