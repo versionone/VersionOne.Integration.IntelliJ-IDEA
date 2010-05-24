@@ -63,7 +63,6 @@ public class MainSettings implements ApplicationComponent, Configurable {
                 form.apply();
                 final TasksComponent tc = project.getComponent(TasksComponent.class);
                 final DetailsComponent dc = project.getComponent(DetailsComponent.class);
-                tc.update();
                 dc.update();
             }
             else {

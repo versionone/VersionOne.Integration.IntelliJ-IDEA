@@ -44,7 +44,9 @@ public class DetailsComponent implements ProjectComponent {
     }
 
     public void projectOpened() {
-        registerToolWindow();
+        if (settings.isEnable) {
+            registerToolWindow();
+        }
     }
 
     public void projectClosed() {
@@ -65,15 +67,11 @@ public class DetailsComponent implements ProjectComponent {
         return COMPONENT_NAME;
     }
 
-        public boolean showDetails(boolean isShow) {
-        table.setVisible(isShow);
-        return isShow;
-    }
-
     public void update() {
-        showDetails(settings.isEnable);
-        table.revalidate();
-        table.repaint();
+        if (table != null) {
+            table.revalidate();
+            table.repaint();
+        }
     }
 
     public void setItem(Object obj) {
@@ -157,5 +155,4 @@ public class DetailsComponent implements ProjectComponent {
         ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_NAME);
         initToolWindow = false;
     }
-
 }

@@ -70,6 +70,8 @@ public class TasksComponent implements ProjectComponent {
                                                                                  settings.projectToken);
         } catch (DataLayerException ex) {
             ex.printStackTrace();
+            Icon icon = Messages.getErrorIcon();
+            Messages.showMessageDialog(ex.getMessage(), "Error", icon);
         }
 
         initActions(settings, dataLayer);
@@ -120,12 +122,14 @@ public class TasksComponent implements ProjectComponent {
                 }
             };
             this.project.getComponent(DetailsComponent.class).registerTableListener(listener);
+            this.project.getComponent(DetailsComponent.class).projectOpened();
             initToolWindow = true;
         }
     }
 
     public void unregisterToolWindow() {
         ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_ID);
+        this.project.getComponent(DetailsComponent.class).projectClosed();
         initToolWindow = false;
     }
 
