@@ -7,6 +7,7 @@ import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.regex.Pattern;
 
 import com.versionone.common.sdk.Workitem;
 
@@ -51,7 +52,8 @@ public class RichDialogEditor extends JDialog {
         okButton.setText("OK");
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                item.setProperty(Workitem.DESCRIPTION_PROPERTY, editor.getText());
+                String htmlCode = removeEndBr(editor.getText());
+                item.setProperty(Workitem.DESCRIPTION_PROPERTY, htmlCode);
                 setVisible(false);
                 table.editingStopped(new ChangeEvent(RichDialogEditor.this));
             }
@@ -67,5 +69,11 @@ public class RichDialogEditor extends JDialog {
         buttonPanel.add(cancelButton);
         getContentPane().add(buttonPanel, BorderLayout.PAGE_END);
         getContentPane().add(editor, BorderLayout.CENTER);
+    }
+
+    private String removeEndBr(String text) {
+        Pattern patern = Pattern.compile("<br>(\\s+)?$");
+        text = patern.matcher(text).replaceFirst("");
+        return text;
     }
 }
