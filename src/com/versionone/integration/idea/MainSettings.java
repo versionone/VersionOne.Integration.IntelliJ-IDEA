@@ -61,7 +61,6 @@ public class MainSettings implements ApplicationComponent, Configurable {
             if (form.isConnectVerified() && form.isConnectValid()) {
                 // Get data from form to component
                 form.apply();
-                final TasksComponent tc = project.getComponent(TasksComponent.class);
                 final DetailsComponent dc = project.getComponent(DetailsComponent.class);
                 dc.update();
             }

@@ -47,39 +47,44 @@ public class TasksComponent implements ProjectComponent {
 
     private Content content;
     private TasksTable table;
-    private final WorkspaceSettings cfg;
+    private final WorkspaceSettings settings;
     private final IDataLayer dataLayer;
     private TreeSelectionListener tableSelectionListener;
-    private boolean initToolWindow = false;
 
 
     public TasksComponent(Project project, WorkspaceSettings settings) {
         this.project = project;
-        cfg = settings;
+        this.settings = settings;
         Configuration config = Configuration.getInstance();
         config.fill();
         dataLayer = ApiDataLayer.getInstance();
         addWorkitemProperties();
 
-        try {
-            dataLayer.connect(cfg.v1Path, cfg.user, cfg.passwd, cfg.isWindowsIntegratedAuthentication);
-            dataLayer.setCurrentProjectId(cfg.projectToken);
-            dataLayer.setShowAllTasks(cfg.isShowAllTask);
-            settings.projectToken = dataLayer.getCurrentProjectId();
-            settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(),
-                                                                                 settings.projectToken);
-        } catch (DataLayerException ex) {
-            ex.printStackTrace();
-            Icon icon = Messages.getErrorIcon();
-            Messages.showMessageDialog(ex.getMessage(), "Error", icon);
-        }
-
         initActions(settings, dataLayer);
     }
 
+    public void createConnect() {
+        if (!dataLayer.isConnected()) {
+            try {
+                dataLayer.connect(settings.v1Path, settings.user, settings.passwd,
+                                  settings.isWindowsIntegratedAuthentication);
+                dataLayer.setCurrentProjectId(settings.projectToken);
+                dataLayer.setShowAllTasks(settings.isShowAllTask);
+                settings.projectToken = dataLayer.getCurrentProjectId();
+                settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(),
+                                                                                     settings.projectToken);
+            } catch (DataLayerException ex) {
+                ex.printStackTrace();
+                Icon icon = Messages.getErrorIcon();
+                Messages.showMessageDialog(ex.getMessage(), "Error", icon);
+            }
+        }
+    }
+
     public void projectOpened() {
-        if (cfg.isEnable) {
-            registerToolWindow();
+        if (settings.isEnable) {
+            initToolWindow();
+            createConnect();
         }
     }
     
@@ -101,41 +106,34 @@ public class TasksComponent implements ProjectComponent {
         return COMPONENT_NAME;
     }
 
-    public void registerToolWindow() {
-        if (!initToolWindow) {
-            ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+    public void initToolWindow() {
+        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+        if (toolWindowManager.getToolWindow(TOOL_WINDOW_ID) == null) {
+            ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false,
+                                                                         ToolWindowAnchor.BOTTOM);
             JPanel contentPanel = createContentPanel();
 
             ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
             ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
             contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
 
-            ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
             ContentFactory contentFactory;
             contentFactory = ContentFactory.SERVICE.getInstance();
-            content = contentFactory.createContent(contentPanel, cfg.projectName, false);
+            content = contentFactory.createContent(contentPanel, settings.projectName, false);
             toolWindow.getContentManager().addContent(content);
 
-            TableModelListener listener = new TableModelListener() {
-                public void tableChanged(TableModelEvent e) {
-                    update();
-                }
-            };
-            this.project.getComponent(DetailsComponent.class).registerTableListener(listener);
-            this.project.getComponent(DetailsComponent.class).projectOpened();
-            initToolWindow = true;
+            registerTableListener();
         }
     }
 
     public void unregisterToolWindow() {
         ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_ID);
-        this.project.getComponent(DetailsComponent.class).projectClosed();
-        initToolWindow = false;
+        this.project.getComponent(DetailsComponent.class).unregisterToolWindow();
     }
 
     public void update() {
         if (content != null) {
-            content.setDisplayName(cfg.projectName);
+            content.setDisplayName(settings.projectName);
         }
         if (table == null) {
             table = createTable();
@@ -273,5 +271,15 @@ public class TasksComponent implements ProjectComponent {
         table.getTree().setShowsRootHandles(true);
         table.getTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         return table;
+    }
+
+    private void registerTableListener() {
+        TableModelListener listener = new TableModelListener() {
+                public void tableChanged(TableModelEvent e) {
+                    update();
+                }
+            };
+        this.project.getComponent(DetailsComponent.class).registerTableListener(listener);
+        this.project.getComponent(DetailsComponent.class).initToolWindow();
     }
 }
