@@ -86,7 +86,7 @@ public class VersionOneConnector {
                 V1APIConnector dataConnector = new V1APIConnector(path + DATA_SUFFIX, userName, password);
                 services = new Services(metaModel, dataConnector);
 
-                isConnected = verifyConnection(metaModel, metaConnector);
+                isConnected = verifyConnection(metaModel, dataConnector);
             }
 
             config = new V1Configuration(new V1APIConnector(path + CONFIG_SUFFIX));
@@ -114,7 +114,7 @@ public class VersionOneConnector {
             dataConnector = new V1APIConnector(url + DATA_SUFFIX, user, pass);
         }
 
-         return verifyConnection(model, dataConnector);
+        return verifyConnection(model, dataConnector);
     }
 
     private boolean verifyConnection(IMetaModel model, V1APIConnector dataConnector) {
