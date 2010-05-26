@@ -35,7 +35,7 @@ import java.util.*;
 import java.util.Map.*;
 import java.util.List;
 
-public class TasksComponent implements ProjectComponent {
+public class TasksComponent implements ProjectComponent, ToolService {
 
     //private static final Logger LOG = Logger.getLogger(TasksComponent.class);
     @NonNls
@@ -59,37 +59,32 @@ public class TasksComponent implements ProjectComponent {
         config.fill();
         dataLayer = ApiDataLayer.getInstance();
         addWorkitemProperties();
-
         initActions(settings, dataLayer);
     }
 
-    public void createConnect() {
-        if (!dataLayer.isConnected()) {
-            try {
-                dataLayer.connect(settings.v1Path, settings.user, settings.passwd,
-                                  settings.isWindowsIntegratedAuthentication);
-                dataLayer.setCurrentProjectId(settings.projectToken);
-                dataLayer.setShowAllTasks(settings.isShowAllTask);
-                settings.projectToken = dataLayer.getCurrentProjectId();
-                settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(),
-                                                                                     settings.projectToken);
-            } catch (DataLayerException ex) {
-                ex.printStackTrace();
-                Icon icon = Messages.getErrorIcon();
-                Messages.showMessageDialog(ex.getMessage(), "Error", icon);
-            }
+    public void registerTool() {
+        try {
+            createConnection();
+        } catch (DataLayerException ex) {
+            ex.printStackTrace();
+            Icon icon = Messages.getErrorIcon();
+            Messages.showMessageDialog("Can not connect to VersionOne", "Error", icon);
         }
+        initToolWindow();
+    }
+
+    public void unregisterTool() {
+        ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_ID);
     }
 
     public void projectOpened() {
-        if (settings.isEnable) {
-            initToolWindow();
-            createConnect();
+        if (settings.isEnabled) {
+            registerTool();
         }
     }
     
     public void projectClosed() {
-        unregisterToolWindow();
+        unregisterTool();
     }
 
     public void initComponent() {
@@ -106,31 +101,6 @@ public class TasksComponent implements ProjectComponent {
         return COMPONENT_NAME;
     }
 
-    public void initToolWindow() {
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        if (toolWindowManager.getToolWindow(TOOL_WINDOW_ID) == null) {
-            ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false,
-                                                                         ToolWindowAnchor.BOTTOM);
-            JPanel contentPanel = createContentPanel();
-
-            ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
-            ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
-            contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
-
-            ContentFactory contentFactory;
-            contentFactory = ContentFactory.SERVICE.getInstance();
-            content = contentFactory.createContent(contentPanel, settings.projectName, false);
-            toolWindow.getContentManager().addContent(content);
-
-            registerTableListener();
-        }
-    }
-
-    public void unregisterToolWindow() {
-        ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_ID);
-        this.project.getComponent(DetailsComponent.class).unregisterToolWindow();
-    }
-
     public void update() {
         if (content != null) {
             content.setDisplayName(settings.projectName);
@@ -143,24 +113,24 @@ public class TasksComponent implements ProjectComponent {
     }
 
     public void refresh() {
-        if (table != null) {
+        //if (table != null) {
             try {
                 table.updateData();
             } catch (DataLayerException ex) {
                 Icon icon = Messages.getErrorIcon();
                 Messages.showMessageDialog(ex.getMessage(), "Error", icon);
             }
-        }
+       // }
     }
 
     public void selectNode(Workitem itemAtNode) {
-        if (table != null) {
-            table.selectNode(itemAtNode);
-        }
+        //TODO verify NPE
+        table.selectNode(itemAtNode);
     }
 
     public void removeEdition() {
-        if (table != null && table.isEditing()) {
+        //TODO verify NPE
+        if (table.isEditing()) {
             //table.removeEditor(); cancel editing (without data saving)
             if (SwingUtilities.isEventDispatchThread()) {
                 table.getCellEditor().stopCellEditing();
@@ -189,21 +159,20 @@ public class TasksComponent implements ProjectComponent {
     }
 
     public void registerTableChangeListener(TableModelListener listener) {
-        if (table != null) {
-            table.getModel().addTableModelListener(listener);
-        }
+        //TODO verify NPE
+        table.getModel().addTableModelListener(listener);
     }
 
     public void registerTableSelectListener(TreeSelectionListener selectionListener) {
-        if (table != null) {
-            table.getTree().removeTreeSelectionListener(tableSelectionListener);
-            table.getTree().addTreeSelectionListener(selectionListener);
-        }
+        //TODO verify NPE
+        table.getTree().removeTreeSelectionListener(tableSelectionListener);
+        table.getTree().addTreeSelectionListener(selectionListener);
         tableSelectionListener = selectionListener;
     }
 
     public Object getCurrentItem() {
-        return table == null ? null : table.getWorkitemAtRow(table.getSelectedRow());
+        //TODO verify NPE
+        return table.getWorkitemAtRow(table.getSelectedRow());
     }
 
     JPanel createContentPanel() {
@@ -214,37 +183,61 @@ public class TasksComponent implements ProjectComponent {
         return panel;
     }
 
-    private void initActions(WorkspaceSettings settings, IDataLayer dataLayer) {
-        ActionManager actionManager = ActionManager.getInstance();
-
-        // set settings to the actions
-        ((FilterAction) actionManager.getAction("V1.SelectProject")).setSettings(settings);
-        ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setSettings(settings);
-
-        // set Data Layer to actions
-        String[] actionsList = new String[]{"V1.AddDefect", "V1.AddTask",
-                                            "V1.AddTest", "V1.Workitem.Close", "V1.Workitem.QuickClose",
-                                            "V1.Workitem.Signup", "V1.SaveData", "V1.toolRefresh",
-                                            "V1.ContextMenu.AddDefect", "V1.ContextMenu.AddTest",
-                                            "V1.ContextMenu.AddTask", "V1.ContextMenu.AddDefect"};
-        ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setDataLayer(dataLayer);
-        for (String actionName : actionsList) {
-            ((AbstractAction) actionManager.getAction(actionName)).setDataLayer(dataLayer);
-            ((AbstractAction) actionManager.getAction(actionName)).setSettings(settings);
+    /**
+     * Creates connection if not connected
+     */
+    private void createConnection() throws DataLayerException {
+        if (!dataLayer.isConnected()) {
+            dataLayer.connect(settings.v1Path, settings.user, settings.passwd,
+                              settings.isWindowsIntegratedAuthentication);
+            dataLayer.setCurrentProjectId(settings.projectToken);
+            dataLayer.setShowAllTasks(settings.isShowAllTask);
+            settings.projectToken = dataLayer.getCurrentProjectId();
+            settings.projectName = com.versionone.common.sdk.Project.getNameById(dataLayer.getProjectTree(),
+                                                                                 settings.projectToken);
         }
     }
 
-    private void addWorkitemProperties() {
-        final Map<String, Boolean> properties = new HashMap<String, Boolean>();
-        properties.put(Workitem.CHECK_QUICK_CLOSE_PROPERTY, false);
-        properties.put(Workitem.CHECK_SIGNUP_PROPERTY, false);
+    /**
+     * Creates tool window if it not exist
+     */
+    private void initToolWindow() {
+        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+        if (toolWindowManager.getToolWindow(TOOL_WINDOW_ID) == null) {
+            ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false,
+                                                                         ToolWindowAnchor.BOTTOM);
+            JPanel contentPanel = createContentPanel();
 
-        for (Entry<String, Boolean> entry : properties.entrySet()) {
-            for (EntityType type : EntityType.values()) {
-                if (type.isWorkitem()) {
-                    dataLayer.addProperty(entry.getKey(), type, entry.getValue());
-                }
-            }
+            ActionGroup actions = (ActionGroup) ActionManager.getInstance().getAction("V1.ToolWindow");
+            ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("V1.ToolWindow", actions, false);
+            contentPanel.add(toolbar.getComponent(), BorderLayout.LINE_START);
+
+            ContentFactory contentFactory;
+            contentFactory = ContentFactory.SERVICE.getInstance();
+            content = contentFactory.createContent(contentPanel, settings.projectName, false);
+            toolWindow.getContentManager().addContent(content);
+
+            registerTableListener();
+        }
+    }
+
+    private void initActions(WorkspaceSettings settings, IDataLayer dataLayer) {
+        ActionManager actionManager = ActionManager.getInstance();
+
+        ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setDataLayer(dataLayer);
+        ((ShowAllItemFilterAction) actionManager.getAction("V1.ShowAllTaskFilter")).setSettings(settings);
+
+        //TODO get actions by group from plugin.xml
+        String[] actionsList = new String[]{"V1.AddDefect", "V1.AddTask", "V1.AddTest",
+                                            "V1.SelectProject", "V1.toolRefresh", "V1.SaveData", "V1.Help",
+                                            "V1.Workitem.Close", "V1.Workitem.QuickClose", "V1.Workitem.Signup",
+                                            "V1.ContextMenu.AddDefect", "V1.ContextMenu.AddTest",
+                                            "V1.ContextMenu.AddTask", "V1.ContextMenu.AddDefect"};
+        for (String actionName : actionsList) {
+            // set Data Layer to actions
+            ((AbstractAction) actionManager.getAction(actionName)).setDataLayer(dataLayer);
+            // set settings to actions
+            ((AbstractAction) actionManager.getAction(actionName)).setSettings(settings);
         }
     }
 
@@ -267,10 +260,25 @@ public class TasksComponent implements ProjectComponent {
         table.setShowGrid(true);
         table.setIntercellSpacing(new Dimension(1, 1));
         table.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        //TODO maybe delete
         table.getTree().addTreeSelectionListener(tableSelectionListener);
         table.getTree().setShowsRootHandles(true);
         table.getTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         return table;
+    }
+
+    private void addWorkitemProperties() {
+        final Map<String, Boolean> properties = new HashMap<String, Boolean>();
+        properties.put(Workitem.CHECK_QUICK_CLOSE_PROPERTY, false);
+        properties.put(Workitem.CHECK_SIGNUP_PROPERTY, false);
+
+        for (Entry<String, Boolean> entry : properties.entrySet()) {
+            for (EntityType type : EntityType.values()) {
+                if (type.isWorkitem()) {
+                    dataLayer.addProperty(entry.getKey(), type, entry.getValue());
+                }
+            }
+        }
     }
 
     private void registerTableListener() {
@@ -280,6 +288,5 @@ public class TasksComponent implements ProjectComponent {
                 }
             };
         this.project.getComponent(DetailsComponent.class).registerTableListener(listener);
-        this.project.getComponent(DetailsComponent.class).initToolWindow();
     }
 }

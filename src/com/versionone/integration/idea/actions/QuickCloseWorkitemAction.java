@@ -8,8 +8,11 @@ import com.versionone.common.sdk.ValidatorException;
 import com.versionone.common.sdk.Workitem;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.TasksTable;
+import org.apache.log4j.Logger;
 
 public class QuickCloseWorkitemAction extends AbstractAction {
+
+    private static final Logger LOG = Logger.getLogger(QuickCloseWorkitemAction.class);
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -25,8 +28,10 @@ public class QuickCloseWorkitemAction extends AbstractAction {
                 table.updateData();
                 table.reloadModel();
             } catch(DataLayerException ex) {
+                LOG.warn("Failed to quick close workitem.", ex);
                 displayError(ex.getMessage());
             } catch(ValidatorException ex) {
+                LOG.warn("Failed to quick close workitem.", ex);
                 displayError(ex.getMessage());
             }
         }
@@ -44,6 +49,6 @@ public class QuickCloseWorkitemAction extends AbstractAction {
             enabled = dataLayer.isConnected() && item != null && item.canQuickClose() && item.isPersistent();
         }
 
-        presentation.setEnabled(enabled && getSettings().isEnable);
+        presentation.setEnabled(enabled && getSettings().isEnabled);
     }
 }

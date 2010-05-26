@@ -4,8 +4,6 @@ package com.versionone.integration.idea;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.keymap.Keymap;
-import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +13,7 @@ public class MainSettings implements ApplicationComponent, Configurable {
     private ConfigForm form;
     private WorkspaceSettings settings;
     private Project project;
+    private ToolComponent component;
 
     public MainSettings(Project project, WorkspaceSettings settings) {
         this.settings = settings;
@@ -46,8 +45,10 @@ public class MainSettings implements ApplicationComponent, Configurable {
     }
 
     public JComponent createComponent() {
+        component = new ToolComponent(project.getComponent(TasksComponent.class),
+                                                    project.getComponent(DetailsComponent.class));
         if (form == null) {
-            form = new ConfigForm(settings, project);
+            form = new ConfigForm(settings, component.getDataLayer());
         }
         return form.getPanel();
     }
@@ -58,16 +59,19 @@ public class MainSettings implements ApplicationComponent, Configurable {
 
     public void apply() throws ConfigurationException {
         if (form != null) {
-            if (form.isConnectVerified() && form.isConnectValid()) {
+            if (form.isConnectionVerified()) {
                 // Get data from form to component
                 form.apply();
-                final DetailsComponent dc = project.getComponent(DetailsComponent.class);
-                dc.update();
+                if (settings.isEnabled) {
+                    component.registerTool();
+                    component.update();
+                } else {
+                    component.unregisterTool();
+                }
             }
             else {
                 throw new ConfigurationException("Connection has not been validated or contains invalid values");
             }
-
         }
     }
 

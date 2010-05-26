@@ -22,9 +22,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import java.awt.*;
 
-public class DetailsComponent implements ProjectComponent {
+public class DetailsComponent implements ProjectComponent, ToolService {
 
-    //private static final Logger LOG = Logger.getLogger(DetailsComponent.class);
     @NonNls
     private static final String COMPONENT_NAME = "V1.Details";
     public static final String TOOL_WINDOW_NAME = "V1Details";
@@ -42,14 +41,22 @@ public class DetailsComponent implements ProjectComponent {
         this.project = project;
     }
 
+    public void registerTool() {
+        initToolWindow();
+    }
+
+    public void unregisterTool() {
+        ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_NAME);
+    }
+
     public void projectOpened() {
-        if (settings.isEnable) {
-            initToolWindow();
+        if (settings.isEnabled) {
+            registerTool();
         }
     }
 
     public void projectClosed() {
-        unregisterToolWindow();
+        unregisterTool();
     }
 
     public void initComponent() {
@@ -91,7 +98,26 @@ public class DetailsComponent implements ProjectComponent {
         }
     }
 
-    public void initToolWindow() {
+    public void registerTableListener(TableModelListener listener) {
+        //TODO
+        if (table != null) {
+            tableChangesListener = listener;
+            table.getModel().addTableModelListener(tableChangesListener);
+        }
+    }
+
+    JPanel createContentPanel(IDataLayer dataLayer) {
+        final JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(UIUtil.getTreeTextBackground());
+        model = new DetailsModel(dataLayer);
+        table = new DetailsTable(model);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        panel.add(new JScrollPane(table));
+        table.getModel().addTableModelListener(tableChangesListener);
+        return panel;
+    }
+
+    private void initToolWindow() {
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         if (toolWindowManager.getToolWindow(TOOL_WINDOW_NAME) == null) {
             ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_NAME, false,
@@ -111,28 +137,6 @@ public class DetailsComponent implements ProjectComponent {
             toolWindow.getContentManager().addContent(content);
 
             registerTableListener();
-        }
-    }
-
-    public void unregisterToolWindow() {
-        ToolWindowManager.getInstance(project).unregisterToolWindow(TOOL_WINDOW_NAME);
-    }
-
-    JPanel createContentPanel(IDataLayer dataLayer) {
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(UIUtil.getTreeTextBackground());
-        model = new DetailsModel(dataLayer);
-        table = new DetailsTable(model);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(table));
-        table.getModel().addTableModelListener(tableChangesListener);
-        return panel;
-    }
-
-    public void registerTableListener(TableModelListener listener) {
-        tableChangesListener = listener;
-        if (table != null) {
-            table.getModel().addTableModelListener(tableChangesListener);
         }
     }
 

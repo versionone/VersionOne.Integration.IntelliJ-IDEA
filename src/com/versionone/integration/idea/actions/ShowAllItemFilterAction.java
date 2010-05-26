@@ -7,6 +7,7 @@ import com.versionone.integration.idea.WorkspaceSettings;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.common.sdk.IDataLayer;
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -50,6 +51,6 @@ public class ShowAllItemFilterAction extends ToggleAction {
     @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setEnabled(settings.isEnable);
+        presentation.setEnabled(dataLayer.isConnected() && settings.isEnabled);
     }
 }

@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.versionone.common.sdk.DataLayerException;
-import com.versionone.common.sdk.IDataLayer;
 import com.versionone.common.sdk.ValidatorException;
 import com.versionone.integration.idea.DetailsComponent;
 import com.versionone.integration.idea.ValidationResultDialog;
@@ -15,9 +14,6 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 
-/**
- *
- */
 public class SaveDataAction extends AbstractAction {
 
     private static final Logger LOG = Logger.getLogger(SaveDataAction.class);
@@ -31,7 +27,6 @@ public class SaveDataAction extends AbstractAction {
         }
         final TasksComponent tc = resolveTasksComponent(ideaProject);
         final DetailsComponent dc = resolveDetailsComponent(ideaProject);
-        final IDataLayer dataLayer = this.dataLayer;
         final ProgressManager progressManager = ProgressManager.getInstance();
 
         // is exception, text of exception, error or warning, display in standard or in custom dialog
@@ -81,12 +76,11 @@ public class SaveDataAction extends AbstractAction {
         }
 
         ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
-        //RefreshAction.refreshData(ideaProject, tc, dataLayer, dc, progressManager);
     }
 
     @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setEnabled(getSettings().isEnable);
+        presentation.setEnabled(dataLayer.isConnected() && getSettings().isEnabled);
     }
 }

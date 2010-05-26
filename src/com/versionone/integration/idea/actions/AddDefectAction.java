@@ -9,13 +9,16 @@ import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.common.sdk.EntityType;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.integration.idea.TasksComponent;
+import org.apache.log4j.Logger;
 
 import javax.swing.Icon;
 
 /**
- * Create in-memory Defect. New entity will be persisted when user triggers Save action.
+ * Creates in-memory Defect. New entity will be persisted when user triggers Save action.
  */
 public class AddDefectAction extends AbstractAction {
+
+    private static final Logger LOG = Logger.getLogger(AddDefectAction.class);
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -26,6 +29,7 @@ public class AddDefectAction extends AbstractAction {
             try {
                 newItem = dataLayer.createNewPrimaryWorkitem(EntityType.Defect);
             } catch (DataLayerException ex) {
+                LOG.warn("Failed to create new " + EntityType.Defect.name(), ex);
                 Icon icon = Messages.getErrorIcon();
                 Messages.showMessageDialog("Failed to create new " + EntityType.Defect.name(), "Error", icon);
             }
@@ -39,6 +43,6 @@ public class AddDefectAction extends AbstractAction {
     @Override
     public void update(AnActionEvent event) {
         Presentation presentation = event.getPresentation();
-        presentation.setEnabled(dataLayer.isConnected() && getSettings().isEnable);
+        presentation.setEnabled(dataLayer.isConnected() && getSettings().isEnabled);
     }
 }

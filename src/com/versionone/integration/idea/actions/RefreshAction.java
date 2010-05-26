@@ -2,7 +2,6 @@
 package com.versionone.integration.idea.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -28,10 +27,12 @@ public class RefreshAction extends AbstractAction {
             return;
         }
         final IDataLayer dataLayer = this.dataLayer;
-        //TODO need to find way to recognize who was triggered this action 
+        //TODO need to find way to recognize who was triggered this action
         String text = e.getActionManager().getAction("V1.toolRefresh").getTemplatePresentation().getText();
         if (dataLayer.hasChanges() && e.getPresentation().getText().equals(text)) {
-            int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten.\nDo you want to continue?", "Refresh Warning", new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
+            int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten.\n" +
+                                                     "Do you want to continue?", "Refresh Warning",
+                                                     new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
             if (confirmRespond == 1) {
                 return;
             }
@@ -39,10 +40,11 @@ public class RefreshAction extends AbstractAction {
         final TasksComponent tc = resolveTasksComponent(ideaProject);
         final DetailsComponent dc = resolveDetailsComponent(ideaProject);
         final ProgressManager progressManager = ProgressManager.getInstance();
-        refreshData(ideaProject, tc, dataLayer, dc, progressManager);
+        refreshData(ideaProject, dataLayer, tc, dc, progressManager);
     }
 
-    static void refreshData(Project ideaProject, TasksComponent tc, final IDataLayer dataLayer, DetailsComponent dc, final ProgressManager progressManager) {
+    static void refreshData(Project ideaProject, final IDataLayer dataLayer,
+                            TasksComponent tc, DetailsComponent dc, final ProgressManager progressManager) {
         final Exception[] isError = {null};
         tc.removeEdition();
         dc.removeEdition();
@@ -79,6 +81,6 @@ public class RefreshAction extends AbstractAction {
     @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setEnabled(getSettings().isEnable);
+        presentation.setEnabled(dataLayer.isConnected() && getSettings().isEnabled);
     }
 }

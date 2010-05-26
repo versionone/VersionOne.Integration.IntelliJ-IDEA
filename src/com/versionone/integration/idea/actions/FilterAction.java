@@ -8,10 +8,7 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.versionone.common.sdk.ApiDataLayer;
-import com.versionone.common.sdk.IDataLayer;
 import com.versionone.integration.idea.FilterForm;
-import com.versionone.integration.idea.WorkspaceSettings;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.DetailsComponent;
 import org.apache.log4j.Logger;
@@ -25,17 +22,10 @@ import java.util.List;
 public class FilterAction extends AbstractAction {
 
     private static final Logger LOG = Logger.getLogger(FilterAction.class);
-    //private WorkspaceSettings settings;
-    //private Project project;
 
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project ideaProject = resolveProject(e);
-        /*
-        if (ideaProject == null && project != null) {
-            ideaProject = project;
-        }
-        */
         if (ideaProject != null) {
             if (filterDialog(ideaProject)) {
                 ActionManager.getInstance().getAction("V1.toolRefresh").actionPerformed(e);
@@ -48,12 +38,12 @@ public class FilterAction extends AbstractAction {
         final Object[] res = new Object[1];
         final TasksComponent tc = resolveTasksComponent(ideaProject);
         final DetailsComponent dc = resolveDetailsComponent(ideaProject);
-        final IDataLayer dataLayer = ApiDataLayer.getInstance();
 
         if (dataLayer.hasChanges()) {
-            int confirmRespond = Messages.showDialog("You have pending changes that will be overwritten if you change " +
-                    "projects.\nDo you wish to continue?.", "Filter Warning",
-                    new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
+            int confirmRespond =
+                    Messages.showDialog("You have pending changes that will be overwritten if you change projects.\n" +
+                                        "Do you wish to continue?.", "Filter Warning",
+                                        new String[]{"Yes", "No"}, 1, Messages.getQuestionIcon());
             if (confirmRespond == 1) {
                 return false;
             }
@@ -90,12 +80,6 @@ public class FilterAction extends AbstractAction {
     @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setEnabled(getSettings().isEnable);
+        presentation.setEnabled(dataLayer.isConnected() && getSettings().isEnabled);
     }
-
-    /*
-    public void setProject(Project project) {
-        this.project = project;
-    }
-    */
 }

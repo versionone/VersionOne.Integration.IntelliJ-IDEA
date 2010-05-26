@@ -7,8 +7,11 @@ import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.Workitem;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.TasksTable;
+import org.apache.log4j.Logger;
 
 public class SignupAction extends AbstractAction {
+
+    private static final Logger LOG = Logger.getLogger(SignupAction.class);
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -23,6 +26,7 @@ public class SignupAction extends AbstractAction {
                 table.updateData();
                 table.reloadNode(item);
             } catch(DataLayerException ex) {
+                LOG.warn("Failed to signup.", ex);
                 displayError(ex.getMessage());
             }
         } 
@@ -40,10 +44,10 @@ public class SignupAction extends AbstractAction {
             enabled = isEnabledForWorkitem(item);
         }
 
-        presentation.setEnabled(enabled && getSettings().isEnable);
+        presentation.setEnabled(enabled && dataLayer.isConnected() && getSettings().isEnabled);
     }
 
     private boolean isEnabledForWorkitem(Workitem item) {
-        return dataLayer.isConnected() && item != null && item.isPersistent() && item.canSignup() && !item.isMine();
+        return item != null && item.isPersistent() && item.canSignup() && !item.isMine();
     }
 }

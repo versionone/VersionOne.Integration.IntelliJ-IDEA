@@ -5,17 +5,19 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.versionone.integration.idea.TasksComponent;
-import com.versionone.common.sdk.ApiDataLayer;
 import com.versionone.common.sdk.PrimaryWorkitem;
 import com.versionone.common.sdk.EntityType;
 import com.versionone.common.sdk.DataLayerException;
 import com.versionone.common.sdk.Workitem;
 import com.versionone.common.sdk.SecondaryWorkitem;
+import org.apache.log4j.Logger;
 
 /**
- * Create in-memory Task. New entity will be persisted when user triggers Save action.
+ * Creates in-memory Task. New entity will be persisted when user triggers Save action.
  */
 public class AddTaskAction extends AbstractAction {
+
+    private static final Logger LOG = Logger.getLogger(AddTaskAction.class);
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -44,7 +46,9 @@ public class AddTaskAction extends AbstractAction {
         SecondaryWorkitem newItem = null;
         try {
             newItem = dataLayer.createNewSecondaryWorkitem(EntityType.Task, parent);
-        } catch (DataLayerException ignored) {}
+        } catch (DataLayerException ignored) {
+            LOG.warn("Failed to create new " + EntityType.Task.name(), ignored);
+        }
 
         return newItem;
     }
@@ -52,8 +56,7 @@ public class AddTaskAction extends AbstractAction {
     @Override
     public void update(AnActionEvent event) {        
         Presentation presentation = event.getPresentation();
-        presentation.setEnabled(ApiDataLayer.getInstance().isConnected()
-                && !isActionDisabled(event)  && getSettings().isEnable);
+        presentation.setEnabled(dataLayer.isConnected() && getSettings().isEnabled && !isActionDisabled(event));
     }
 
     private boolean isActionDisabled(AnActionEvent event) {

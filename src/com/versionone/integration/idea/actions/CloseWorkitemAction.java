@@ -6,10 +6,13 @@ import com.versionone.common.sdk.*;
 import com.versionone.integration.idea.CloseWorkitemDialog;
 import com.versionone.integration.idea.TasksComponent;
 import com.versionone.integration.idea.TasksTable;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 
 public class CloseWorkitemAction extends AbstractAction {
+
+    private static final Logger LOG = Logger.getLogger(CloseWorkitemAction.class);
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -26,6 +29,7 @@ public class CloseWorkitemAction extends AbstractAction {
             try {
                 table.updateData();
             } catch(DataLayerException ex) {
+                LOG.warn("Failed to close workitem.", ex);
                 displayError(ex.getMessage());
             }
 
@@ -45,6 +49,6 @@ public class CloseWorkitemAction extends AbstractAction {
             enabled = dataLayer.isConnected() && item != null && item.isPersistent();
         }
 
-        presentation.setEnabled(enabled && getSettings().isEnable);
+        presentation.setEnabled(enabled && getSettings().isEnabled);
     }
 }
