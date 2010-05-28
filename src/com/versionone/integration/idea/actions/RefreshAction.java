@@ -72,7 +72,6 @@ public class RefreshAction extends AbstractAction {
             return;
         }
 
-        tc.refresh();
         tc.update();
         dc.setItem(tc.getCurrentItem());
         dc.update();

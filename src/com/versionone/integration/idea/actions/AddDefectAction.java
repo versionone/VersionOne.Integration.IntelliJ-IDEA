@@ -34,7 +34,6 @@ public class AddDefectAction extends AbstractAction {
                 Messages.showMessageDialog("Failed to create new " + EntityType.Defect.name(), "Error", icon);
             }
 
-            tc.refresh();
             tc.update();
             tc.selectNode(newItem);
         }

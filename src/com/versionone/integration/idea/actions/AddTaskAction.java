@@ -29,7 +29,6 @@ public class AddTaskAction extends AbstractAction {
             if (currentItem != null) {
                 SecondaryWorkitem newItem = createTask(currentItem);
 
-                tc.refresh();
                 tc.update();
                 tc.selectNode(newItem);
             }

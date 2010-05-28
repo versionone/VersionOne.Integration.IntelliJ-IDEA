@@ -12,20 +12,18 @@ import javax.swing.*;
 public class MainSettings implements ApplicationComponent, Configurable {
     private ConfigForm form;
     private WorkspaceSettings settings;
-    private Project project;
-    private ToolComponent component;
+    private final TasksComponent taskComponent;
+    private final DetailsComponent detailsComponent;
 
     public MainSettings(Project project, WorkspaceSettings settings) {
         this.settings = settings;
-        this.project = project;
+        taskComponent = project.getComponent(TasksComponent.class);
+        detailsComponent = project.getComponent(DetailsComponent.class);
     }
 
-    public void initComponent() {
-        //loadRegisteredData();
-    }
+    public void initComponent() {}
 
-    public void disposeComponent() {
-    }
+    public void disposeComponent() {}
 
     @NotNull
     public String getComponentName() {
@@ -45,10 +43,8 @@ public class MainSettings implements ApplicationComponent, Configurable {
     }
 
     public JComponent createComponent() {
-        component = new ToolComponent(project.getComponent(TasksComponent.class),
-                                                    project.getComponent(DetailsComponent.class));
         if (form == null) {
-            form = new ConfigForm(settings, component.getDataLayer());
+            form = new ConfigForm(settings, taskComponent.getDataLayer());
         }
         return form.getPanel();
     }
@@ -60,13 +56,15 @@ public class MainSettings implements ApplicationComponent, Configurable {
     public void apply() throws ConfigurationException {
         if (form != null) {
             if (form.isConnectionVerified()) {
-                // Get data from form to component
                 form.apply();
                 if (settings.isEnabled) {
-                    component.registerTool();
-                    component.update();
+                    taskComponent.registerTool();
+                    detailsComponent.registerTool();
+                    taskComponent.update();
+                    detailsComponent.update();
                 } else {
-                    component.unregisterTool();
+                    taskComponent.unregisterTool();
+                    detailsComponent.unregisterTool();
                 }
             }
             else {

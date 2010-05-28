@@ -33,7 +33,6 @@ public class ShowAllItemFilterAction extends ToggleAction {
         if (ideaProject != null ) {
             final TasksComponent tc = ideaProject.getComponent(TasksComponent.class);
             final DetailsComponent dc = ideaProject.getComponent(DetailsComponent.class);
-            tc.refresh();
             tc.update();
             dc.setItem(tc.getCurrentItem());
             dc.update();

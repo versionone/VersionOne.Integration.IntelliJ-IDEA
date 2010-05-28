@@ -22,10 +22,11 @@ public class ConfigForm implements UnnamedConfigurable {
     private JPanel generalPanel;
     private JCheckBox windowsIntegratedAuthentication;
     private JCheckBox enableCheckBox;
-    private WorkspaceSettings settings;
-    private final IDataLayer dataLayer;
     private boolean isConnectionCorrect = true;
     private boolean isConnectionVerified = true;
+
+    private WorkspaceSettings settings;
+    private final IDataLayer dataLayer;    
 
     public ConfigForm(WorkspaceSettings settings, IDataLayer dataLayer) {
         this.settings = settings;
@@ -78,9 +79,7 @@ public class ConfigForm implements UnnamedConfigurable {
         enableCheckBox.setSelected(settings.isEnabled);
     }
 
-    public void disposeUIResources() {
-        //Do nothing
-    }
+    public void disposeUIResources() {}
 
     protected JPanel getPanel() {
         return generalPanel;
@@ -97,7 +96,7 @@ public class ConfigForm implements UnnamedConfigurable {
         }
 
         isConnectionCorrect = dataLayer.verifyConnection(serverUrl.getText(), userName.getText(), password.getText(),
-                windowsIntegratedAuthentication.isSelected());
+                                                         windowsIntegratedAuthentication.isSelected());
         if (isConnectionCorrect) {
             Messages.showInfoMessage("Connection is valid", "Connection Status");
             isConnectionCorrect = true;

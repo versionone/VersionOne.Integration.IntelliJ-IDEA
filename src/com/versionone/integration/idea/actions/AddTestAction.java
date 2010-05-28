@@ -28,8 +28,6 @@ public class AddTestAction extends AbstractAction {
             Workitem currentItem = (Workitem)tc.getCurrentItem();
             if (currentItem != null) {
                 SecondaryWorkitem newItem = createTest(currentItem);
-
-                tc.refresh();
                 tc.update();
                 tc.selectNode(newItem);
             }
