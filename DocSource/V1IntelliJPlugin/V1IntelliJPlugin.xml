@@ -128,7 +128,7 @@
     <section id="usage">
         <title>Usage</title>
         <para>
-        &name; contributes two new components to the IntelliJ IDEA environment; a V1Integration Window and a V1Details Window.  The V1Integration Window provides visibility to the VersionOne workitems in the current active
+        &name; contributes two new components to the IntelliJ IDEA environment; a V1Workitem Window and a V1Details Window.  The V1Workitem Window provides visibility to the VersionOne workitems in the current active
 		iteration.  On the left side of this window is a iconbar that allows users to:
 		<itemizedlist>
 			<listitem><para>Add New Defects</para></listitem>
@@ -142,11 +142,11 @@
         </itemizedlist>
         <graphic fileref="Tasks.JPG"/>
 		</para>
-        <para>The Details Window provides additional details about the specific Workitem selected in the V1Integration view
+        <para>The Details Window provides additional details about the specific Workitem selected in the V1Workitem view
 		<graphic fileref="NewDetailsView.JPG"/></para>
         <section id="usage.project">
             <title>Selecting Projects</title>
-            <para>In order to view VersionOne Workitems you must first select a Project.  To select a Project click the <emphasis>Filter</emphasis> icon located on the left side of the V1Integration Window. 
+            <para>In order to view VersionOne Workitems you must first select a Project.  To select a Project click the <emphasis>Filter</emphasis> icon located on the left side of the V1Workitem Window. 
                 <figure
                     id="usage.project.figure">
                     <title>Projects Window</title>
@@ -158,7 +158,7 @@
         <section id="usage.tasks">
             <title>Updating Tasks</title>
             <para>
-                Once the filter is closed the V1Integration Window will refresh and list all VersionOne Workitems based on the filter.  
+                Once the filter is closed the V1Workitem Window will refresh and list all VersionOne Workitems based on the filter.  
                 To update a workitem, modify the attribute directly in the grid. Once you’re finished, click the Save icon to commit your changes to VersionOne.				
             </para>
         </section>
