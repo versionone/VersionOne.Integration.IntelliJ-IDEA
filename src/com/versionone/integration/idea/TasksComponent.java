@@ -39,7 +39,7 @@ public class TasksComponent extends AbstractComponent{
     private static final String COMPONENT_NAME = "V1.ToolWindow";
 
     @NonNls
-    public static final String TOOL_WINDOW_ID = "V1Integration";
+    public static final String TOOL_WINDOW_ID = "V1Workitems";
 
     private Content content;
     private TasksTable table;

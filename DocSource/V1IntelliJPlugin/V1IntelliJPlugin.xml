@@ -26,7 +26,7 @@
             Client Workstation:
             <itemizedlist>
                 <listitem>
-                    <para>IDE &mdash; IntelliJ IDEA 8.0 &mdash; 8.1.2</para>
+                    <para>IDE &mdash; IntelliJ IDEA 8.0 &mdash; 8.1.2 &mdash; 9.x</para>
                 </listitem>
             </itemizedlist>
         </para>
@@ -128,35 +128,38 @@
     <section id="usage">
         <title>Usage</title>
         <para>
-        &name; contributes two new components to the IntelliJ IDEA environment; a Task Window and a Detail Window.  The Task Window is available in the tool button bar located at the bottom of the UI.  
-        This view exposes a list of task defined in VersionOne based on the selected filter.  <graphic
-                fileref="NewTaskWindow.JPG"/></para>
-        <para>The Details Window is available in the tool button bar located on the right hand side of the UI .  This view provides additional details about a specific Task selected in the Task view<graphic
-                fileref="NewDetailsView.JPG"/></para>
+        &name; contributes two new components to the IntelliJ IDEA environment; a V1Integration Window and a V1Details Window.  The V1Integration Window provides visibility to the VersionOne workitems in the current active
+		iteration.  On the left side of this window is a iconbar that allows users to:
+		<itemizedlist>
+			<listitem><para>Add New Defects</para></listitem>
+			<listitem><para>Add New Task</para></listitem>
+			<listitem><para>Add New Test</para></listitem>
+			<listitem><para>Toggle view to show all workitems or only the workitems assigned to the connected member</para></listitem>
+			<listitem><para>Filter view to a specific project</para></listitem>
+			<listitem><para>Refresh the view</para></listitem>
+			<listitem><para>Save Changes</para></listitem>
+			<listitem><para>Access Help</para></listitem>
+        </itemizedlist>
+        <graphic fileref="Tasks.JPG"/>
+		</para>
+        <para>The Details Window provides additional details about the specific Workitem selected in the V1Integration view
+		<graphic fileref="NewDetailsView.JPG"/></para>
         <section id="usage.project">
             <title>Selecting Projects</title>
-            <para>In order to view VersionOne Task you must first select a Project.  To select a Project click the <emphasis>Filter</emphasis> icon located on the left side of the Task Window. 
+            <para>In order to view VersionOne Workitems you must first select a Project.  To select a Project click the <emphasis>Filter</emphasis> icon located on the left side of the V1Integration Window. 
                 <figure
                     id="usage.project.figure">
                     <title>Projects Window</title>
                     <graphic fileref="Projects.JPG"/>
                 </figure>
                 To choose a specific project to work on, simply navigate the tree and select it.  Once selected, click <emphasis>OK</emphasis> to exit.
-                <note>
-                    <para>By default the Task view will only show Task assigned to the current user for the active iteration in the selected project.  The Filter dialog supports a "Show All Tasks" checkbox.  Use this option to view tasks for all users in the active iteration. </para>
-                </note>
             </para>
         </section>
         <section id="usage.tasks">
             <title>Updating Tasks</title>
             <para>
-                Once the filter is closed the Task Window will refresh and list all VersionOne Task based on the filter.  
-                To update a task, modify the attribute directly in the grid. Once you’re finished updating a Task, click the Save icon to commit your changes to VersionOne.				
-                <figure
-                    id="usage.tasks.figure">
-                    <title>Tasks Window</title>
-                    <graphic fileref="Tasks.JPG"/>
-                </figure>
+                Once the filter is closed the V1Integration Window will refresh and list all VersionOne Workitems based on the filter.  
+                To update a workitem, modify the attribute directly in the grid. Once you’re finished, click the Save icon to commit your changes to VersionOne.				
             </para>
         </section>
     </section>
