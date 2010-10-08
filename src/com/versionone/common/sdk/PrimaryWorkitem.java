@@ -27,15 +27,19 @@ public class PrimaryWorkitem extends Workitem {
         }
         Comparator<Entity> comparator = new Comparator<Entity>() {
             public int compare(Entity entity1, Entity entity2) {
-            	if (entity1.getType().equals(EntityType.Test) && entity2.getType().equals(EntityType.Task)) {
-            		return -1;
-            	}
-            	if (entity1.getType().equals(EntityType.Task) && entity2.getType().equals(EntityType.Test)) {
-            		return 1;
-            	}
-            	String value1 = entity1.getProperty(Workitem.ORDER_PROPERTY).toString();
-            	String value2 = entity2.getProperty(Workitem.ORDER_PROPERTY).toString();
-            	return Integer.valueOf(value1).compareTo(Integer.valueOf(value2));
+                if (entity1.getType().equals(EntityType.Test) && entity2.getType().equals(EntityType.Task)) {
+                    return -1;
+                }
+                if (entity1.getType().equals(EntityType.Task) && entity2.getType().equals(EntityType.Test)) {
+                    return 1;
+                }
+                try {
+                    String value1 = entity1.getPropertyAsString(Workitem.ORDER_PROPERTY);
+                    String value2 = entity2.getPropertyAsString(Workitem.ORDER_PROPERTY);
+                    return Integer.valueOf(value1).compareTo(Integer.valueOf(value2));
+                } catch (IllegalArgumentException e) {
+                    return -1;
+                }
             }
         };
         Collections.sort(children, comparator);

@@ -73,11 +73,13 @@ public class ApiDataLayerTester implements IntegrationalTest {
         data.addProperty("Name", Task, false);
         data.addProperty("Owners", Task, true);
         data.addProperty("Status", Task, true);
+        data.addProperty("Order", Task, false);
         data.addProperty("Timebox.Name", Story, false);
         data.addProperty("Name", Scope, false);
         data.connect(V1_PATH, V1_USER, V1_PASSWORD, false);
         final PrimaryWorkitem story = data.getWorkitemTree().get(0);
         final SecondaryWorkitem task = data.createNewSecondaryWorkitem(Task, story);
+        task.setProperty(Workitem.ORDER_PROPERTY, 1);
         assertEquals(story, task.parent);
         assertFalse(task.canQuickClose());
         assertFalse(task.canSignup());
@@ -162,6 +164,42 @@ public class ApiDataLayerTester implements IntegrationalTest {
             fail("Story allow to create child project");
         } catch (IllegalArgumentException ex) {
             // Do nothing
+        }
+    }
+
+    @Test
+    public void testChildrenSorting() throws Exception {
+        final ApiDataLayer data = ApiDataLayer.getInstance();
+        data.addProperty("Name", Task, false);
+        data.addProperty("Owners", Task, true);
+        data.addProperty("Status", Task, true);
+        data.addProperty("Order", Task, false);
+        data.addProperty("Order", Test, false);
+        data.addProperty("Timebox.Name", Story, false);
+        data.addProperty("Name", Scope, false);
+        data.connect(V1_PATH, V1_USER, V1_PASSWORD, false);
+        PrimaryWorkitem story = data.getWorkitemTree().get(0);
+
+        final SecondaryWorkitem test = story.createChild(Test);
+        final Entity task = story.createChild(Task);
+        final Entity task2 = story.createChild(Task);
+        final Entity task3 = story.createChild(Task);
+        task2.setProperty(Workitem.ORDER_PROPERTY, -1);
+        task3.setProperty(Workitem.ORDER_PROPERTY, 0);
+        task.setProperty(Workitem.ORDER_PROPERTY, 2);
+        test.setProperty(Workitem.ORDER_PROPERTY, 3);
+
+        story = data.getWorkitemTree().get(0);
+        assertEquals(story.children.get(0), test);
+        assertEquals(story.children.get(1), task2);
+        assertEquals(story.children.get(2), task3);
+        assertEquals(story.children.get(3), task);
+
+        try {
+            story.createChild(Test);
+            data.getWorkitemTree().get(0);
+        } catch (IllegalArgumentException ex) {
+            assertTrue("Method shouldn't throw any exception",false);
         }
     }
 }
