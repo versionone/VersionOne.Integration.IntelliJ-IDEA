@@ -226,6 +226,7 @@ public class TasksComponent extends AbstractComponent{
         final Map<String, Boolean> properties = new HashMap<String, Boolean>();
         properties.put(Workitem.CHECK_QUICK_CLOSE_PROPERTY, false);
         properties.put(Workitem.CHECK_SIGNUP_PROPERTY, false);
+        properties.put(Workitem.ORDER_PROPERTY, false);
 
         for (Entry<String, Boolean> entry : properties.entrySet()) {
             for (EntityType type : EntityType.values()) {

@@ -11,20 +11,12 @@ import com.versionone.apiclient.FilterTerm;
 import com.versionone.apiclient.IAssetType;
 import com.versionone.apiclient.IAttributeDefinition;
 import com.versionone.apiclient.IFilterTerm;
-import com.versionone.apiclient.ILocalizer;
 import com.versionone.apiclient.IMetaModel;
 import com.versionone.apiclient.IOperation;
-import com.versionone.apiclient.IServices;
-import com.versionone.apiclient.IV1Configuration.TrackingLevel;
-import com.versionone.apiclient.Localizer;
 import com.versionone.apiclient.MetaException;
-import com.versionone.apiclient.MetaModel;
 import com.versionone.apiclient.OrderBy;
 import com.versionone.apiclient.Query;
 import com.versionone.apiclient.QueryResult;
-import com.versionone.apiclient.Services;
-import com.versionone.apiclient.V1APIConnector;
-import com.versionone.apiclient.V1Configuration;
 import com.versionone.apiclient.V1Exception;
 
 import java.util.ArrayList;
@@ -521,7 +513,7 @@ public class ApiDataLayer implements IDataLayer {
      *
      * @param workitem to update
      * @return updated Asset of this Workitem.
-     * @throws DataLayerException
+     * @throws DataLayerException if there is a problem with getting workitems
      */
     Asset refreshWorkitem(Entity workitem) throws DataLayerException {
         try {

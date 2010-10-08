@@ -96,6 +96,7 @@ public abstract class Entity {
      * 
      * @param propertyName
      *            Name of the property to get, e.g. "Status"
+     * @throws IllegalArgumentException  If property does not exist
      */
     public void resetProperty(String propertyName) throws IllegalArgumentException {
         final String fullName = getType() + "." + propertyName;
