@@ -49,7 +49,7 @@ public class RefreshAction extends AbstractAction {
         tc.removeEdition();
         dc.removeEdition();
 
-        ProgressManager.getInstance().runProcessWithProgressSynchronously(
+        progressManager.runProcessWithProgressSynchronously(
                 new Runnable() {
                     public void run() {
                         progressManager.getProgressIndicator().setText("Updating VersionOne Task List");

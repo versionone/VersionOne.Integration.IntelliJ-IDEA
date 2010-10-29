@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.Table;
@@ -33,15 +34,28 @@ public class DetailsComponent extends AbstractComponent {
 
     public DetailsComponent(Project project, WorkspaceSettings settings) {
         super(project, settings);
-        createTable();
-        registerTableListener();
-        initToolWindow();
     }
 
     @NotNull
     @NonNls
     public String getComponentName() {
         return COMPONENT_NAME;
+    }
+
+    @Override
+    public void initComponent() {
+        ColorKey.createColorKey("V1_CHANGED_ROW", new Color(255, 243, 200));
+        createTable();
+    }
+
+    @Override
+    public void projectOpened() {
+        //registerTableListener();
+        initToolWindow();
+        if (getSettings().isEnabled) {
+            registerTool();
+            registerTableListener();
+        }
     }
 
     @Override
@@ -111,8 +125,9 @@ public class DetailsComponent extends AbstractComponent {
 
     public void registerTableListener(TableModelListener listener) {
         //TODO why we need to re-register
+        table.getModel().removeTableModelListener(tableChangesListener);
+        table.getModel().addTableModelListener(listener);
         tableChangesListener = listener;
-        table.getModel().addTableModelListener(tableChangesListener);
     }
 
     JPanel createContentPanel() {

@@ -9,6 +9,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.UIUtil;
@@ -45,20 +46,34 @@ public class TasksComponent extends AbstractComponent{
     private TasksTable table;
     private TasksModel model;
     private TreeSelectionListener tableSelectionListener;
+    private TableModelListener tableChangingListener;
 
     public TasksComponent(Project project, WorkspaceSettings settings) {
         super(project, settings);
         Configuration config = Configuration.getInstance();
         config.fill();
-        addWorkitemProperties();
-        createTable();
-        initToolWindow();
     }
 
     @NotNull
     @NonNls
     public String getComponentName() {
         return COMPONENT_NAME;
+    }
+
+    @Override
+    public void initComponent() {
+        ColorKey.createColorKey("V1_CHANGED_ROW", new Color(255, 243, 200));
+        addWorkitemProperties();
+        createTable();
+    }
+
+    @Override
+    public void projectOpened() {
+        initToolWindow();
+        if (getSettings().isEnabled) {
+            registerTool();
+            registerTableListener();
+        }
     }
 
     @Override
@@ -139,7 +154,9 @@ public class TasksComponent extends AbstractComponent{
     }
 
     public void registerTableChangeListener(TableModelListener listener) {
+        table.getModel().addTableModelListener(tableChangingListener);
         table.getModel().addTableModelListener(listener);
+        tableChangingListener = listener;
     }
 
     public void registerTableSelectListener(TreeSelectionListener selectionListener) {
@@ -157,15 +174,13 @@ public class TasksComponent extends AbstractComponent{
     }
 
     private void createConnection() throws DataLayerException {
-        if (!getDataLayer().isConnected()) {
-            getDataLayer().connect(getSettings().v1Path, getSettings().user, getSettings().passwd,
-                                   getSettings().isWindowsIntegratedAuthentication);
-            getDataLayer().setCurrentProjectId(getSettings().projectToken);
-            getDataLayer().setShowAllTasks(getSettings().isShowAllTask);
-            getSettings().projectToken = getDataLayer().getCurrentProjectId();
-            getSettings().projectName = com.versionone.common.sdk.Project.getNameById(getDataLayer().getProjectTree(),
-                                                                                 getSettings().projectToken);
-        }
+        getDataLayer().connect(getSettings().v1Path, getSettings().user, getSettings().passwd,
+                               getSettings().isWindowsIntegratedAuthentication);
+        getDataLayer().setCurrentProjectId(getSettings().projectToken);
+        getDataLayer().setShowAllTasks(getSettings().isShowAllTask);
+        getSettings().projectToken = getDataLayer().getCurrentProjectId();
+        getSettings().projectName = com.versionone.common.sdk.Project.getNameById(getDataLayer().getProjectTree(),
+                                                                             getSettings().projectToken);
     }
 
     private void registerToolWindow() {

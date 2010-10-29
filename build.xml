@@ -311,7 +311,7 @@
         </replace>
         <replace file="${base.dir}/META-INF/plugin.xml">
             <replacetoken><![CDATA[<idea-version since-build="10000"/>]]></replacetoken>
-            <replacevalue><![CDATA[<idea-version since-build="7000" until-build="10000"/>]]></replacevalue>
+            <replacevalue><![CDATA[<idea-version since-build="7000" until-build="9999"/>]]></replacevalue>
         </replace>
     </target>
 

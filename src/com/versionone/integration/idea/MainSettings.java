@@ -59,7 +59,9 @@ public class MainSettings implements ApplicationComponent, Configurable {
                 form.apply();
                 if (settings.isEnabled) {
                     taskComponent.registerTool();
+                    taskComponent.registerTableListener();
                     detailsComponent.registerTool();
+                    detailsComponent.registerTableListener();
                     taskComponent.update();
                     detailsComponent.update();
                 } else {

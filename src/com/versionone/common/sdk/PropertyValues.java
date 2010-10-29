@@ -66,6 +66,9 @@ public class PropertyValues extends AbstractCollection<ValueId> {
     }
 
     public boolean add(ValueId value) {
+        if (value == null) {
+            return false;
+        }
         final ValueId prev = dictionary.put(value.oid, value);
         if (prev == null || !prev.equals(value)) {
             index.put(value.oid, currentIndex);

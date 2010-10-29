@@ -20,18 +20,11 @@ public abstract class AbstractComponent implements ProjectComponent {
         dataLayer = ApiDataLayer.getInstance();
     }
 
-    public void projectOpened() {
-        if (getSettings().isEnabled) {
-            registerTool();
-            registerTableListener();
-        }
-    }
+    public abstract void projectOpened();
 
     public void projectClosed() {}
 
-    public void initComponent() {
-        ColorKey.createColorKey("V1_CHANGED_ROW", new Color(255, 243, 200));
-    }
+    public abstract void initComponent();
 
     public void disposeComponent() {}
 
