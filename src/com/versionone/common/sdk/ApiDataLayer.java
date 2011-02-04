@@ -118,8 +118,8 @@ public class ApiDataLayer implements IDataLayer {
         return connector.getRequiredFieldsValidator().validate(asset);
     }
 
-    public boolean verifyConnection(String path, String username, String password, boolean integrated) {
-        return connector.verifyConnection(path, username, password, integrated);
+    public boolean verifyConnection(ConnectionSettings settings) throws ConnectionException {
+        return connector.verifyConnection(settings);
     }
 
     private void processConfig() throws ConnectionException, APIException {

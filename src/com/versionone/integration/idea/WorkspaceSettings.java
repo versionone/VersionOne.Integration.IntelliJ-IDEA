@@ -15,6 +15,10 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
     public boolean isShowAllTask = true;
     public boolean isWindowsIntegratedAuthentication = false;
     public boolean isEnabled = false;
+    public boolean isProxyEnabled = false;
+    public String proxyUsername = "";
+    public String proxyPassword = "";
+    public String proxyUri = "";
 
     public WorkspaceSettings getState() {
         return this;
@@ -28,5 +32,9 @@ public class WorkspaceSettings implements PersistentStateComponent<WorkspaceSett
         isShowAllTask = state.isShowAllTask;
         projectToken = state.projectToken;
         isEnabled = state.isEnabled;
+        isProxyEnabled = state.isProxyEnabled;
+        proxyUsername = state.proxyUsername;
+        proxyPassword = state.proxyPassword;
+        proxyUri = state.proxyUri;
     }
 }

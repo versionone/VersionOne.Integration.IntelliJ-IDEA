@@ -1,11 +1,12 @@
 package com.versionone.common.sdk;
 
+import com.versionone.apiclient.ConnectionException;
+
 import java.util.List;
-import java.util.Map;
 
 public interface IDataLayer {
 
-    boolean verifyConnection(String url, String user, String pass, boolean integratedAuth);
+    boolean verifyConnection(ConnectionSettings settings) throws ConnectionException;
     void connect(String path, String userName, String password, boolean integrated) throws DataLayerException;
 
     /**
@@ -31,4 +32,6 @@ public interface IDataLayer {
     boolean isConnected();
     PrimaryWorkitem createNewPrimaryWorkitem(EntityType type) throws DataLayerException;
     SecondaryWorkitem createNewSecondaryWorkitem(EntityType type, PrimaryWorkitem parent) throws DataLayerException;
+
+
 }
