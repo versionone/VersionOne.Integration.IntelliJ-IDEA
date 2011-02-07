@@ -174,8 +174,7 @@ public class TasksComponent extends AbstractComponent{
     }
 
     private void createConnection() throws DataLayerException {
-        getDataLayer().connect(getSettings().v1Path, getSettings().user, getSettings().passwd,
-                               getSettings().isWindowsIntegratedAuthentication);
+        getDataLayer().connect(getConnectionSettings());
         getDataLayer().setCurrentProjectId(getSettings().projectToken);
         getDataLayer().setShowAllTasks(getSettings().isShowAllTask);
         getSettings().projectToken = getDataLayer().getCurrentProjectId();

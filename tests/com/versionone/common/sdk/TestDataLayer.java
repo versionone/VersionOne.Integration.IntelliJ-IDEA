@@ -47,7 +47,7 @@ public class TestDataLayer extends ApiDataLayer {
     }
 
     @Override
-    public void connect(String path, String userName, String password, boolean integrated) throws DataLayerException {
+    public void connect(ConnectionSettings connectionSettings) throws DataLayerException {
     }
 
     @Override

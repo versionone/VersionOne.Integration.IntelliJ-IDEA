@@ -1,5 +1,6 @@
 package com.versionone.common.sdk;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +23,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
         data.addProperty("Owners", Defect, true);
         data.addProperty("Status", Defect, true);
         data.addProperty("Name", Scope, false);
-        data.connect(V1_PATH, V1_USER, V1_PASSWORD, false);
+        data.connect(getConnectionSettings());
         data.getWorkitemTree();
         final PrimaryWorkitem defect = data.createNewPrimaryWorkitem(Defect);
         assertEquals(0, defect.children.size());
@@ -76,7 +77,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
         data.addProperty("Order", Task, false);
         data.addProperty("Timebox.Name", Story, false);
         data.addProperty("Name", Scope, false);
-        data.connect(V1_PATH, V1_USER, V1_PASSWORD, false);
+        data.connect(getConnectionSettings());
         final PrimaryWorkitem story = data.getWorkitemTree().get(0);
         final SecondaryWorkitem task = data.createNewSecondaryWorkitem(Task, story);
         task.setProperty(Workitem.ORDER_PROPERTY, 1);
@@ -131,7 +132,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
         data.addProperty("Status", Task, true);
         data.addProperty("Timebox.Name", Story, false);
         data.addProperty("Name", Scope, false);
-        data.connect(V1_PATH, V1_USER, V1_PASSWORD, false);
+        data.connect(getConnectionSettings());
         PrimaryWorkitem story = data.getWorkitemTree().get(0);
         final SecondaryWorkitem test = story.createChild(Test);
         assertTrue(story.children.contains(test));
@@ -177,7 +178,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
         data.addProperty("Order", Test, false);
         data.addProperty("Timebox.Name", Story, false);
         data.addProperty("Name", Scope, false);
-        data.connect(V1_PATH, V1_USER, V1_PASSWORD, false);
+        data.connect(getConnectionSettings());
         PrimaryWorkitem story = data.getWorkitemTree().get(0);
 
         final SecondaryWorkitem test = story.createChild(Test);
@@ -201,5 +202,79 @@ public class ApiDataLayerTester implements IntegrationalTest {
         } catch (IllegalArgumentException ex) {
             assertTrue("Method shouldn't throw any exception",false);
         }
+    }
+
+
+    @Test
+    @Ignore("This test requires proxy.")
+    public void testCreateAndGetTaskWithProxy() throws Exception {
+        final ApiDataLayer data = ApiDataLayer.getInstance();
+        data.addProperty("Name", Task, false);
+        data.addProperty("Owners", Task, true);
+        data.addProperty("Status", Task, true);
+        data.addProperty("Order", Task, false);
+        data.addProperty("Timebox.Name", Story, false);
+        data.addProperty("Name", Scope, false);
+        ConnectionSettings settings = getConnectionSettings();
+        settings.isProxyEnabled = true;
+        data.connect(settings);
+        final PrimaryWorkitem story = data.getWorkitemTree().get(0);
+        final SecondaryWorkitem task = data.createNewSecondaryWorkitem(Task, story);
+        task.setProperty(Workitem.ORDER_PROPERTY, 1);
+        assertEquals(story, task.parent);
+        assertFalse(task.canQuickClose());
+        assertFalse(task.canSignup());
+        try {
+            task.close();
+            fail();
+        } catch (UnsupportedOperationException ex) {
+            // Do nothing
+        }
+        try {
+            task.quickClose();
+            fail();
+        } catch (UnsupportedOperationException ex) {
+            // Do nothing
+        }
+        try {
+            task.signup();
+            fail();
+        } catch (UnsupportedOperationException ex) {
+            // Do nothing
+        }
+        try {
+            task.revertChanges();
+            fail();
+        } catch (UnsupportedOperationException ex) {
+            // Do nothing
+        }
+        assertEquals("NULL", task.getId());
+        assertEquals(Task, task.getType());
+        assertTrue(task.hasChanges());
+        assertFalse(task.isMine());
+        assertFalse(task.isPropertyReadOnly(Entity.NAME_PROPERTY));
+        assertEquals("", task.getPropertyAsString(Entity.NAME_PROPERTY));
+        task.setProperty(Entity.NAME_PROPERTY, "NewName53765");
+        assertEquals("NewName53765", task.getPropertyAsString(Entity.NAME_PROPERTY));
+        assertEquals("", task.getPropertyAsString(Workitem.STATUS_PROPERTY));
+        task.setProperty(Workitem.STATUS_PROPERTY, "TaskStatus:123");
+        assertEquals("In Progress", task.getPropertyAsString(Workitem.STATUS_PROPERTY));
+
+        PrimaryWorkitem story2 = data.getWorkitemTree().get(0);
+        assertTrue(story2.children.contains(task));
+    }
+
+    private ConnectionSettings getConnectionSettings() {
+        ConnectionSettings connectionSettings = new ConnectionSettings();
+        connectionSettings.v1Path = V1_PATH;
+        connectionSettings.v1Username = V1_USER;
+        connectionSettings.v1Password = V1_PASSWORD;
+        connectionSettings.isWindowsIntegratedAuthentication = false;
+        connectionSettings.isProxyEnabled = false;
+        connectionSettings.proxyPassword = PROXY_PASSWORD;
+        connectionSettings.proxyUri = PROXY_URI;
+        connectionSettings.proxyUsername = PROXY_USER;
+
+        return connectionSettings;
     }
 }

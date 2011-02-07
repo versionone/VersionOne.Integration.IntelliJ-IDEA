@@ -4,6 +4,7 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.project.Project;
 import com.versionone.common.sdk.ApiDataLayer;
+import com.versionone.common.sdk.ConnectionSettings;
 import com.versionone.common.sdk.IDataLayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,5 +51,19 @@ public abstract class AbstractComponent implements ProjectComponent {
 
     public WorkspaceSettings getSettings() {
         return settings;
+    }
+
+    public ConnectionSettings getConnectionSettings() {
+        ConnectionSettings connectionSettings = new ConnectionSettings();
+        connectionSettings.v1Path = settings.v1Path;
+        connectionSettings.v1Username = settings.user;
+        connectionSettings.v1Password = settings.passwd;
+        connectionSettings.isWindowsIntegratedAuthentication = settings.isWindowsIntegratedAuthentication;
+        connectionSettings.isProxyEnabled = settings.isProxyEnabled;
+        connectionSettings.proxyPassword = settings.proxyPassword;
+        connectionSettings.proxyUri = settings.proxyUri;
+        connectionSettings.proxyUsername = settings.proxyUsername;
+
+        return connectionSettings;
     }
 }

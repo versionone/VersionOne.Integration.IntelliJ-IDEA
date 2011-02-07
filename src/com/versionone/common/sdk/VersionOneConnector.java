@@ -14,10 +14,7 @@ public class VersionOneConnector {
     private static final String DATA_SUFFIX = "rest-1.v1/";
     private static final String CONFIG_SUFFIX = "config.v1/";
 
-    private String path;
-    private String userName;
-    private String password;
-    private boolean integrated;
+    private ConnectionSettings connectionSettings;
 
     private IMetaModel metaModel;
     private IServices services;
@@ -30,22 +27,6 @@ public class VersionOneConnector {
 
     RequiredFieldsValidator getRequiredFieldsValidator() {
         return requiredFieldsValidator;
-    }
-
-    String getPath() {
-        return path;
-    }
-
-    String getUserName() {
-        return userName;
-    }
-
-    String getPassword() {
-        return password;
-    }
-
-    boolean getIntegrated() {
-        return integrated;
     }
 
     boolean isConnected() {
@@ -72,29 +53,37 @@ public class VersionOneConnector {
         return config;
     }
 
-    void connect(String path, String userName, String password, boolean integrated) throws DataLayerException {
-        final boolean credentialsChanged = credentialsChanged(path, userName, integrated);
+    //void connect(String path, String userName, String password, boolean integrated) throws DataLayerException {
+    void connect(ConnectionSettings connectionSettings) throws DataLayerException {
+        final String path = connectionSettings.v1Path;
+        final String username = connectionSettings.v1Username;
+        final String password = connectionSettings.v1Password;
+        final boolean integratedAuth = connectionSettings.isWindowsIntegratedAuthentication;
+        final boolean credentialsChanged = credentialsChanged(connectionSettings);
+        ProxyProvider proxyProvider = null;
+        try {
+            proxyProvider = getProxy(connectionSettings);
+        } catch (URISyntaxException e) {
 
-        this.path = path;
-        this.userName = userName;
-        this.password = password;
-        this.integrated = integrated;
+        }
+
+        this.connectionSettings = connectionSettings;
 
         try {
             if (credentialsChanged) {
-                V1APIConnector metaConnector = new V1APIConnector(path + META_SUFFIX, userName, password);
+                V1APIConnector metaConnector = new V1APIConnector(path + META_SUFFIX, username, password, proxyProvider);
                 metaModel = new MetaModel(metaConnector);
 
-                V1APIConnector localizerConnector = new V1APIConnector(path + LOCALIZER_SUFFIX, userName, password);
+                V1APIConnector localizerConnector = new V1APIConnector(path + LOCALIZER_SUFFIX, username, password, proxyProvider);
                 localizer = new Localizer(localizerConnector);
 
-                V1APIConnector dataConnector = new V1APIConnector(path + DATA_SUFFIX, userName, password);
+                V1APIConnector dataConnector = new V1APIConnector(path + DATA_SUFFIX, username, password, proxyProvider);
                 services = new Services(metaModel, dataConnector);
 
                 isConnected = verifyConnection(metaModel, dataConnector);
             }
 
-            config = new V1Configuration(new V1APIConnector(path + CONFIG_SUFFIX));
+            config = new V1Configuration(new V1APIConnector(path + CONFIG_SUFFIX, null, null, proxyProvider));
 
             requiredFieldsValidator = new RequiredFieldsValidator(metaModel, services);
             requiredFieldsValidator.init();
@@ -105,7 +94,7 @@ public class VersionOneConnector {
     }
 
     void reconnect() throws DataLayerException {
-        connect(path, userName, password, integrated);
+        connect(connectionSettings);
     }
 
      boolean verifyConnection(ConnectionSettings settings) throws ConnectionException {
@@ -151,13 +140,35 @@ public class VersionOneConnector {
         return true;
     }
 
-    // TODO Need refactor by Mikhail
-    boolean credentialsChanged(String path, String userName, boolean integrated) {
-        boolean isUserChanged = true;
-        if ((this.userName != null || integrated) && this.path != null) {
-            isUserChanged = (this.userName != null && !this.userName.equals(userName)) || integrated != this.integrated
-                    || !this.path.equals(path);
+    boolean credentialsChanged(ConnectionSettings newSettings) {
+        if (!isConnectionInitialized()) {
+            return true;
         }
-        return isUserChanged || metaModel == null || localizer == null || services == null;
+        String currentUsername = connectionSettings.v1Username;
+        String currentPath = connectionSettings.v1Path;
+        if (isProxySettingsChanged(newSettings)) {
+            return true;
+        }
+        if (currentUsername != null || newSettings.isWindowsIntegratedAuthentication) {
+            return isUserChanged(newSettings.v1Username, newSettings.isWindowsIntegratedAuthentication) || !currentPath.equals(newSettings.v1Path);
+        }
+        return true;
+    }
+
+    private boolean isProxySettingsChanged(ConnectionSettings newSettings) {
+        return newSettings.isProxyEnabled != connectionSettings.isProxyEnabled ||
+                (newSettings.proxyPassword != null && !newSettings.proxyPassword.equals(connectionSettings.proxyPassword)) ||
+                (newSettings.proxyUri != null && !newSettings.proxyUri.equals(connectionSettings.proxyUri)) ||
+                (newSettings.proxyUsername != null && !newSettings.proxyUsername.equals(connectionSettings.proxyUsername));
+    }
+
+    private boolean isUserChanged(String username, boolean integrated) {
+        return (connectionSettings.v1Username != null && !connectionSettings.v1Username.equals(username))
+                || integrated != connectionSettings.isWindowsIntegratedAuthentication;
+    }
+
+    private boolean isConnectionInitialized() {
+        return metaModel != null && localizer != null && services != null &&
+                connectionSettings != null && connectionSettings.v1Path != null;
     }
 }

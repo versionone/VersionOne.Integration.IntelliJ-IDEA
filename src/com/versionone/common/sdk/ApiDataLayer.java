@@ -88,13 +88,13 @@ public class ApiDataLayer implements IDataLayer {
         return instance;
     }
 
-    public void connect(String path, String userName, String password, boolean integrated) throws DataLayerException {
-        final boolean credentialsChanged = connector.credentialsChanged(path, userName, integrated);
+    public void connect(ConnectionSettings connectionSettings) throws DataLayerException {
+        final boolean credentialsChanged = connector.credentialsChanged(connectionSettings);
 
         assetList = null;
 
         try {
-            connector.connect(path, userName, password, integrated);
+            connector.connect(connectionSettings);
 
             if (credentialsChanged) {
                 cleanConnectionData();
@@ -155,7 +155,7 @@ public class ApiDataLayer implements IDataLayer {
      * @throws DataLayerException
      */
     public void reconnect() throws DataLayerException {
-        connect(connector.getPath(), connector.getUserName(), connector.getPassword(), connector.getIntegrated());
+        connector.reconnect();
     }
 
     public List<Project> getProjectTree() throws DataLayerException {

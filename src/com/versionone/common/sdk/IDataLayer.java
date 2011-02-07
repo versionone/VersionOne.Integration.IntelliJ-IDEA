@@ -7,7 +7,7 @@ import java.util.List;
 public interface IDataLayer {
 
     boolean verifyConnection(ConnectionSettings settings) throws ConnectionException;
-    void connect(String path, String userName, String password, boolean integrated) throws DataLayerException;
+    void connect(ConnectionSettings settings) throws DataLayerException;
 
     /**
      * Reconnect with settings, used in last Connect() call.
