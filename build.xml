@@ -11,7 +11,7 @@
 
     <!--Settings-->
     <property name="ver.major" value="9"/>
-    <property name="ver.minor" value="0"/>
+    <property name="ver.minor" value="2"/>
     <property name="ver.build" value="0"/>
     <property name="publish.dir" value="./_publish"/>
     <property name="build.version" value="${ver.major}.${ver.minor}.${ver.build}"/>
@@ -305,7 +305,7 @@
     </target>
 
     <target name="setVersion">
-        <replace file="${base.dir}/META-INF/plugin.xml" token="#PLUGIN_VERSION#" value="${ver.major}.${ver.minor}.${ver.build}"/>
+        <replace file="${base.dir}/META-INF/plugin.xml" token="@PLUGIN_VERSION@" value="${ver.major}.${ver.minor}.${ver.build}"/>
     </target>
 
     <target name="patchTo8">
