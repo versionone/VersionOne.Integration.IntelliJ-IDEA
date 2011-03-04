@@ -29,6 +29,7 @@
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="xml">
           <option name="INDENT_SIZE" value="4" />
@@ -38,6 +39,7 @@
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
       </value>
     </option>
@@ -223,6 +225,9 @@
       <module fileurl="file://$PROJECT_DIR$/V1-IDEA.iml" filepath="$PROJECT_DIR$/V1-IDEA.iml" />
     </modules>
   </component>
+  <component name="ProjectResources">
+    <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 9013" project-jdk-type="IDEA JDK" />
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
@@ -281,6 +286,7 @@
         <root url="jar://$PROJECT_DIR$/lib/VersionOne.APIClient.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/sam.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/jtidy-8.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/junit-4.4.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
