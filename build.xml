@@ -176,6 +176,7 @@
 				<include name="DocSource/**/*"/>
                 <include name="META-INF/**/*"/>
                 <include name="V1-IDEA.iml"/>
+                <include name="V1-IDEA.ipr"/>
 			</fileset>
 		</zip>		
 
