@@ -51,5 +51,7 @@ public class ShowAllItemFilterAction extends ToggleAction {
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(dataLayer.isConnected() && settings.isEnabled);
+        final boolean selected = isSelected(e) ? Boolean.TRUE : Boolean.FALSE;
+        presentation.putClientProperty(SELECTED_PROPERTY, selected);
     }
 }

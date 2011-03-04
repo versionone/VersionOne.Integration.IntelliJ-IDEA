@@ -55,7 +55,7 @@ public class MainSettings implements ApplicationComponent, Configurable {
 
     public void apply() throws ConfigurationException {
         if (form != null) {
-            if (form.isConnectionVerified()) {
+            if (form.isConnectionVerified() || !form.isPluginEnabled()) {
                 form.apply();
                 if (settings.isEnabled) {
                     taskComponent.registerTool();
@@ -63,6 +63,7 @@ public class MainSettings implements ApplicationComponent, Configurable {
                     detailsComponent.registerTool();
                     detailsComponent.registerTableListener();
                     taskComponent.update();
+                    taskComponent.resetSelection();
                     detailsComponent.update();
                 } else {
                     taskComponent.unregisterTool();

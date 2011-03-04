@@ -14,6 +14,7 @@ import com.versionone.apiclient.IFilterTerm;
 import com.versionone.apiclient.IMetaModel;
 import com.versionone.apiclient.IOperation;
 import com.versionone.apiclient.MetaException;
+import com.versionone.apiclient.OidException;
 import com.versionone.apiclient.OrderBy;
 import com.versionone.apiclient.Query;
 import com.versionone.apiclient.QueryResult;
@@ -90,27 +91,27 @@ public class ApiDataLayer implements IDataLayer {
 
     public void connect(ConnectionSettings connectionSettings) throws DataLayerException {
         final boolean credentialsChanged = connector.credentialsChanged(connectionSettings);
+        connector.connect(connectionSettings);
+        loadData(credentialsChanged);
+    }
 
+    private void loadData(boolean reloadConnectionData) throws DataLayerException {
         assetList = null;
 
+        if (reloadConnectionData) {
+            cleanConnectionData();
+        }
+        if (types.isEmpty()) {
+            initTypes();
+        }
         try {
-            connector.connect(connectionSettings);
-
-            if (credentialsChanged) {
-                cleanConnectionData();
-            }
-            if (types.isEmpty()) {
-                initTypes();
-            }
             processConfig();
-
             memberOid = connector.getServices().getLoggedIn();
             listPropertyValues = getListPropertyValues();
-            //updateCurrentProjectId();
         } catch (MetaException ex) {
-            throw createAndLogException("Cannot connect to V1 server.", ex);
+            throw createAndLogException("Cannot load data from V1 server.", ex);
         } catch (V1Exception ex) {
-            throw createAndLogException("Cannot connect to V1 server.", ex);
+            throw createAndLogException("Cannot load data from V1 server.", ex);
         }
     }
 
@@ -156,6 +157,7 @@ public class ApiDataLayer implements IDataLayer {
      */
     public void reconnect() throws DataLayerException {
         connector.reconnect();
+        loadData(false);
     }
 
     public List<Project> getProjectTree() throws DataLayerException {

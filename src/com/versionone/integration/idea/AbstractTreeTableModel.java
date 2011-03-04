@@ -2,6 +2,7 @@ package com.versionone.integration.idea;
 
 import com.intellij.util.ui.treetable.TreeTableModel;
 
+import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
 
@@ -157,7 +158,7 @@ public abstract class AbstractTreeTableModel extends DefaultTreeModel implements
     }
 
     //
-    // Default impelmentations for methods in the TreeTableModel interface.
+    // Default implementations for methods in the TreeTableModel interface.
     //
 
     public Class getColumnClass(int column) {
@@ -174,5 +175,8 @@ public abstract class AbstractTreeTableModel extends DefaultTreeModel implements
     }
 
     public void setValueAt(Object aValue, Object node, int column) { }
+
+    public void setTree(JTree jTree) {}
+
 }
 

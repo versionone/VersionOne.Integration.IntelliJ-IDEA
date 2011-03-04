@@ -78,15 +78,19 @@ public class TasksComponent extends AbstractComponent{
 
     @Override
     public void registerTool() {
+        boolean isConnected = false;
         try {
             createConnection();
+            isConnected = true;
         } catch (DataLayerException ex) {
             LOG.warn(ex.getMessage());
             Icon icon = Messages.getErrorIcon();
             Messages.showMessageDialog("Can not connect to VersionOne", "Error", icon);
         }
         registerToolWindow();
-        update();
+        if (isConnected) {
+            update();
+        }
     }
 
     @Override
@@ -118,6 +122,15 @@ public class TasksComponent extends AbstractComponent{
             model.setHideColumns(true);
         }
         updateUI();
+    }
+
+    public void resetSelection() {
+        if (table != null) {
+            table.removeRowSelectionInterval(0, table.getRowCount() - 1);
+            table.getTree().removeSelectionInterval(0, table.getTree().getRowCount() - 1);
+            table.getTree().stopEditing();
+            table.removeEditor();
+        }
     }
 
     public void updateUI() {

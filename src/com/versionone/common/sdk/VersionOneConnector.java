@@ -97,20 +97,20 @@ public class VersionOneConnector {
         connect(connectionSettings);
     }
 
-     boolean verifyConnection(ConnectionSettings settings) throws ConnectionException {
-         AuthCacheValue.setAuthCache(new AuthCacheImpl());
-         ProxyProvider proxy;
-         try {
-             proxy = getProxy(settings);
-         } catch (URISyntaxException ex) {
-             throw new ConnectionException("Proxy Uri is not correct", ex);
-         }
+    boolean verifyConnection(ConnectionSettings settings) throws ConnectionException {
+        AuthCacheValue.setAuthCache(new AuthCacheImpl());
+        ProxyProvider proxy;
+        try {
+            proxy = getProxy(settings);
+        } catch (URISyntaxException ex) {
+            throw new ConnectionException("Proxy Uri is not correct", ex);
+        }
         V1APIConnector metaConnector = new V1APIConnector(settings.v1Path + META_SUFFIX, null, null, proxy);
         MetaModel model = new MetaModel(metaConnector);
 
         final V1APIConnector dataConnector;
 
-         if (settings.isWindowsIntegratedAuthentication) {
+        if (settings.isWindowsIntegratedAuthentication) {
             dataConnector = new V1APIConnector(settings.v1Path + DATA_SUFFIX, null, null, proxy);
         } else {
             dataConnector = new V1APIConnector(settings.v1Path + DATA_SUFFIX, settings.v1Username, settings.v1Password, proxy);
@@ -122,7 +122,7 @@ public class VersionOneConnector {
     private ProxyProvider getProxy(ConnectionSettings settings) throws URISyntaxException {
         if (!settings.isProxyEnabled) {
             return null;
-        }        
+        }
         URI uri = new URI(settings.proxyUri);
         return new ProxyProvider(uri, settings.proxyUsername, settings.proxyPassword);
     }

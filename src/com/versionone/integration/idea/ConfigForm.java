@@ -175,7 +175,7 @@ public class ConfigForm implements UnnamedConfigurable {
         ItemListener useProxyListener = new ItemListener() {
             public void itemStateChanged(ItemEvent itemEvent) {
                 int state = itemEvent.getStateChange();
-                enableProxyUsing(state == ItemEvent.SELECTED);
+                enableProxyUsing(state == ItemEvent.SELECTED && enableCheckBox.isSelected());
                 verifyChanges();
             }
         };
@@ -246,5 +246,9 @@ public class ConfigForm implements UnnamedConfigurable {
         txtProxyPassword.setEditable(useProxy);
         txtProxyUri.setEditable(useProxy);
         txtProxyUsername.setEditable(useProxy);
+    }
+
+    public boolean isPluginEnabled() {
+        return enableCheckBox.isSelected();
     }
 }
