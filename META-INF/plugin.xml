@@ -11,7 +11,8 @@
     ]]>
     </description>
 
-    <version>9.2.0</version>
+    <!-- for correct plugin version need to have here PLUGIN_VERSION(with # from start and end) before build -->
+    <version>#PLUGIN_VERSION#</version>
 
     <vendor logo="/v1.png" url="http://www.versionone.com/" email="support@versionone.com">
         VersionOne, Inc.

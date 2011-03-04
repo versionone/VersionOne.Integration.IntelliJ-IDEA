@@ -290,7 +290,7 @@
         depends="compile.clean, package.clean, build.clean, coverage.clean, gendoc.clean"
         description="cleanup all"/>
 
-    <target name="ccnet.build" depends="init, clean, coverage, gendoc, plugin.package.idea"
+    <target name="ccnet.build" depends="setVersion, init, clean, coverage, gendoc, plugin.package.idea"
         description="build all"/>
 
     <target name="patchTo9">
@@ -302,6 +302,10 @@
             <replacetoken><![CDATA[<idea-version since-build="7000" until-build="9999"/>]]></replacetoken>
             <replacevalue><![CDATA[<idea-version since-build="10000"/>]]></replacevalue>
         </replace>
+    </target>
+
+    <target name="setVersion">
+        <replace file="${base.dir}/META-INF/plugin.xml" token="#PLUGIN_VERSION#" value="${ver.major}.${ver.minor}.${ver.build}"/>
     </target>
 
     <target name="patchTo8">
