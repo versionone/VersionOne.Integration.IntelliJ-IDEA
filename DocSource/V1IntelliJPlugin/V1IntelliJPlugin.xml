@@ -110,7 +110,42 @@
                             </tbody>
                         </tgroup>
                     </table>
-                </para>
+
+				
+				If there's a proxy between your machine and the VersionOne instance, you'll also need to configure the following settings:
+				
+                <table
+                    frame="none" id="install.configure.table">
+                    <title>Proxy Configuration Parameters</title>
+                    <tgroup cols="2">
+                        <thead>
+                            <row>
+                                <entry>Parameter</entry>
+                                <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>Use Proxy</entry>
+                                <entry>Determines if the integration connect to VersionOne through a Proxy</entry>
+                            </row>
+                            <row>
+                                <entry>Proxy URI</entry>
+                                <entry>This is the URL to your Proxy Server.</entry>
+                            </row>
+                            <row>
+                                <entry>Proxy Username</entry>
+                                <entry>The username that will get you past this proxy</entry>
+                            </row>
+                            <row>
+                                <entry>Proxy Password</entry>
+                                <entry>The password for the Proxy Username</entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+				</para>
             </listitem>
             <listitem>
                 <para>
