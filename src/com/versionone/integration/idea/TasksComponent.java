@@ -125,7 +125,7 @@ public class TasksComponent extends AbstractComponent{
     }
 
     public void resetSelection() {
-        if (table != null) {
+        if (table != null && table.getRowCount() > 0) {
             table.removeRowSelectionInterval(0, table.getRowCount() - 1);
             table.getTree().removeSelectionInterval(0, table.getTree().getRowCount() - 1);
             table.getTree().stopEditing();
