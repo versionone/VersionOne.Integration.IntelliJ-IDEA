@@ -17,6 +17,7 @@ import static com.versionone.common.sdk.EntityType.Test;
 public class ApiDataLayerTester implements IntegrationalTest {
 
     @Test
+    @Ignore("required V1 instance")
     public void testCreateAndGetDefect() throws Exception {
         final ApiDataLayer data = ApiDataLayer.getInstance();
         data.addProperty("Name", Defect, false);
@@ -69,6 +70,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
     }
 
     @Test
+    @Ignore("required V1 instance")
     public void testCreateAndGetTask() throws Exception {
         final ApiDataLayer data = ApiDataLayer.getInstance();
         data.addProperty("Name", Task, false);
@@ -125,6 +127,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
     }
 
     @Test
+    @Ignore("required V1 instance")
     public void testCreateChild() throws Exception {
         final ApiDataLayer data = ApiDataLayer.getInstance();
         data.addProperty("Name", Task, false);
@@ -169,6 +172,7 @@ public class ApiDataLayerTester implements IntegrationalTest {
     }
 
     @Test
+    @Ignore("required V1 instance")
     public void testChildrenSorting() throws Exception {
         final ApiDataLayer data = ApiDataLayer.getInstance();
         data.addProperty("Name", Task, false);
