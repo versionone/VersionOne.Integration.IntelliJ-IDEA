@@ -1,0 +1,49 @@
+{
+    "id": "VersionOne.Integration.IntelliJ-IDEA",
+    "titleSection": {
+        "name": "VersionOne Integration for IntelliJ IDEA",
+        "shortDescription": "short description of VersionOne Integration for IntelliJ IDEA",
+        "pricing": "Free",
+        "support": {
+            "text": "VersionOne",
+            "href": "http://support.versionone.com/home"
+        }
+    },
+    "descriptionSection": {
+        "description": "Description of VersionOne Integration for IntelliJ IDEA."
+    },
+    "linksSection": [
+        {
+            "type": "documentation",
+            "title": "Documentation",
+            "href": "http://versionone.github.io/VersionOne.Integration.IntelliJ-IDEA/index.html"
+        }
+    ],
+    "updatesSection": {
+        "updates": [
+            {
+                "date": "2013-07-13T11:00:10.105Z",
+                "description": "Launch",
+                "version": "0.0.1",
+                "releaseNotes": "Initial Release",
+                "qualityBand": "seed"
+            }
+        ],
+        "qualityBands": [
+            "seed": {
+                "shortDescription": "The initial idea of a product. May not be stable code.",
+                "href": "https://github.com/versionone/VersionOne.Integration.IntelliJ-IDEA/blob/master/CONTRIBUTING.md#seed"
+            },
+            "sapling": {
+                "shortDescription": "The product is undergoing rapid growth. The code works but expect major changes.",
+                "href": "https://github.com/versionone/VersionOne.Integration.IntelliJ-IDEA/blob/master/CONTRIBUTING.md#sapling"
+            },
+            "mature": {
+                "shortDescription": "The product is stable. The code will continue to evolve with minimum breaking changes.",
+                "href": "https://github.com/versionone/VersionOne.Integration.IntelliJ-IDEA/blob/master/CONTRIBUTING.md#mature"
+            }
+        ]
+    },
+    "mediaSection": [
+    ]
+}
