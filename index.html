@@ -1,52 +1,46 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>Versionone.integration.intellij-idea by versionone</title>
-  </head>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>VersionOne IntelliJ IDEA Plugin User Guide</title><link rel="stylesheet" href="v1integration.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.70.1" /></head><body><div class="article" lang="en" xml:lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="V1IntelliJPlugIn.user"></a>VersionOne IntelliJ IDEA Plugin User Guide</h1></div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#description">Description</a></span></dt><dt><span class="section"><a href="#systemreqs">System Requirements</a></span></dt><dt><span class="section"><a href="#downloads">Downloads</a></span></dt><dt><span class="section"><a href="#installation">Installation</a></span></dt><dt><span class="section"><a href="#id521491">Configuration</a></span></dt><dt><span class="section"><a href="#usage">Usage</a></span></dt><dd><dl><dt><span class="section"><a href="#usage.project">Selecting Projects</a></span></dt><dt><span class="section"><a href="#usage.tasks">Updating Tasks</a></span></dt></dl></dd><dt><span class="section"><a href="#section.footer"></a></span></dt></dl></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="description"></a>Description</h2></div></div></div><p>
+            The VersionOne IntelliJ Idea Plugin (V1IntelliJPlugIn) provides interaction with development task in defined in VersionOne from within the IntelliJ IDEA IDE.  
+            This enables Java developers to update VersionOne task status, estimates, remaining effort, etc., without leaving the confines of the IntelliJ IDEA environment.
+        </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="systemreqs"></a>System Requirements</h2></div></div></div><p>
+            VersionOne: 7.3 or above
+        </p><p>
+            Client Workstation:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>IDE — IntelliJ IDEA 8.0 — 8.1.2 — 9.x</p></li></ul></div><p>
+        </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="downloads"></a>Downloads</h2></div></div></div><p>
+		The latest version of V1IntelliJPlugin is available at <a href="http://community.versionone.com/downloads" target="_top">V1:  Integration Downloads</a>.
+	</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="installation"></a>Installation</h2></div></div></div><p>
+                To install the VersionOne plugin
+                </p><div class="orderedlist"><ol type="1"><li><p>Close any open instance of the IntelliJ IDEA IDE</p></li><li><p>Unzip the V1IntelliJPlugin.zip file into a temporary location. </p></li><li><p>Locate the IntelliJ installation directory. </p></li><li><p>Copy the VersionOne subdirectory from the temporary location to the <span class="emphasis"><em>plugin </em></span> subdirectory located under the IntelliJ installation directory</p></li><li><p>Configure IntelliJ IDEA to use the VersionOne Plugin. </p><p>
+                        </p><div class="orderedlist"><ol type="a"><li><p>Launch IntelliJ IDEA</p></li><li><p>Select <span class="emphasis"><em>Configure Plugins</em></span> from the <span class="emphasis"><em>File</em></span> menu to launch the <span class="emphasis"><em>"IntelliJ IDEA Plugin Configuration Wizard"</em></span>. </p></li><li><p>Click <span class="emphasis"><em>Next</em></span> until you reach the <span class="emphasis"><em>"Select Other Plugins"</em></span> page </p></li><li><p>Enable the "VersionOne Integration" </p></li><li><p>Click Finish</p></li><li><p>Restart IntelliJ IDEA</p></li></ol></div><p>
+                    </p></li></ol></div><p>
+        </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id521491"></a>Configuration</h2></div></div></div><p>To configure the VersionOne plugin:</p><div class="orderedlist"><ol type="1"><li><p>Select <span class="emphasis"><em>Settings</em></span> from the <span class="emphasis"><em>File</em></span> 
+                menu (File | Settings), and navigate to the VersionOne settings as show in <a href="#install.configure.options" title="Figure&#xA0;1.&#xA0;Configuration Options Screen">Figure 1, “Configuration Options Screen”</a>.
+                </p><div class="figure"><a id="install.configure.options"></a><p class="title"><b>Figure 1. Configuration Options Screen</b></p><div class="figure-contents"><div><img src="Options.JPG" alt="Configuration Options Screen" /></div></div></div><p><br class="figure-break" />
+                </p></li><li><p>Enter the configuration parameters as specified in the table below 				
+                </p><div class="table"><a id="install.configure.table"></a><p class="title"><b>Table 1. VSAddin Configuration Parameters</b></p><div class="table-contents"><table summary="VSAddin Configuration Parameters" cellspacing="0" cellpadding="0" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td>Windows Integrated Authentication</td><td>Check this box if your VersionOne instance uses Windows Integraten Authentication.</td></tr><tr><td>Application URL</td><td>VersionOne installation URL</td></tr><tr><td>Username</td><td>User that will access VersionOne.</td></tr><tr><td>Password</td><td>Password for the username above.</td></tr></tbody></table></div></div><p><br class="table-break" />
 
-  <body>
-    <div id="container">
-      <div class="inner">
+				
+				If there's a proxy between your machine and the VersionOne instance, you'll also need to configure the following settings:
+				
+                </p><div class="table"><a id="install.configure.table"></a><p class="title"><b>Table 2. Proxy Configuration Parameters</b></p><div class="table-contents"><table summary="Proxy Configuration Parameters" cellspacing="0" cellpadding="0" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td>Use Proxy</td><td>Determines if the integration connect to VersionOne through a Proxy</td></tr><tr><td>Proxy URI</td><td>This is the URL to your Proxy Server.</td></tr><tr><td>Proxy Username</td><td>The username that will get you past this proxy</td></tr><tr><td>Proxy Password</td><td>The password for the Proxy Username</td></tr></tbody></table></div></div><p><br class="table-break" />
 
-        <header>
-          <h1>Versionone.integration.intellij-idea</h1>
-          <h2>View and update VersionOne work items directly from JetBrains IntelliJ IDEA.</h2>
-        </header>
-
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/versionone/VersionOne.Integration.IntelliJ-IDEA/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/versionone/VersionOne.Integration.IntelliJ-IDEA/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/versionone/VersionOne.Integration.IntelliJ-IDEA" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
-
-        <hr>
-
-        <section id="main_content">
-          <h1>
-<a name="versionone-integration-for-intellij-idea" class="anchor" href="#versionone-integration-for-intellij-idea"><span class="octicon octicon-link"></span></a>VersionOne Integration for IntelliJ IDEA</h1>
-
-<h2>
-<a name="code-coming-soon" class="anchor" href="#code-coming-soon"><span class="octicon octicon-link"></span></a>Code Coming Soon!</h2>
-
-<p>If you are interested in contributing to this project, please contact <a href="mailto:ian.buchanan@versionone.com">Ian Buchanan</a>.</p>
-        </section>
-
-        <footer>
-          Versionone.integration.intellij-idea is maintained by <a href="https://github.com/versionone">versionone</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
-      </div>
-    </div>
-  </body>
-</html>
+				</p></li><li><p>
+                Click <span class="emphasis"><em>Validate Connection</em></span> to ensure that
+                the add-in can both access VersionOne’s API and authenticate using the supplied username and password.
+            </p></li><li><p>
+                Click <span class="emphasis"><em>OK</em></span> to close the Settings dialog
+            </p></li></ol></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="usage"></a>Usage</h2></div></div></div><p>
+        V1IntelliJPlugin contributes two new components to the IntelliJ IDEA environment; a V1Workitem Window and a V1Details Window.  The V1Workitem Window provides visibility to the VersionOne workitems in the current active
+		iteration.  On the left side of this window is a iconbar that allows users to:
+		</p><div class="itemizedlist"><ul type="disc"><li><p>Add New Defects</p></li><li><p>Add New Task</p></li><li><p>Add New Test</p></li><li><p>Toggle view to show all workitems or only the workitems assigned to the connected member</p></li><li><p>Filter view to a specific project</p></li><li><p>Refresh the view</p></li><li><p>Save Changes</p></li><li><p>Access Help</p></li></ul></div><p>
+        </p><div><img src="Tasks.JPG" /></div><p>
+		</p><p>The Details Window provides additional details about the specific Workitem selected in the V1Workitem view
+		</p><div><img src="NewDetailsView.JPG" /></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="usage.project"></a>Selecting Projects</h3></div></div></div><p>In order to view VersionOne Workitems you must first select a Project.  To select a Project click the <span class="emphasis"><em>Filter</em></span> icon located on the left side of the V1Workitem Window. 
+                </p><div class="figure"><a id="usage.project.figure"></a><p class="title"><b>Figure 2. Projects Window</b></p><div class="figure-contents"><div><img src="Projects.JPG" alt="Projects Window" /></div></div></div><p><br class="figure-break" />
+                To choose a specific project to work on, simply navigate the tree and select it.  Once selected, click <span class="emphasis"><em>OK</em></span> to exit.
+            </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="usage.tasks"></a>Updating Tasks</h3></div></div></div><p>
+                Once the filter is closed the V1Workitem Window will refresh and list all VersionOne Workitems based on the filter.  
+                To update a workitem, modify the attribute directly in the grid. Once you’re finished, click the Save icon to commit your changes to VersionOne.				
+            </p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="section.footer"></a></h2></div></div></div><p>Copyright © 2011, VersionOne, Inc. All rights reserved. This document was generated 2011-06-07 17:13:07.</p></div></div></body></html>
